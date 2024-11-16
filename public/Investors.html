@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Navbar styling */
+        .navbar-brand {
+            color: tomato;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link {
+            color: black;
+        }
+
+        .navbar-nav .nav-link.active {
+            font-weight: bold;
+        }
+
+        .navbar-toggler-icon {
+            filter: invert(1);
+        }
+
+        /* Profile and Sign-Out styling */
+        .profile-card {
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .profile-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #003366;
+            margin-bottom: 15px;
+        }
+
+        .profile-card h2 {
+            font-size: 1.5em;
+            color: #003366;
+            margin: 10px 0;
+        }
+
+        .profile-card p.job-title {
+            font-size: 1em;
+            color: #888;
+            margin: 5px 0;
+        }
+
+        .profile-details {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .profile-details .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-details .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .profile-card .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .profile-card .social-icons a {
+            color: #003366;
+            font-size: 1.2em;
+            transition: color 0.3s;
+        }
+
+        .profile-card .social-icons a:hover {
+            color: #0066cc;
+        }
+
+        .add-new-investor {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.2em;
+            color: white;
+            background-color: tomato;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+
+        .add-new-investor:hover {
+            background-color: darkred;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <div>
+                    <span style="display: block;">Sips Finance</span>
+                    <small style="font-size: 0.7em;">Financial Services</small>
+                </div>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Investors">Investors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Clients">Clients</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Leads">Leads</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-3">
+                    <a href="./Login.html" class="sign-out ms-3">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row" id="profile-cards-container">
+            <!-- Dynamic profile cards will be inserted here -->
+        </div>
+    </div>
+
+    <a href="/AddInvestor">ADD New Investor</a>
+
+    <script>
+        async function fetchData() {
+            try {
+                console.log('Fetching data...');
+                const response = await fetch('/InvestorData'); // Adjust endpoint if necessary
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json(); // This should return an array of investor objects
+                console.log('Data received:', data);
+    
+                // Clear existing profile cards if needed
+                const container = document.getElementById('profile-cards-container');
+                container.innerHTML = '';
+    
+                // Loop through each investor and create a profile card
+                data.forEach(investor => {
+                    const profileCard = document.createElement('div');
+                    profileCard.classList.add('col-md-4', 'mb-4');
+                    profileCard.innerHTML = `
+                        <div class="profile-card">
+                        ${investor.Image}
+                            <h2>${investor.InvestorName}</h2>
+                            <p class="job-title">Investor</p>
+                            <div class="profile-details">
+                                <div class="detail-row">
+                                    <span><strong>Name:</strong></span>
+                                    <span>${investor.InvestorName}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span><strong>Amount:</strong></span>
+                                    <span>${investor.AmountInvested}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span><strong>Date:</strong></span>
+                                    <span>${investor.TotalDuration}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span><strong>Invested in:</strong></span>
+                                    <span>${investor.InvestedIn}</span>
+                                </div>
+                            </div>
+                            <div class="social-icons">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(profileCard);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+    
+        // Call fetchData on page load
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+    
+    <!-- <script>
+
+    
+async function fetchData() {
+    try {
+        console.log('Fetching data...');
+        const response = await fetch('/data');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Data received:', data);
+
+
+        const name = response.InvestorName;
+            const amount = response.AmountInvested;
+            const date = response.TotalDuration;
+            const investedIn = response.InvestedIn;
+
+
+
+    }}
+
+    catch (error) {
+        console.error('Error fetching data:', error);
+    }
+
+            // const name = document.getElementById('name').value;
+            // const amount = document.getElementById('amount').value;
+            // const date = document.getElementById('date').value;
+            // const investedIn = document.getElementById('investedIn').value;
+
+            const profileCard = document.createElement('div');
+            profileCard.classList.add('col-md-4', 'mb-4');
+            profileCard.innerHTML = `
+                <div class="profile-card">
+                    <img src="https://via.placeholder.com/100" alt="Profile Picture">
+                    <h2>${name}</h2>
+                    <p class="job-title">Investor</p>
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <span><strong>Name:</strong></span>
+                            <span>${name}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Amount:</strong></span>
+                            <span>${amount}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Date:</strong></span>
+                            <span>${date}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Invested in:</strong></span>
+                            <span>${investedIn}</span>
+                        </div>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            `;
+
+            // Append the new profile card to the container
+            document.getElementById('profile-cards-container').appendChild(profileCard);
+            document.getElementById('addInvestorForm').reset();
+    </script> -->
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ppE5V4F7k9vLAHQ4OdwLwD4EYMOJKH7PQcHI3Y0OV/2vO2QlR3SNi76qIr1z5nqg" crossorigin="anonymous"></script>
+</body>
+</html>

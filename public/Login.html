@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance App Login</title>
+  <style>
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: slateblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.login-box {
+  background-color: #003f5c; /* Midnight Blue */
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  color: #f5f5f5; /* Soft White Text */
+}
+
+.logo h1 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #00b894; /* Emerald Green for Branding */
+  color:#fff;
+}
+
+h2 {
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-weight: bold;
+  color: #f5f5f5;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #00b894; /* Emerald Green Border */
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333333; /* Dark Gray Text */
+}
+
+.login-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #00b894; /* Emerald Green Button */
+  color: #ffffff;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #007f5f; /* Darker Emerald on Hover */
+}
+
+.footer {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #f5f5f5;
+}
+
+.footer a {
+  color: #ffb142; /* Amber for Links */
+  text-decoration: none;
+}
+#ForgetPassword{
+    text-decoration: none;
+    color: tomato;
+    background-color: transparent;
+    font-size: 20px;
+
+    
+}
+a{
+  text-decoration: none;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <div class="logo">
+        <h1> Welcome To SiPS Finance</h1>
+      </div>
+      <h2>Secured Login</h2>
+      <form>
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter your username" required>
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+       
+        <button class="login-button" onclick="home()">Log In</button>
+      </form>
+     
+      <div class="footer">
+        <a id="ForgetPassword">Forgot Password</a><br><br>
+        <p>Secure SSL Connection</p>
+      </div>
+    </div>
+  </div>
+  <script>
+function home(){
+  window.location.href="/Home";
+}
+
+
+  </script>
+</body>
+</html>
