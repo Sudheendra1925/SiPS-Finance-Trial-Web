@@ -1,20 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
-     
         body {
-    
             font-family: Arial, sans-serif;
-            
-            padding: 0;
             margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: white;
+        }
+
+        .navbar {
+            background-color: black;
         }
 
         .navbar-brand {
@@ -23,55 +24,187 @@
             font-weight: bold;
         }
 
-        /* .navbar-nav .nav-link {
-            
-        } */
+        .navbar-nav .nav-link {
+            color: white;
+        }
 
         .navbar-nav .nav-link.active {
             font-weight: bold;
+            color: yellow !important;
         }
 
-        .navbar-toggler-icon {
-            filter: invert(1);
+        .sign-out {
+            color: tomato;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        h3 {
+            color: yellow;
+        }
+
+        .table {
+            background-color: black;
+            color: white;
+            border: 1px solid tomato;
+        }
+
+        .table thead {
+            background-color: tomato;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive {
+                margin-bottom: 20px;
+            }
+
+            .add-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="#">
-            <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
-            <div>
-                <span style="display: block;">Sips Finance</span>
-                <small style="font-size: 0.7em;">Financial Services</small>
-            </div>
-        </a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <div>
+                    <span style="display: block;">Sips Finance</span>
+                    <small style="font-size: 0.7em;">Financial Services</small>
+                </div>
+            </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarToggler">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link  active" href="/Home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Investors">Investors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Clients">Clients</a>
-                </li>
-              
-                <li class="nav-item">
-                    <a class="nav-link" href="/Leads">Leads</a>
-                </li>
-            </ul>
-            <div class="d-flex align-items-center ms-3">
-                <a href="./Login.html" class="sign-out ms-3">Sign Out</a>
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Investors">Investors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Clients">Clients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Leads">Leads</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-3">
+                    <a href="./Login.html" class="sign-out">Sign Out</a>
+                </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Buttons -->
+        <div class="add-buttons d-flex justify-content-between mb-4">
+            <a href="/AddInvestement" class="btn btn-warning">Add Investment</a>
+            <a href="/AddOrder" class="btn btn-danger">Add Order</a>
+        </div>
+
+        <!-- Clients Paying Interest Today -->
+        <div class="table-responsive">
+            <h3>Clients Paying Interest Today</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Amount Due</th>
+                        <th>Phone Number</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTable">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Investors to Pay Today -->
+        <div class="table-responsive">
+            <h3>Investors to Pay Today</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Investor Name</th>
+                        <th>Amount</th>
+                        <th>Phone Number</th>
+                    </tr>
+                </thead>
+                <tbody id="investorsTable">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
     </div>
-</nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Fetch today's interest payments (clients)
+            const clientResponse = await fetch('/TodayClient');
+            const clients = await clientResponse.json();
+    
+            const clientsTable = document.getElementById('clientsTable');
+            for (const client of clients) {
+                try {
+                    // Fetch additional details for the client
+                    const clientDetailsResponse = await fetch(`/ClientDetails/${client.ClientID}`);
+                    const clientDetails = await clientDetailsResponse.json();
+    
+                    clientsTable.innerHTML += `
+                        <tr>
+                            <td>${clientDetails.ClientName || 'N/A'}</td>
+                            <td>₹${client.Amount.toLocaleString()}</td>
+                            <td>${clientDetails.PhoneNumber || 'N/A'}</td>
+                        </tr>
+                    `;
+                } catch (clientError) {
+                    console.error(`Error fetching details for client ${client.ClientID}:`, clientError);
+                }
+            }
+    
+            // Fetch today's investor payouts
+            const investorResponse = await fetch('/TodayInvestor');
+            const investors = await investorResponse.json();
+    
+            const investorsTable = document.getElementById('investorsTable');
+            for (const investor of investors) {
+                try {
+                    // Fetch additional details for the investor
+                    const investorDetailsResponse = await fetch(`/InvestorDetails/${investor.InvestorID}`);
+                    const investorDetails = await investorDetailsResponse.json();
+    
+                    investorsTable.innerHTML += `
+                        <tr>
+                            <td>${investorDetails.InvestorName || 'N/A'}</td>
+                            <td>₹${investor.Amount.toLocaleString()}</td>
+                            <td>${investorDetails.PhoneNumber || 'N/A'}</td>
+                        </tr>
+                    `;
+                } catch (investorError) {
+                    console.error(`Error fetching details for investor ${investor.InvestorID}:`, investorError);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
