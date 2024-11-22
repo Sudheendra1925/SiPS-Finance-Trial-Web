@@ -6,76 +6,190 @@
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: white;
-        }
+     :root {
+    --primary-color: #0056b3; /* Rich Blue */
+    --secondary-color: #f7f9fc; /* Light Background */
+    --accent-color: #0875e1; /* Lighter Accent */
+    --text-dark: #222; /* Rich Dark */
+    --text-light: #555; /* Muted Text */
+    --white: #ffffff;
+    --success-color: #28a745; /* Success Green */
+    --warning-color: #ffc107; /* Warning Yellow */
+    --danger-color: #dc3545; /* Danger Red */
+    --highlight-color: #ffc107; /* Premium Gold */
+    --table-bg: #ffffff; /* White Table Background */
+    --table-border: #e0e0e0; /* Subtle Gray Borders */
+    --card-bg: #ffffff; /* Clean White Cards */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
+    --transition-speed: 0.3s; /* Smooth Transitions */
+}
 
-        .navbar {
-            background-color: black;
-        }
+body {
+    font-family: 'Poppins', sans-serif; /* Modern Font */
+    margin: 0;
+    padding: 0;
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
 
-        .navbar-brand {
-            color: tomato;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
+.navbar {
+    background: var(--primary-color);
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
 
-        .navbar-nav .nav-link {
-            color: white;
-        }
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        .navbar-nav .nav-link.active {
-            font-weight: bold;
-            color: yellow !important;
-        }
+.navbar-nav .nav-link {
+    color: var(--white);
+    margin: 0 10px;
+    transition: color var(--transition-speed);
+}
 
-        .sign-out {
-            color: tomato;
-            text-decoration: none;
-            font-weight: bold;
-        }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
 
-        .content {
-            padding: 20px;
-        }
+.sign-out {
+    color: var(--danger-color);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    background: var(--white);
+    border-radius: 4px;
+    transition: background var(--transition-speed), color var(--transition-speed);
+}
 
-        h3 {
-            color: yellow;
-        }
+.sign-out:hover {
+    color: var(--white);
+}
 
-        .table {
-            background-color: black;
-            color: white;
-            border: 1px solid tomato;
-        }
+.content {
+    padding: 30px;
+    max-width: 1200px;
+    margin: auto;
+}
 
-        .table thead {
-            background-color: tomato;
-            color: white;
-        }
+h3 {
+    color: var(--accent-color);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
 
-        @media (max-width: 768px) {
-            .table-responsive {
-                margin-bottom: 20px;
-            }
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--table-bg);
+    color: var(--text-dark);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-            .add-buttons {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
+.table thead {
+    background: var(--accent-color);
+    color: var(--white);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.table th, 
+.table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--table-border);
+}
+
+.table tr:hover {
+    background-color: var(--secondary-color);
+    cursor: pointer;
+}
+
+.table th:first-child,
+.table td:first-child {
+    border-left: 1px solid var(--table-border);
+}
+
+.table th:last-child,
+.table td:last-child {
+    border-right: 1px solid var(--table-border);
+}
+
+#TotalInvestements, #TotalLendings {
+    display: inline-block;
+    margin: 20px;
+    border: 2px solid var(--primary-color);
+    background: linear-gradient(135deg, var(--highlight-color), var(--accent-color));
+    color: var(--white);
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px var(--shadow-color);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+#TotalInvestements:hover, #TotalLendings:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px var(--shadow-color);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
+
+button:hover {
+    background-color: var(--button-hover-bg);
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        margin-bottom: 20px;
+    }
+
+    .add-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #TotalInvestements, #TotalLendings {
+        font-size: 30px;
+        padding: 15px 20px;
+    }
+}
+
+
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="/Home">
                 <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
                 <div>
                     <span style="display: block;">Sips Finance</span>
@@ -102,19 +216,27 @@
                         <a class="nav-link" href="/Leads">Leads</a>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center ms-3">
-                    <a href="./Login.html" class="sign-out">Sign Out</a>
+                <div class="d-flex align-items-center ms-3 " >
+                    <a href="./Login.html" class="sign-out btn btn-danger">Sign Out</a>
                 </div>
             </div>
         </div>
     </nav>
-
+    
     <!-- Content -->
     <div class="content">
         <!-- Buttons -->
         <div class="add-buttons d-flex justify-content-between mb-4">
+            <div style="background-color: whitesnow;">
+                <div ><h3>Total Investements</h3></div>
+                <div id="TotalInvestements"></div>
             <a href="/AddInvestement" class="btn btn-warning">Add Investment</a>
+        </div>
+        <div>
+            <div><h3>Total Leandings</h3></div>
+            <div id="TotalLendings"></div>
             <a href="/AddOrder" class="btn btn-danger">Add Order</a>
+        </div>
         </div>
 
         <!-- Clients Paying Interest Today -->
@@ -124,8 +246,11 @@
                 <thead>
                     <tr>
                         <th>Client Name</th>
-                        <th>Amount Due</th>
+                        <th>Total Loan</th>
+                        <th>Payable Interests</th>
                         <th>Phone Number</th>
+                        <th>Send Message</th>
+                       
                     </tr>
                 </thead>
                 <tbody id="clientsTable">
@@ -142,7 +267,10 @@
                     <tr>
                         <th>Investor Name</th>
                         <th>Amount</th>
+                        <th>Payable Interest</th>
                         <th>Phone Number</th>
+                        <th>Message</th>
+                        
                     </tr>
                 </thead>
                 <tbody id="investorsTable">
@@ -150,6 +278,30 @@
                 </tbody>
             </table>
         </div>
+
+
+
+
+        <div class="table-responsive">
+            <h3>Clients Whose TERM is Over </h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Client Name</th>
+                        <th>Loan Amount</th>
+                        <th>Phone Number</th>
+                        <th>Payable Interest</th>
+                        <th>Start Date</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody id="ClosingClientsTable">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 <script>
@@ -157,28 +309,40 @@
         try {
             // Fetch today's interest payments (clients)
             const clientResponse = await fetch('/TodayClient');
-            const clients = await clientResponse.json();
-    
-            const clientsTable = document.getElementById('clientsTable');
-            for (const client of clients) {
-                try {
-                    // Fetch additional details for the client
-                    const clientDetailsResponse = await fetch(`/ClientDetails/${client.ClientID}`);
-                    const clientDetails = await clientDetailsResponse.json();
-    
-                    clientsTable.innerHTML += `
-                        <tr>
-                            <td>${clientDetails.ClientName || 'N/A'}</td>
-                            <td>₹${client.Amount.toLocaleString()}</td>
-                            <td>${clientDetails.PhoneNumber || 'N/A'}</td>
-                        </tr>
-                    `;
-                } catch (clientError) {
-                    console.error(`Error fetching details for client ${client.ClientID}:`, clientError);
-                }
+        const clients = await clientResponse.json();
+
+        const clientsTable = document.getElementById('clientsTable');
+        for (const client of clients) {
+            try {
+                // Fetch additional details for the client
+                const clientDetailsResponse = await fetch(`/ClientDetails/${client.ClientID}`);
+                const clientDetails = await clientDetailsResponse.json();
+
+                // Populate table with client details
+                clientsTable.innerHTML += `
+                    <tr>
+                        <td>${clientDetails.ClientName || 'N/A'}</td>
+                        <td>${client.Amount || 'N/A'}</td>
+                        <td>${client.PayableInterest.toLocaleString()}</td>
+                        <td>${clientDetails.PhoneNumber || 'N/A'}</td>
+
+            
+                        <td>
+                            <button 
+                                class="btn btn-sm btn-success" 
+                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}', '${client.PayableInterest}')">
+                                Send Message
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+            } catch (clientError) {
+                console.error(`Error fetching details for client ${client.ClientID}:`, clientError);
             }
+        }
     
-            // Fetch today's investor payouts
+      //  ${client.PayableInterest.toLocaleString()}
             const investorResponse = await fetch('/TodayInvestor');
             const investors = await investorResponse.json();
     
@@ -193,18 +357,124 @@
                         <tr>
                             <td>${investorDetails.InvestorName || 'N/A'}</td>
                             <td>₹${investor.Amount.toLocaleString()}</td>
+                             <td>₹${investor.PayableInterest.toLocaleString()}</td>
                             <td>${investorDetails.PhoneNumber || 'N/A'}</td>
+                               <td>
+                            <button 
+                                class="btn btn-sm btn-success" 
+                                onclick="InvestorWhatsappMessage('${investorDetails.PhoneNumber}', '${investor.PayableInterest}')">
+                                Send Message
+                            </button>
+                        </td>
+                            
                         </tr>
                     `;
                 } catch (investorError) {
                     console.error(`Error fetching details for investor ${investor.InvestorID}:`, investorError);
                 }
             }
+           
+
+            try{
+                const TotalInvestements=await fetch("/TotalInvestements");
+                const TotalInvestement = await TotalInvestements.json();
+                const TotalLendings=await fetch("/TotalLendings");
+                const TotalLending = await TotalLendings.json();
+                console.log(TotalInvestement);
+                console.log(TotalLending);
+
+                document.getElementById("TotalInvestements").innerHTML=`<p>${TotalInvestement.TotalInvestement}</p>`
+                document.getElementById("TotalLendings").innerHTML=`<p>${TotalLending.TotalLeanding }</p>`
+
+            }
+            catch(error){
+                console.error('Error fetching data:', error);
+            }
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+const ClosingClientsResponse = await fetch('/ClosingClients');
+        const ClosingClients = await ClosingClientsResponse.json();
+console.log(ClosingClients)
+        const ClosingClientsTable = document.getElementById('ClosingClientsTable');
+        for (const ClosingClient of ClosingClients) {
+            try {
+                // Fetch additional details for the client
+                const ClosingClientDetailsResponse = await fetch(`/ClientDetails/${ClosingClient.clientID}`);
+                const ClosingClientDetails = await ClosingClientDetailsResponse.json();
+                const formattedStartDate = new Date(ClosingClient.startdate).toLocaleDateString('en-US') || 'N/A';
+console.log(ClosingClientDetails)
+                // Populate table with client details
+                ClosingClientsTable.innerHTML += `
+                    <tr>
+                        <td>${ClosingClient.orderid || 'N/A'}</td>
+                        <td>${ClosingClientDetails.ClientName || 'N/A'}</td>
+                        <td>${ClosingClient.amount.toLocaleString()}</td>
+                        
+                        <td>${ClosingClientDetails.PhoneNumber || 'N/A'}</td>
+                        <td>${ClosingClient.PayableInterest.toLocaleString()}</td>
+                        <td>${formattedStartDate}</td>
+                        <td>
+                            <button 
+                                class="btn btn-sm btn-success" 
+                                onclick="ClosingClientWhatsappMessage('${ClosingClientDetails.PhoneNumber}', '${ClosingClient.PayableInterest}','${ClosingClient.amount}')">
+                                Send Message
+                            </button>
+                        </td>
+    
+                    </tr>
+                `;
+            } 
+            catch(error){
+                console.error('Error fetching knczncjz data:', error);
+            }
+        }
+
         } catch (error) {
             console.error('Error fetching data:', error);
-        }
-    });
+
+
+}});
 </script>
+
+
+<script>
+function ClientWhatsappMessage(phone, PayableInterest) {
+    const message = `Hello, We are from SIPS Finance. This is to inform you that you have a total due amount of ₹${PayableInterest}. Please settle it at the earliest.`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/+91${phone}?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank');
+}
+
+
+function InvestorWhatsappMessage(phone, PayableInterest) {
+    const message = `Hello, We are from SIPS Finance. This is to inform you that we  have deleverd you  amount of ₹${PayableInterest} as part you have investemnt in SiPS. Thankyou Have a Good Day.`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/+91${phone}?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank');
+}
+
+function ClosingClientWhatsappMessage(phone, PayableInterest,amount) {
+    const message = `Hello, We are from SIPS Finance. This is to inform you that your loan has closed of ₹${PayableInterest}+${amount}. Please settle it at the earliest.`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/+91${phone}?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank');
+}
+
+
+
+
+</script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+
 </body>
 </html>
+<!--

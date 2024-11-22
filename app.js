@@ -80,29 +80,52 @@ app.get('/Client/:ID', (req, res) => {
 });
 
 
+app.get('/InvestementHistory', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/InvestementHistory.html'));
+});
+
+app.get('/OrderHistory', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/OrderHistory.html'));
+});
+
+app.get('/UpdateInvestorPage/:ID', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/UpdateInvestor.html'));
+});
+app.get('/UpdateClientPage/:ID', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/UpdateClient.html'));
+});
+
+app.get('/UpdateInvestementPage/:ID', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/UpdateInvestement.html'));
+});
+app.get('/UpdateOrderPage/:ID', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/UpdateOrder.html'));
+});
+
+
+
 
 
 
 app.post('/NewInvestor', (req, res) => {
 
     const InvestorID = generateSmallId('INV');
-    const { InvestorName, StartDate, PhoneNumber, Image } = req.body;
+    const { InvestorName,PhoneNumber} = req.body;
 
 
-    const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber, Image)
-                 VALUES (?, ?, ?,0, ?,?)`;
+    const sql = `INSERT INTO Investors (InvestorID, InvestorName,AmountInvested, PhoneNumber)
+                 VALUES (?, ?,0,?)`;
 
-    db.query(sql, [ InvestorID,InvestorName, StartDate, PhoneNumber, Image], (err, result) => {
+    db.query(sql, [ InvestorID,InvestorName, PhoneNumber], (err, result) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
             return;
         }
         console.log('Record inserted');
-        res.send('Inserted Successfully');
+        res.sendFile(path.join(__dirname, 'public/AddInvestement.html'));
     });
 });
-
 app.post('/NewClient', (req, res) => {
     const ClientID = generateSmallId('CLI');
     const { ClientName,AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments} = req.body;
@@ -120,37 +143,37 @@ app.post('/NewClient', (req, res) => {
             return;
         }
         console.log('Record inserted');
-        res.send('Inserted Successfully');
+        res.sendFile(path.join(__dirname, 'public/AddOrder.html'));
     });
 });
 
 app.post("/NewLead",(req,res)=>{
 
-    const {LeadName,Amount,IssuedDate,Years,Months,Days} = req.body;
+    const {LeadName,Amount,PhoneNumber,Years,Months,Days,Collateral} = req.body;
+    const Duration=parseInt(Years)*365+parseInt(Months)*30+parseInt(Days);
 
-    const sql = `INSERT INTO Leads ( LeadName, Amount, IssuedDate, Duration)
-                 VALUES (?,?,?,?)`;
+    const sql = `INSERT INTO Leads ( LeadName, Amount,Duration,PhoneNumber,Collateral)
+                 VALUES (?,?,?,?,?)`;
 
-Duration=Years*365+Months*30+Days;
+
     // Execute the query, passing values from the request body
-    db.query(sql, [ LeadName,Amount,IssuedDate,Duration], (err, result) => {
+    db.query(sql, [ LeadName,Amount,Duration,PhoneNumber,Collateral], (err, result) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
             return;
         }
         console.log('Record inserted');
-        res.send('Inserted Successfully');
+        res.sendFile(path.join(__dirname, 'public/Leads.html'));
     });
 })
 
 
 app.post("/NewInvestment", (req, res) => {
     const InvestmentID = generateSmallId('INVE');
-    const { Investor, Amount, InvestmentDate, InterestRate, Years = 0, Months = 0, Days = 0 } = req.body;
+    const { Investor, Amount, InvestmentDate,PayableInterest, InterestRate} = req.body;
 
     // Calculate duration in days
-    const Duration = Years * 365 + Months * 30 + Days;
 
     // Update Investor's total investment first
     const updateInvestorSql = `UPDATE Investors SET AmountInvested = AmountInvested + ? WHERE InvestorID = ?`;
@@ -165,11 +188,11 @@ app.post("/NewInvestment", (req, res) => {
         console.log('Investor AmountInvested updated');
 
         const insertInvestmentSql = `
-            INSERT INTO Investments (InvestmentID, InvestorID, Amount, InvestmentDate, Duration, InterestRate)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO Investments (InvestmentID, InvestorID, Amount,PayableInterest, InvestmentDate, InterestRate)
+            VALUES (?, ?, ?,?, ?, ?)
         `;
 
-        db.query(insertInvestmentSql, [InvestmentID, Investor, Amount, InvestmentDate, Duration, InterestRate], (insertErr, insertResult) => {
+        db.query(insertInvestmentSql, [InvestmentID, Investor, Amount,PayableInterest, InvestmentDate, InterestRate], (insertErr, insertResult) => {
             if (insertErr) {
                 console.error('Error inserting Investment:', insertErr);
                 res.status(500).send('Error inserting Investment');
@@ -184,7 +207,7 @@ app.post("/NewInvestment", (req, res) => {
 
 app.post("/NewOrder", (req, res) => {
     const OrderID = generateSmallId('ORD');
-    const { Client, Amount, InvestmentDate, InterestRate, Years = 0, Months = 0, Days = 0,RateOfInterest,StartDate,Documents } = req.body;
+    const { Client, Amount,PayableInterest, Years = 0, Months = 0, Days = 0,RateOfInterest,StartDate,Documents } = req.body;
      
     const Duration = Years * 365 + Months * 30 + Days;
 
@@ -201,11 +224,11 @@ app.post("/NewOrder", (req, res) => {
         console.log('Client Total Debt updated');
 
         const insertOrderSql = `
-            INSERT INTO Orders (OrderID, ClientID, Amount, RateOfInterest, StartDate, Duration, Documents)
-            VALUES (?, ?, ?, ?, ?, ?,?)
+            INSERT INTO Orders (OrderID, ClientID, Amount,PayableInterest, RateOfInterest, StartDate, Duration, Documents)
+            VALUES (?, ?,?, ?, ?, ?, ?,?)
         `;
 
-        db.query(insertOrderSql, [OrderID,Client, Amount, RateOfInterest, StartDate, Duration, Documents], (insertErr, insertResult) => {
+        db.query(insertOrderSql, [OrderID,Client, Amount,PayableInterest, RateOfInterest, StartDate, Duration, Documents], (insertErr, insertResult) => {
             if (insertErr) {
                 console.error('Error inserting Order:', insertErr);
                 res.status(500).send('Error inserting Order');
@@ -306,7 +329,7 @@ app.get("/InvestmentDetails/:ID", (req, res) => {
     });
 });
 
-app.get("/OrderDetails/:ID", (req, res) => {
+app.get("/OrdersDetails/:ID", (req, res) => {
     const ClientID = req.params.ID;
     db.query('SELECT * FROM Orders WHERE ClientID = ?', [ClientID], (err, results) => {
         if (err) {
@@ -326,7 +349,7 @@ app.get("/OrderDetails/:ID", (req, res) => {
 app.get("/TodayInvestor", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the investment date
     const query = `
-SELECT InvestorID, Amount 
+SELECT InvestorID, Amount,PayableInterest
 FROM Investments 
 WHERE DATE(InvestmentDate) = CURDATE() - INTERVAL 1 MONTH;
     `;
@@ -344,7 +367,7 @@ WHERE DATE(InvestmentDate) = CURDATE() - INTERVAL 1 MONTH;
 app.get("/TodayClient", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the start date
     const query = `
-  SELECT ClientID, Amount 
+  SELECT ClientID, Amount,PayableInterest
 FROM Orders 
 WHERE DATE(StartDate) = CURDATE() - INTERVAL 1 MONTH;
     `;
@@ -361,6 +384,336 @@ WHERE DATE(StartDate) = CURDATE() - INTERVAL 1 MONTH;
 });
 
 
+app.get("/TotalInvestements", (req, res) => {
+    // SQL query to check if today's date is exactly 1 month after the investment date
+    const query = `SELECT sum(Amount) AS TotalInvestement FROM Investments`;
+   
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching investor data:', err.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+        res.status(200).json(results[0] || 0);  // Send results if data found
+    });
+});
+
+app.get("/TotalLendings", (req, res) => {
+    // SQL query to check if today's date is exactly 1 month after the investment date
+    const query = `
+SELECT sum(Amount) AS TotalLeanding FROM Orders`;
+   
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching investor data:', err.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        res.status(200).json(results[0] || 0);  // Send results if data found
+    });
+});
+
+
+app.get("/InvestmentHistoryData", (req, res) => {
+    // SQL query to check if today's date is exactly 1 month after the investment date
+    const query = `
+SELECT  InvestorID,Amount,InvestmentDate,InterestRate FROM Investments`;
+   
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching investor data:', err.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        res.status(200).json(results|| 0);  // Send results if data found
+    });
+});
+
+app.get("/OrderHistoryData", (req, res) => {
+    // SQL query to check if today's date is exactly 1 month after the investment date
+    const query = `
+SELECT  ClientID,Amount,StartDate,RateOfInterest,Documents FROM Orders`;
+   
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching Order data:', err.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        res.status(200).json(results|| 0);  // Send results if data found
+    });
+});
+
+
+
+
+app.get("/ClosingClients", (req, res) => {
+    
+    const query = `
+SELECT
+    orderid,
+    clientID,
+    amount,PayableInterest,
+    startdate
+FROM
+    Orders
+    where 
+    DATE_ADD(startdate, INTERVAL duration DAY)=curdate()`;
+   
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching Order data:', err.message);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        res.status(200).json(results|| 0);  // Send results if data found
+    });
+});
+
+
+app.post('/UpdateInvestor', (req, res) => {
+    const { InvestorID,InvestorName, AmountInvested, PhoneNumber } = req.body;
+    console.log(InvestorID,InvestorName, AmountInvested, PhoneNumber);
+    
+    const updateQuery = `
+        UPDATE Investors SET
+            InvestorName = ?,
+            AmountInvested = ?,
+            PhoneNumber = ?
+        WHERE InvestorID = ?
+    `;
+
+    db.query(updateQuery, [InvestorName, AmountInvested, PhoneNumber, InvestorID], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error updating investor details');
+        }
+        res.json({ message: 'Investor details updated successfully' });
+    });
+});
+
+
+
+app.post('/UpdateClient', (req, res) => {
+    const { ClientID,ClientName, TotalAmount, PhoneNumber} = req.body;
+
+    const query = `
+        UPDATE Clients 
+        SET ClientName = ?, TotalAmount = ?, PhoneNumber = ?
+        WHERE ClientID = ?`;
+
+    db.query(
+        query,
+        [ClientName,  TotalAmount, PhoneNumber, ClientID],
+        (err, results) => {
+            if(err){
+                console.log(err)
+                res.send("GONE WRONG");
+            }
+           else{
+                res.status(200).json({ message: 'Client details updated successfully' });
+            }
+        }
+    );
+});
+
+
+
+app.get('/InvestementDetails/:investmentID', (req, res) => {
+    const investmentID = req.params.investmentID;
+    const query = 'SELECT * FROM Investments WHERE InvestmentID = ?';
+    
+    db.execute(query, [investmentID], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to fetch investment details' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Investment not found' });
+        }
+        res.json(results[0]);
+    });
+});
+
+// Route to update investment details
+app.post('/UpdateInvestement', (req, res) => {
+   const{InvestementID,Amount,PayableInterest,InterestRate}=req.body;
+
+    const query = `
+        UPDATE Investments SET
+         Amount = ?, PayableInterest = ?, InterestRate = ?
+        WHERE InvestmentID = ?`;
+
+        db.query(
+            query,
+            [Amount,PayableInterest,InterestRate,InvestementID],
+            (err, results) => {
+                if(err){
+                    console.log(err)
+                    res.send("GONE WRONG");
+                }
+               else{
+                    res.status(200).json({ message: 'Investement details updated successfully' });
+                }
+            }
+        );
+    });
+
+
+
+    app.get('/OrderDetails/:orderID', (req, res) => {
+        const orderID = req.params.orderID;
+        const query = 'SELECT * FROM Orders WHERE OrderID = ?';
+        
+        db.query(query, [orderID], (err, results) => {
+            if (err) {
+                console.error('Error fetching order:', err);
+                return res.status(500).json({ message: 'Error fetching order details' });
+            }
+    
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Order not found' });
+            }
+    
+            // Send the order data as JSON
+            res.json(results[0]);
+        });
+    });
+    
+    
+    app.post('/UpdateOrder', (req, res) => {
+        const {OrderID,Amount,PayableInterest,RateOfInterest } = req.body;
+        
+        const query = `
+            UPDATE Orders
+            SET Amount = ?,PayableInterest=?, RateOfInterest = ?
+            WHERE OrderID = ?
+        `;
+    
+        db.query(query, [Amount,PayableInterest,RateOfInterest, OrderID], (err, results) => {
+            if (err) {
+                console.error('Error updating order:', err);
+                return res.status(500).json({ message: 'Error updating order' });
+            }
+    
+            if (results.affectedRows === 0) {
+                return res.status(404).json({ message: 'Order not found' });
+            }
+    
+            res.json({ message: 'Order updated successfully' });
+        });
+    });
+    
+
+app.get ('/RejectLead/:LeadName',(req,res)=>{
+    
+const LeadName = req.params.LeadName;
+
+    const query = `
+   DELETE  FROM Leads WHERE LeadName=? ;
+`;
+
+db.query(query, [LeadName], (err, results) => {
+    if (err) {
+        console.error('Error updating order:', err);
+        return res.status(500).json({ message: 'Error updating order' });
+    }
+
+    if (results.affectedRows === 0) {
+        return res.send("WHYYy");
+    }
+
+    res.json({ message: 'Deleted successfully' });
+});
+})
+
+
+
+
+
+
+app.get('/DeleteInvestor/:ID', (req, res) => {
+    
+    const InvestorID = req.params.ID;
+
+    const query = `
+   DELETE  FROM Investors WHERE InvestorID=? ;
+`;
+
+db.query(query, [InvestorID], (err, results) => {
+    if (err) {
+        console.error('Error updating order:', err);
+        return res.status(500).json({ message: 'Error updating order' });
+    }
+
+    if (results.affectedRows === 0) {
+        return res.send("WHYYy");
+    }
+
+    res.json({ message: 'Deleted successfully' });
+});
+});
+
+app.get('/DeleteClient/:ID', (req, res) => {
+    const ClientID = req.params.ID;
+
+    const query = `
+   DELETE  FROM Clients WHERE ClientID=? ;
+`;
+
+db.query(query, [ClientID], (err, results) => {
+    if (err) {
+        console.error('Error updating order:', err);
+        return res.status(500).json({ message: 'Error updating order' });
+    }
+
+    if (results.affectedRows === 0) {
+        return res.send("WHYYy");
+    }
+
+    res.json({ message: 'Deleted successfully' });
+});
+});
+
+app.get('/DeleteInvestement/:ID', (req, res) => {
+    const InvestementID = req.params.ID;
+
+    const query = `
+   DELETE  FROM Investments WHERE InvestmentID=? ;
+`;
+
+db.query(query, [InvestementID], (err, results) => {
+    if (err) {
+        console.error('Error updating order:', err);
+        return res.status(500).json({ message: 'Error updating order' });
+    }
+
+    if (results.affectedRows === 0) {
+        return res.send("WHYYy");
+    }
+
+    res.json({ message: 'Deleted successfully' });
+});
+});
+
+app.get('/DeleteOrder/:ID', (req, res) => {
+    const OrderID = req.params.ID;
+
+    const query = `
+   DELETE  FROM Orders WHERE OrderID=? ;
+`;
+
+db.query(query, [OrderID], (err, results) => {
+    if (err) {
+        console.error('Error updating order:', err);
+        return res.status(500).json({ message: 'Error updating order' });
+    }
+
+    if (results.affectedRows === 0) {
+        return res.send("WHYYy");
+    }
+
+    res.json({ message: 'Deleted successfully' });
+});
+});
 
 
 app.listen(2001,()=>{

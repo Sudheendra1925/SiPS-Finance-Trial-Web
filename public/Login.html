@@ -5,108 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Finance App Login</title>
   <style>
+:root {
+    --primary-color: #0056b3; /* Rich Blue */
+    --secondary-color: #f7f9fc; /* Light Background */
+    --accent-color: #0875e1; /* Lighter Accent */
+    --text-dark: #222; /* Rich Dark */
+    --text-light: #555; /* Muted Text */
+    --white: #ffffff;
+    --success-color: #28a745; /* Success Green */
+    --warning-color: #ffc107; /* Warning Yellow */
+    --danger-color: #dc3545; /* Danger Red */
+    --highlight-color: #ffc107; /* Premium Gold */
+    --table-bg: var(--white); /* White Table Background */
+    --table-border: #e0e0e0; /* Subtle Gray Borders */
+    --card-bg: var(--white); /* Clean White Cards */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
+    --transition-speed: 0.3s; /* Smooth Transitions */
+    --login-bg: #003f5c; /* Midnight Blue */
+    --login-text-color: #f5f5f5; /* Soft White Text */
+    --emerald-green: #00b894; /* Emerald Green */
+    --emerald-green-dark: #007f5f; /* Darker Emerald */
+    --amber-link: #ffb142; /* Amber for Links */
+    --tomato-color: tomato; /* Tomato for Forget Password */
+    --input-border-color: #00b894; /* Emerald Green Border */
+    --input-bg-color: #ffffff; /* White Input Background */
+    --input-text-color: #333333; /* Dark Gray Text */
+    --login-button-bg: #00b894; /* Emerald Green Button */
+    --login-button-hover-bg: #007f5f; /* Darker Emerald Button Hover */
+}
+
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: slateblue;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: whitesmoke;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .login-box {
-  background-color: #003f5c; /* Midnight Blue */
-  border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  max-width: 500px;
-  width: 100%;
-  text-align: center;
-  color: #f5f5f5; /* Soft White Text */
+    background-color: var(--accent-color); /* Midnight Blue */
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px var(--shadow-color);
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    color: var(--login-text-color); /* Soft White Text */
 }
 
 .logo h1 {
-  font-size: 30px;
-  font-weight: bold;
-  color: #00b894; /* Emerald Green for Branding */
-  color:#fff;
+    font-size: 30px;
+    font-weight: bold;
+    color: var(--primary-color); /* Emerald Green for Branding */
+    color: var(--highlight-color);
 }
 
 h2 {
-  color: #ffffff;
-  margin-bottom: 20px;
+    color: var(--highlight-color);
+    margin-bottom: 20px;
 }
 
 .input-group {
-  margin-bottom: 15px;
-  text-align: left;
+    margin-bottom: 15px;
+    text-align: left;
 }
 
 .input-group label {
-  display: block;
-  font-weight: bold;
-  color: #f5f5f5;
-  margin-bottom: 5px;
+    display: block;
+    font-weight: bold;
+    color: var(--login-text-color);
+    margin-bottom: 5px;
 }
 
 .input-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #00b894; /* Emerald Green Border */
-  border-radius: 5px;
-  font-size: 16px;
-  color: #333333; /* Dark Gray Text */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border-color); /* Emerald Green Border */
+    border-radius: 5px;
+    font-size: 16px;
+    color: var(--input-text-color); /* Dark Gray Text */
+    background-color: var(--input-bg-color); /* White Input Background */
 }
 
 .login-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #00b894; /* Emerald Green Button */
-  color: #ffffff;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+    width: 100%;
+    padding: 10px;
+    background-color: var(--login-button-bg); /* Emerald Green Button */
+    color: var(--white);
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed) ease;
 }
 
 .login-button:hover {
-  background-color: #007f5f; /* Darker Emerald on Hover */
+    background-color: var(--login-button-hover-bg); /* Darker Emerald on Hover */
 }
 
 .footer {
-  margin-top: 20px;
-  font-size: 12px;
-  color: #f5f5f5;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--login-text-color);
 }
 
 .footer a {
-  color: #ffb142; /* Amber for Links */
-  text-decoration: none;
-}
-#ForgetPassword{
+    color: var(--amber-link); /* Amber for Links */
     text-decoration: none;
-    color: tomato;
+}
+
+#ForgetPassword {
+    text-decoration: none;
+    color: var(--tomato-color); /* Tomato for Forget Password */
     background-color: transparent;
     font-size: 20px;
-
-    
 }
-a{
-  text-decoration: none;
+
+a {
+    text-decoration: none;
 }
 
 

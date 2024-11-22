@@ -6,84 +6,119 @@
     <title>Add Client</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #88f3aa;
-        }
-nav{
-    background-color: #0078D7;
+       :root {
+    --primary-color: #0056b3; /* Deep blue for navigation */
+    --secondary-color: #f7f9fc; /* Light background for content */
+    --accent-color: #0875e1; /* Vibrant blue for accents */
+    --highlight-color: #ffc107; /* Warm gold for highlights */
+    --danger-color: #dc3545; /* Red for error or danger */
+    --white: #ffffff; /* White for text and backgrounds */
+    --shadow: rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
 }
-        /* Navbar styling */
-        .navbar-brand {
-            color: tomato;
-            font-size: 1.5em;
-            font-weight: bold;
-        }
 
-        .navbar-nav .nav-link {
-            color: black;
-        }
+/* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif; /* Clean, modern font */
+    background-color: var(--secondary-color); /* Soft background */
+    color: #333; /* Dark text for readability */
+    margin: 0;
+    padding: 0;
+}
 
-        .navbar-toggler-icon {
-            filter: invert(1);
-        }
+/* Navbar styling */
+nav {
+    background: var(--primary-color); /* Primary blue */
+    box-shadow: 0 4px 8px var(--shadow); /* Light shadow for depth */
+}
 
-        /* Main Form Container */
-        #main {
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+.navbar-brand {
+    color: var(--highlight-color); /* Gold for brand */
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        /* Input Fields */
-        form div {
-            margin-bottom: 20px;
-        }
+.navbar-nav .nav-link {
+    color: var(--white); /* White text for links */
+    font-size: 1em;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--highlight-color); /* Gold hover effect */
+    font-weight: bold;
+}
 
-        input {
-            width: 100%;
-            padding: 10px;
-            font-size: 1em;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+.navbar-toggler-icon {
+    filter: invert(1); /* Invert icon for contrast */
+}
 
-        /* Button */
-        #Submit {
-            width: 100%;
-            padding: 10px;
-            font-size: 1em;
-            color: white;
-            background-color: tomato;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+/* Main Form Container */
+#main {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: var(--white); /* White background for form */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--shadow); /* Subtle shadow for depth */
+}
 
-        #Submit:hover {
-            background-color: darkred;
-        }
+/* Input Fields */
+form div {
+    margin-bottom: 20px;
+}
 
-        /* Back Button */
-        .back-button {
-            font-size: 1em;
-            color: red;
-            text-decoration: none;
-            margin-top: 10px;
-            display: inline-block;
-        }
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
 
-        .back-button:hover {
-            color: darkred;
-        }
+input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+input:focus {
+    border-color: var(--accent-color); /* Accent blue on focus */
+    box-shadow: 0 0 5px var(--accent-color); /* Light glow effect */
+}
+
+/* Button */
+#Submit {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    color: var(--white); /* White text */
+    background-color: var(--primary-color); /* Primary blue background */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#Submit:hover {
+    background-color: var(--accent-color); /* Blue accent on hover */
+}
+
+/* Back Button */
+.back-button {
+    font-size: 1em;
+    color: var(--danger-color); /* Red color for the back button */
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.back-button:hover {
+    color: #c82333; /* Darker red on hover */
+}
+
     </style>
 </head>
 <body>
@@ -127,7 +162,7 @@ nav{
             </div>
             <div>
                 <label for="Aadhar">Aadhar Card</label>
-                <input type="number"  placeholder="Enter valid Aadhar number" id="Aadhar" name="Aadhar" required>
+                <input type="number"  placeholder="Enter valid Aadhar number" maxlength="12" id="Aadhar" name="Aadhar" required>
             </div>
 
                 <div>
