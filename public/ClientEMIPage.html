@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Lead</title>
+    <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+   
     <style>
+
+
+:root {
+            --primary-color: #0056b3; /* Rich Blue */
+            --secondary-color: #f7f9fc; /* Light Background */
+            --accent-color: #0875e1; /* Lighter Accent */
+            --text-dark: #222; /* Rich Dark */
+            --text-light: #555; /* Muted Text */
+            --white: #ffffff;
+            --success-color: #28a745; /* Success Green */
+            --warning-color: #ffc107; /* Warning Yellow */
+            --danger-color: #dc3545; /* Danger Red */
+            --highlight-color: #ffc107; /* Premium Gold */
+            --table-bg: var(--white); /* White Table Background */
+            --table-border: #e0e0e0; /* Subtle Gray Borders */
+            --card-bg: var(--white); /* Clean White Cards */
+            --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
+            --transition-speed: 0.3s; /* Smooth Transitions */
+        }
+
         :root {
     --primary-color: #0056b3;  /* Deep blue */
     --secondary-color: #f7f9fc;  /* Light background */
@@ -126,7 +147,6 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
 .container-fluid{
     background-color: var(--primary-color);
 }
-
     </style>
 </head>
 <body>
@@ -170,66 +190,82 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
     </nav>
     
     <div id="main">
-        <form action="/NewLead" method="post">
+        <form id="EMIForm" action="/ClientEMIPayement" method="post">
             <div>
-                <label for="LeadName">Lead Name *</label>
-                <input type="text" id="LeadName" name="LeadName" required>
+                <label for="OrderID">Order ID</label>
+                <input type="text" id="OrderID" name="OrderID" required readonly>
             </div>
-
-            <div>
-                <label for="Amount">Amount *</label>
-                <input type="number" id="Amount" name="Amount" oninput="roundInput(this)">
-            </div>
-
-
-            <div>
-                <label for="PhoneNumber"> Phone Number*</label>
-                <input type="number" id="PhoneNumber" name="PhoneNumber" required>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <label for="Duration" style="font-weight: bold;">Duration</label><br>
-                <div style="margin-top: 10px;">
-                    <label for="Years">Years</label>
-                    <input type="number" id="Years" name="Years" placeholder="No of Years" min="0" step="1" style="margin-right: 10px; padding: 5px; width: 80px;">
         
-                    <label for="Months">Months</label>
-                    <input type="number" id="Months" name="Months" placeholder="No of Months" min="0" max="11" step="1" style="margin-right: 10px; padding: 5px; width: 80px;">
-            
-                    <label for="Days">Days</label>
-                    <input type="number" id="Days" name="Days" placeholder="No of Days" min="0" max="30" step="1" style="padding: 5px; width: 80px;">
-                </div>
-            </div>
-
             <div>
-                <label for="Collateral"> Collateral*</label>
-                <input type="text" id="Collateral" name="Collateral" placeholder="enter property you want to keep (e.g 1acer in nizambad)" required>
+                <label for="ActualEMI">Actual EMI</label>
+                <input type="number" id="ActualEMI" name="ActualEMI" readonly>
             </div>
-            
+        
+            <div>
+                <label for="PaidEMI">Paid EMI *</label>
+                <input type="number" id="PaidEMI" name="PaidEMI" required>
+            </div>
+        
             <button id="Submit" type="submit">Submit</button>
         </form>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+ws9y5p4p6wPflb4EL1pLf0PdCgSm" crossorigin="anonymous"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        document.getElementById('InvestedAmount').addEventListener('input', function (e) 
-        {
-            this.value = this.value.replace(/\D/g, ''); // Only allows numeric input
-        });
-
-        function roundInput(input) 
-        {
-input.value = Math.round(input.value); // Rounds to the nearest integer
-// For specific decimal places (e.g., 1 decimal): 
-// input.value = Math.round(input.value * 10) / 10;
+        // Fetch Order details using OrderID and PayableInterest from URL
+        async function fetchOrderDetails(OrderID, PayableInterest) {
+            try {
+                // Fill form with previous data
+                document.getElementById('OrderID').value = OrderID;
+                document.getElementById('ActualEMI').value = PayableInterest ;
+    
+            }catch (error) {
+                console.error('Error fetching Order details:', error);
+            }
         }
-      </script> 
+    
+        // Extract URL parameters (OrderID and PayableInterest)
+        function getURLParams() {
+            const params = new URLSearchParams(window.location.search);
+            const PayableInterest = params.get('PayableInterest');
+            const OrderID = window.location.pathname.split('/').pop();
+            return { OrderID, PayableInterest };
+        }
+    
+        // Call fetchOrderDetails function with parameters on page load
+        window.onload = function () {
+            const { OrderID, PayableInterest } = getURLParams();
+            console.log(OrderID,PayableInterest)
+            if (OrderID && PayableInterest) {
+                fetchOrderDetails(OrderID, PayableInterest);
+            } else {
+                console.error('Missing required URL parameters: OrderID or PayableInterest');
+            }
+        };
+    </script>
 
+<script>
+    // Add a confirmation stage before form submission
+    document.getElementById('EMIForm').addEventListener('submit', function (event) {
+        // Get form values for confirmation message
+        const OrderID = document.getElementById('OrderID').value;
+        const ActualEMI = document.getElementById('ActualEMI').value;
+        const PaidEMI = document.getElementById('PaidEMI').value;
 
+        // Display confirmation dialog
+        const confirmation = confirm(
+            `Please confirm the details:\n\n` +
+            `Order ID: ${OrderID}\n` +
+            `Actual EMI: ${ActualEMI}\n` +
+            `Paid EMI: ${PaidEMI}\n\n` +
+            `Do you want to proceed?`
+        );
 
-
+        // If the user cancels, prevent form submission
+        if (!confirmation) {
+            event.preventDefault();
+        }
+    });
+</script>
+    
 </body>
 </html>
-
-

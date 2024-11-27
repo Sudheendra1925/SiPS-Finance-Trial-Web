@@ -31,6 +31,38 @@ body {
     color: var(--text-dark);
 }
 
+.navbar {
+    background: var(--primary-color);
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar-nav .nav-link {
+    color: var(--white);
+    margin: 0 10px;
+    transition: color var(--transition-speed);
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
+
+ 
+
+.sign-out:hover {
+    color: var(--white);
+}
+
 .investor-container {
     display: flex;
     flex-direction: column-reverse;
@@ -129,6 +161,44 @@ body {
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/Home">
+                <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <div>
+                    <span style="display: block;">Sips Finance</span>
+                    <small style="font-size: 0.7em;">Financial Services</small>
+                </div>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Investors">Investors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Clients">Clients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Leads">Leads</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Company">Company</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-3 " >
+                    <a href="./Login.html" class="sign-out btn btn-danger">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
     <div id="loader" class="text-center">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
@@ -144,16 +214,16 @@ body {
                     <tr>
                         <th>InvestmentID</th>
                         <th>Amount</th>
-                        <th>Payable Interest</th>
-                        <th>Date</th>
-                        <th>Duration</th>
                         <th>Interest</th>
-                        <th>EDIT</th>
+                        <th>Date</th>
+                        <th>Interest</th>
+                        <th>Operations</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
             <div class="total-amount"></div> 
+            <div id="ActiveInvestment"></div> 
         </div>
 
         <!-- Investor Info Section -->
@@ -164,15 +234,19 @@ body {
             <p><strong>Since:</strong></p>
             <p><strong>PhoneNumber:</strong></p>
             <a  id="UpdateInvestor" class="btn btn-primary">EDIT</a>
-            <a id="DeleteInvestor" onclick="alert('D0 you Want To Delete This Investor')" class="btn btn-danger">Delete</a>
+            <a id="DeleteInvestor"  class="btn btn-danger">Delete</a>
+
+
+            
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+
         async function fetchData() {
             const id = window.location.pathname.split('/').pop();
-            
+            let InvestorName=''
             // Function to fetch and update investor details
             async function fetchInvestorDetails(id) {
                 try {
@@ -192,8 +266,17 @@ body {
                     const totalAmountDiv = document.querySelector('.investments-section .total-amount');
                     totalAmountDiv.innerHTML = `Total Investment Amount: ₹${data.AmountInvested?.toLocaleString() || '0'}`;
                     document.getElementById("DeleteInvestor").href=`/DeleteInvestor/${id}`
+                    InvestorName=data.InvestorName;
+                    const deleteButton = document.getElementById("DeleteInvestor");
+    deleteButton.addEventListener("click", () => {
+        if (confirm("Are you sure you want to delete this Investor?")) {
+            window.location.href = `/DeleteInvestor/${id}`;
+            alert("Deletion Done.");
+        } else {
+            alert("Deletion canceled.");
+        }
+    });
                     
-                    // Hide the loader and show the investor container after data is fetched
                     document.getElementById('loader').style.display = 'none';
                     document.querySelector('.investor-container').style.display = 'flex';
                     
@@ -205,50 +288,90 @@ body {
             }
     
             // Function to fetch and update investment details
-            async function fetchInvestmentDetails(id) {
-                try {
-                    const response = await fetch(`/InvestmentDetails/${id}`);
-                    if (!response.ok) throw new Error('Failed to fetch investment details');
-                    const data = await response.json();
-                        console.log(data)
-                    // Update Investment Table
-                    const tbody = document.querySelector('.investments-section table tbody');
-                    tbody.innerHTML = ''; // Clear existing rows
-                    
-                    data.forEach(investment => {
-                        const row = `
-                            <tr>
-                                <td>${investment.InvestmentID || 'N/A'}</td>
-                                <td>₹${investment.Amount?.toLocaleString() || '0'}</td>
-                                <td>₹${investment.PayableInterest?.toLocaleString() || '0'}</td>
-                                <td>${investment.InvestmentDate ? new Date(investment.InvestmentDate).toLocaleDateString() : 'N/A'}</td>
-                                <td>${investment.Duration || 'N/A'} months</td>
-                                <td>${investment.InterestRate || 'N/A'}%</td>
-                                      <td>
-                <a href="/UpdateInvestementPage/${investment.InvestmentID}" class="btn btn-primary">
-                    Update
-                </a>
-                 <a href="/DeleteInvestement/${investment.InvestmentID}" class="btn btn-danger">
-                    Delete
-                </a>
-            </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += row;
-                    });
-                    
-                } catch (error) {
-                    console.error('Investments API Error:', error);
-                    document.querySelector('.investments-section').innerHTML = `<p class="text-danger text-center">NO Investements Yet.</p>`;
-                }
+    async function fetchInvestmentDetails(id) {
+    let activeInvestment = 0; // Initialize the total active investment
+
+    try {
+        const response = await fetch(`/InvestmentDetails/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch investment details');
+
+        const data = await response.json();
+        console.log(data);
+
+        // Update Investment Table
+        const tbody = document.querySelector('.investments-section table tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+
+        let rows = ''; // Temporary string to store table rows
+        data.forEach(investment => {
+            rows += `
+                <tr>
+                    <td>${investment.InvestmentID || 'N/A'}</td>
+                    <td>₹${investment.Amount?.toLocaleString('en-IN') || '0'}</td>
+                    <td>₹${investment.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
+                    <td>${investment.InvestmentDate ? new Date(investment.InvestmentDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                    <td>${investment.InterestRate || 'N/A'}%</td>
+                    <td>
+                        <a href="/UpdateInvestementPage/${investment.InvestmentID}" class="btn btn-primary">Update</a>
+                        <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.Amount}','${investment.InvestmentDate}')" class="btn btn-danger">Close</button>
+                        <a onclick="confirmPay('${investment.InvestmentID}', '${investment.PayableInterest}')" class="btn btn-primary">Pay EMI</a>
+                    </td>
+                </tr>
+            `;
+            activeInvestment += investment.Amount || 0; // Add investment amount
+        });
+
+        tbody.innerHTML = rows; // Update the table body once
+
+        // Update Active Investment Amount
+        const activeInvestmentElement = document.getElementById("ActiveInvestment");
+        if (activeInvestmentElement) {
+            activeInvestmentElement.innerHTML = `Active Investment Amount: ₹${activeInvestment.toLocaleString('en-IN')}`;
+        }
+    } catch (error) {
+        console.error('Investments API Error:', error);
+        const investmentsSection = document.querySelector('.investments-section');
+        if (investmentsSection) {
+            investmentsSection.innerHTML = `<p class="text-danger text-center">No Investments Yet.</p>`;
+        }
+    }
+
+}
+
+try {
+                await fetchInvestorDetails(id);
+                await fetchInvestmentDetails(id);
+            } catch (error) {
+                console.error('Data Fetch Error:', error);
             }
-    
-            // Fetch both investor and investment details
-            fetchInvestorDetails(id);
-            fetchInvestmentDetails(id);
         }
     
         document.addEventListener('DOMContentLoaded', fetchData);
+
+
+        
+        function confirmDelete(InvestmentID,InvestorName,Amount,StartDate) {
+            // Show confirmation alert
+            if (confirm("Are you sure you want to delete this Investement?")) {
+                // Action if user confirms
+                window.location.href = `/DeleteInvestement/${InvestmentID}?InvestorName=${InvestorName}&Amount=${Amount}&StartDate=${StartDate}`;
+                alert("Deletion Done.");
+            } else {
+                // Action if user cancels
+                alert("Deletion canceled.");
+            }
+        }
+        function confirmPay(InvestmentID,PayableInterest) {
+            // Show confirmation alert
+            if (confirm("Are you sure you  paid this Invester")) {
+                window.location.href = `/InvestorEMIPay/${InvestmentID}?payableInterest=${PayableInterest}`;
+                alert(" Done.");
+            } else {
+                // Action if user cancels
+                alert(" canceled.");
+            }
+        }
+
     </script>
 </body>
 </html>

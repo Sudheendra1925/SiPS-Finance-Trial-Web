@@ -6,6 +6,10 @@
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+*{
+    font-family: 'serif';
+}
      :root {
     --primary-color: #0056b3; /* Rich Blue */
     --secondary-color: #f7f9fc; /* Light Background */
@@ -59,15 +63,7 @@ body {
     font-weight: bold;
 }
 
-.sign-out {
-    color: var(--danger-color);
-    text-decoration: none;
-    font-weight: bold;
-    padding: 5px 10px;
-    background: var(--white);
-    border-radius: 4px;
-    transition: background var(--transition-speed), color var(--transition-speed);
-}
+ 
 
 .sign-out:hover {
     color: var(--white);
@@ -215,6 +211,9 @@ button:active {
                     <li class="nav-item">
                         <a class="nav-link" href="/Leads">Leads</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Company">Company</a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center ms-3 " >
                     <a href="./Login.html" class="sign-out btn btn-danger">Sign Out</a>
@@ -233,15 +232,15 @@ button:active {
             <a href="/AddInvestement" class="btn btn-warning">Add Investment</a>
         </div>
         <div>
-            <div><h3>Total Leandings</h3></div>
+            <div><h3>Total Lendings</h3></div>
             <div id="TotalLendings"></div>
-            <a href="/AddOrder" class="btn btn-danger">Add Order</a>
+            <a href="/AddOrder" class="btn btn-warning">Add Order</a>
         </div>
         </div>
 
         <!-- Clients Paying Interest Today -->
         <div class="table-responsive">
-            <h3>Clients Paying Interest Today</h3>
+            <h3>Receivable EMI</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -261,7 +260,7 @@ button:active {
 
         <!-- Investors to Pay Today -->
         <div class="table-responsive">
-            <h3>Investors to Pay Today</h3>
+            <h3>Payable Interest</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -330,9 +329,10 @@ button:active {
                         <td>
                             <button 
                                 class="btn btn-sm btn-success" 
-                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}', '${client.PayableInterest}')">
+                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}','${clientDetails.ClientName}','${client.PayableInterest}')">
                                 Send Message
                             </button>
+                             <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}" class="btn btn-primary">Received EMI</a>
                         </td>
 
                     </tr>
@@ -365,6 +365,7 @@ button:active {
                                 onclick="InvestorWhatsappMessage('${investorDetails.PhoneNumber}', '${investor.PayableInterest}')">
                                 Send Message
                             </button>
+                             <a onclick="confirmPay('${investor.InvestmentID}','${investor.PayableInterest}')" class="btn btn-primary">Paid EMI</a>
                         </td>
                             
                         </tr>
@@ -393,8 +394,6 @@ button:active {
 
 
 
-
-//////////////////////////////////////////////////////////////////////////////
 const ClosingClientsResponse = await fetch('/ClosingClients');
         const ClosingClients = await ClosingClientsResponse.json();
 console.log(ClosingClients)
@@ -441,8 +440,14 @@ console.log(ClosingClientDetails)
 
 
 <script>
-function ClientWhatsappMessage(phone, PayableInterest) {
-    const message = `Hello, We are from SIPS Finance. This is to inform you that you have a total due amount of ₹${PayableInterest}. Please settle it at the earliest.`;
+function ClientWhatsappMessage(phone,ClientName,PayableInterest) {
+    const message =`Hello ${ClientName},
+
+This is a reminder to pay the EMI of ${PayableInterest} due on Today for loan from SiPS finance. Please pay the EMI before due date to avoid additional charges.
+
+Regards,
+SiPs Finance
+.`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappURL = `https://wa.me/+91${phone}?text=${encodedMessage}`;
     window.open(whatsappURL, '_blank');
@@ -465,7 +470,17 @@ function ClosingClientWhatsappMessage(phone, PayableInterest,amount) {
 
 
 
-
+function confirmPay(InvestmentID,PayableInterest) {
+            // Show confirmation alert
+            if (confirm("Are you sure you  paid this Invester")) {
+                // Action if user confirms
+                window.location.href = `/InvestorEMIPay/${InvestmentID}?payableInterest=${PayableInterest}`;
+                alert(" Done.");
+            } else {
+                // Action if user cancels
+                alert("Deletion canceled.");
+            }
+        }
 </script>
 
 

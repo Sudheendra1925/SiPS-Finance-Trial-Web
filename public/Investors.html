@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investor</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
         :root {
     --primary-color: #0056b3; /* Rich Blue */
@@ -33,6 +35,32 @@ body {
     color: var(--text-dark);
 }
 
+
+.navbar {
+    background: var(--primary-color);
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar-nav .nav-link {
+    color: var(--white);
+    margin: 0 10px;
+    transition: color var(--transition-speed);
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
 /* Profile Card Styling */
 .profile-card {
     padding: 20px;
@@ -89,14 +117,10 @@ body {
 .container-fluid{
     background-color:var(--primary-color) ;
 }
-.nav-link {
-color:var(--secondary-color);
-}
-
-.active,.nav-link:hover {
-color:var(--highlight-color);
-}
-
+#investmentChart {
+            width: 1000px !important;
+            height: 1000px !important;
+        }
 
     </style>
 </head>
@@ -130,6 +154,9 @@ color:var(--highlight-color);
                     <li class="nav-item">
                         <a class="nav-link" href="/Leads">Leads</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Company">Company</a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center ms-3">
                     <a href="./Login.html" class="sign-out ms-3 btn btn-danger">Sign Out</a>
@@ -146,6 +173,81 @@ color:var(--highlight-color);
     <a href="/AddInvestor" class="btn btn-primary">Add Investor</a>
 <a href="/InvestementHistory" class="btn btn-primary">INVESTEMENT HISTORY</a>
 
+<h2>Investment Distribution</h2>
+<div id="piechart_3d" style="width: 400px; height: 300px;"></div>
+
+
+<script>
+google.charts.load("current", { packages: ["corechart"] });
+
+async function fetchInvestmentData() {
+  try {
+    // Fetch data from server
+    const response = await fetch('/getInvestmentData');
+    if (!response.ok) throw new Error('Failed to fetch investment data');
+
+    const data = await response.json();
+    console.log('Fetched Data:', data);
+
+    // Validate data format
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new Error('Server returned invalid or empty data');
+    }
+
+    // Build chartData array
+    const chartData = [['InvestorID', 'Investment Amount']];
+    data.forEach(item => {
+      if (item.InvestorID &&  item.TotalInvestment) {
+        chartData.push([item.InvestorID, item.TotalInvestment]);
+      }
+    });
+    console.log(chartData)
+
+    // Ensure chartData has at least one row of data
+    if (chartData.length <= 1) {
+      throw new Error('No valid investment data to display');
+    }
+
+    // Draw chart
+    drawChart(chartData);
+  } catch (error) {
+    console.error('Error fetching investment data:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-danger">Failed to load chart data: ${error.message}</p>
+    `;
+  }
+}
+
+function drawChart(chartData) {
+  try {
+    // Validate chartData
+    if (!Array.isArray(chartData) || chartData.length <= 1) {
+      throw new Error('Invalid chart data');
+    }
+
+    const data = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+      title: 'Investment Distribution by Investor',
+      is3D: false,
+      width: 400,
+      height: 300,
+      pieSliceText: 'value', // Show investment amounts directly on slices
+    };
+
+    const chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    chart.draw(data, options);
+  } catch (error) {
+    console.error('Error drawing chart:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-danger">Error drawing chart: ${error.message}</p>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchInvestmentData);
+
+</script>
 
 
     <script>

@@ -34,30 +34,37 @@
         }
 
         .navbar {
-            background-color: var(--primary-color);
-            box-shadow: 0 4px 8px var(--shadow-color);
-        }
+    background: var(--primary-color);
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
 
-        .navbar-brand {
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-        }
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        .navbar-brand img {
-            border-radius: 50%;
-        }
+.navbar-nav .nav-link {
+    color: var(--white);
+    margin: 0 10px;
+    transition: color var(--transition-speed);
+}
 
-        .navbar-brand span {
-            font-size: 1.5em;
-        }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
 
-        .navbar-brand small {
-            display: block;
-            font-size: 0.7em;
-            color: var(--highlight-color);
-        }
+ 
+
+.sign-out:hover {
+    color: var(--white);
+}
+
 
         .container h1 {
             color: var(--primary-color);
@@ -103,13 +110,40 @@
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+            <a class="navbar-brand d-flex align-items-center" href="/Home">
+                <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
                 <div>
-                    <span>Sips Finance</span>
+                    <span style="display: block;">Sips Finance</span>
                     <small style="font-size: 0.7em;">Financial Services</small>
                 </div>
             </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Investors">Investors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Clients">Clients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Leads">Leads</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Company">Company</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-3 " >
+                    <a href="./Login.html" class="sign-out btn btn-danger">Sign Out</a>
+                </div>
+            </div>
         </div>
     </nav>
 

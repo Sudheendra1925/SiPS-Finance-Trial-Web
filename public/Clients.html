@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
        :root {
     --primary-color: #0056b3; /* Rich Blue */
@@ -33,32 +34,30 @@ body {
     color: var(--text-dark);
 }
 
-/* Navbar Styling */
+.navbar {
+    background: var(--primary-color);
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
 .navbar-brand {
-    color: var(--highlight-color);
+    color: var(--white);
     font-size: 1.8em;
     font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .navbar-nav .nav-link {
-    color: var(--secondary-color);
-    font-size: 1em;
-    padding: 10px 15px;
+    color: var(--white);
+    margin: 0 10px;
     transition: color var(--transition-speed);
 }
 
+.navbar-nav .nav-link:hover,
 .navbar-nav .nav-link.active {
-    font-weight: bold;
     color: var(--highlight-color);
-    border-bottom: 2px solid var(--highlight-color);
-}
-
-.navbar-nav .nav-link:hover {
-    color: var(--accent-color);
-}
-
-.navbar-toggler-icon {
-    filter: invert(0.5);
+    font-weight: bold;
 }
 
 /* Profile Card Styling */
@@ -242,6 +241,9 @@ body {
                     <li class="nav-item">
                         <a class="nav-link" href="/Leads">Leads</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Company">Company</a>
+                    </li>
                 </ul>
                 <div class="d-flex align-items-center ms-3 ">
                     <a href="/" class="sign-out ms-3 btn btn-danger">Sign Out</a>
@@ -258,8 +260,79 @@ body {
 
     <a href="/AddClient" class="btn btn-primary">ADD New Client</a>
     <a href="/OrderHistory" class="btn btn-primary">Order History</a>
-
-
+    <h2>Orders Distribution</h2>
+    <div id="piechart_3d" style="width: 400px; height: 300px;"></div>
+    <script>
+        google.charts.load("current", { packages: ["corechart"] });
+        
+        async function fetchOrderData() {
+          try {
+            // Fetch data from server
+            const response = await fetch('/getOrderData');
+            if (!response.ok) throw new Error('Failed to fetch investment data');
+        
+            const data = await response.json();
+            console.log('Fetched Data:', data);
+        
+            // Validate data format
+            if (!Array.isArray(data) || data.length === 0) {
+              throw new Error('Server returned invalid or empty data');
+            }
+        
+            // Build chartData array
+            const chartData = [['ClientID', 'Order Amount']];
+            data.forEach(item => {
+              if (item.ClientID &&  item.TotalOrder) {
+                chartData.push([item.ClientID, item.TotalOrder]);
+              }
+            });
+            console.log(chartData)
+        
+            // Ensure chartData has at least one row of data
+            if (chartData.length <= 1) {
+              throw new Error('No valid investment data to display');
+            }
+        
+            // Draw chart
+            drawChart(chartData);
+          } catch (error) {
+            console.error('Error fetching investment data:', error.message);
+            document.getElementById('piechart_3d').innerHTML = `
+              <p class="text-danger">Failed to load chart data: ${error.message}</p>
+            `;
+          }
+        }
+        
+        function drawChart(chartData) {
+          try {
+            // Validate chartData
+            if (!Array.isArray(chartData) || chartData.length <= 1) {
+              throw new Error('Invalid chart data');
+            }
+        
+            const data = google.visualization.arrayToDataTable(chartData);
+        
+            const options = {
+              title: 'Investment Distribution by Investor',
+              is3D: false,
+              width: 400,
+              height: 300,
+              pieSliceText: 'value', // Show investment amounts directly on slices
+            };
+        
+            const chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart.draw(data, options);
+          } catch (error) {
+            console.error('Error drawing chart:', error.message);
+            document.getElementById('piechart_3d').innerHTML = `
+              <p class="text-danger">Error drawing chart: ${error.message}</p>
+            `;
+          }
+        }
+        
+        document.addEventListener('DOMContentLoaded', fetchOrderData);
+        
+        </script>
     <script>
         async function fetchData() {
             try {
@@ -327,7 +400,6 @@ body {
 
         document.addEventListener('DOMContentLoaded', fetchData);
     </script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ppE5V4F7k9vLAHQ4OdwLwD4EYMOJKH7PQcHI3Y0OV/2vO2QlR3SNi76qIr1z5nqg" crossorigin="anonymous"></script>
 </body>
 </html>
