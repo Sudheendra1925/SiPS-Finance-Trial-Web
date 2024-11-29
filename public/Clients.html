@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+    font-family: 'Merriweather';
+}
        :root {
     --primary-color: #0056b3; /* Rich Blue */
     --secondary-color: #f7f9fc; /* Light Background */
@@ -28,7 +32,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: var(--secondary-color);
+    background-color: white;
     padding: 0;
     margin: 0;
     color: var(--text-dark);
@@ -63,7 +67,7 @@ body {
 /* Profile Card Styling */
 .profile-card {
     padding: 25px;
-    background: var(--card-bg);
+    background: rgb(184, 182, 182);
     box-shadow: 0 6px 16px var(--shadow-color);
     border-radius: 12px;
     text-align: center;
@@ -207,7 +211,21 @@ body {
     font-size: 1.2em;
 }
 
+#ChartBox{
 
+width:97%;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+}
+
+#TwoButtons{
+        display:flex;
+        align-items: center;
+        justify-content: space-between;
+        padding:60px;
+    }
 
     </style>
 </head>
@@ -215,10 +233,9 @@ body {
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="/home">
-                <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
                 <div>
                     <span style="display: block;">Sips Finance</span>
-                    <small style="font-size: 0.7em;">Financial Services</small>
                 </div>
             </a>
 
@@ -239,7 +256,7 @@ body {
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Leads">Leads</a>
+                        <a class="nav-link" href="/Queue">Queues</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/Company">Company</a>
@@ -251,17 +268,20 @@ body {
             </div>
         </div>
     </nav>
-
+    <div id="TwoButtons">
+        <a href="/AddClient" class="btn btn-primary">Add New Client</a>
+        <a href="/OrderHistory" class="btn btn-primary">Order History</a>
+    </div>
     <div class="container my-5">
         <div class="row" id="profile-cards-container">
              Dynamic profile cards will be inserted here 
         </div>
     </div>
-
-    <a href="/AddClient" class="btn btn-primary">ADD New Client</a>
-    <a href="/OrderHistory" class="btn btn-primary">Order History</a>
-    <h2>Orders Distribution</h2>
+ 
+   <div id="ChartBox">
+     <h2>Order Split</h2>
     <div id="piechart_3d" style="width: 400px; height: 300px;"></div>
+</div>
     <script>
         google.charts.load("current", { packages: ["corechart"] });
         
@@ -269,23 +289,38 @@ body {
           try {
             // Fetch data from server
             const response = await fetch('/getOrderData');
-            if (!response.ok) throw new Error('Failed to fetch investment data');
-        
-            const data = await response.json();
-            console.log('Fetched Data:', data);
-        
-            // Validate data format
-            if (!Array.isArray(data) || data.length === 0) {
-              throw new Error('Server returned invalid or empty data');
-            }
-        
-            // Build chartData array
-            const chartData = [['ClientID', 'Order Amount']];
-            data.forEach(item => {
-              if (item.ClientID &&  item.TotalOrder) {
-                chartData.push([item.ClientID, item.TotalOrder]);
-              }
-            });
+if (!response.ok) throw new Error('Failed to fetch order data');
+
+const data = await response.json();
+console.log('Fetched Data:', data);
+
+// Validate data format
+if (!Array.isArray(data) || data.length === 0) {
+  throw new Error('No Clients Yet');
+}
+
+// Function to fetch client details by ID
+async function fetchClientName(id) {
+  try {
+    const res = await fetch(`/ClientDetails/${id}`);
+    if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+    const clientDetails = await res.json();
+    return clientDetails.ClientName; // Assuming the API returns an object with a `name` property
+  } catch (err) {
+    console.error(err.message);
+    return id; // Fallback to ID if the name cannot be fetched
+  }
+}
+
+// Build chartData array
+const chartData = [['Client Name', 'Order Amount']];
+
+for (const item of data) {
+  if (item.ClientID && item.TotalOrder) {
+    const clientName = await fetchClientName(item.ClientID); // Fetch name by ID
+    chartData.push([clientName, item.TotalOrder]);
+  }
+}
             console.log(chartData)
         
             // Ensure chartData has at least one row of data
@@ -313,10 +348,9 @@ body {
             const data = google.visualization.arrayToDataTable(chartData);
         
             const options = {
-              title: 'Investment Distribution by Investor',
-              is3D: false,
-              width: 400,
-              height: 300,
+              is3D: true,
+              width: 600,
+              height: 600,
               pieSliceText: 'value', // Show investment amounts directly on slices
             };
         
@@ -349,7 +383,7 @@ body {
                 container.innerHTML = ''; // Clear existing cards
 
                 if (data.length === 0) {
-                    container.innerHTML = `<p class="text-center text-muted">No investors found.</p>`;
+                    container.innerHTML = `<p class="text-center text-muted">No Clients found.</p>`;
                     return;
                 }
 
@@ -371,8 +405,8 @@ body {
                                     <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(client.TotalAmount)}</span>
                                 </div>
                                 <div class="detail-row">
-                                    <span><strong>Since:</strong></span>
-                                    <span>${new Date(client.StartDate).toLocaleDateString()}</span>
+                                    <span><strong>Phone Number:</strong></span>
+                                    <span>${client.PhoneNumber}</span>
                                 </div>
                             </div>
                         </div>

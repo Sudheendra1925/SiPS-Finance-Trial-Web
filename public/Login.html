@@ -5,151 +5,195 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Finance App Login</title>
   <style>
-:root {
-    --primary-color: #0056b3; /* Rich Blue */
-    --secondary-color: #f7f9fc; /* Light Background */
-    --accent-color: #0875e1; /* Lighter Accent */
-    --text-dark: #222; /* Rich Dark */
-    --text-light: #555; /* Muted Text */
-    --white: #ffffff;
-    --success-color: #28a745; /* Success Green */
-    --warning-color: #ffc107; /* Warning Yellow */
-    --danger-color: #dc3545; /* Danger Red */
-    --highlight-color: #ffc107; /* Premium Gold */
-    --table-bg: var(--white); /* White Table Background */
-    --table-border: #e0e0e0; /* Subtle Gray Borders */
-    --card-bg: var(--white); /* Clean White Cards */
-    --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
-    --transition-speed: 0.3s; /* Smooth Transitions */
-    --login-bg: #003f5c; /* Midnight Blue */
-    --login-text-color: #f5f5f5; /* Soft White Text */
-    --emerald-green: #00b894; /* Emerald Green */
-    --emerald-green-dark: #007f5f; /* Darker Emerald */
-    --amber-link: #ffb142; /* Amber for Links */
-    --tomato-color: tomato; /* Tomato for Forget Password */
-    --input-border-color: #00b894; /* Emerald Green Border */
-    --input-bg-color: #ffffff; /* White Input Background */
-    --input-text-color: #333333; /* Dark Gray Text */
-    --login-button-bg: #00b894; /* Emerald Green Button */
-    --login-button-hover-bg: #007f5f; /* Darker Emerald Button Hover */
-}
+    :root {
+      --primary-color: #0056b3;
+      --secondary-color: #f7f9fc;
+      --accent-color: #0875e1;
+      --text-dark: #222;
+      --text-light: #555;
+      --white: #ffffff;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --highlight-color: #ffc107;
+      --table-bg: var(--white);
+      --table-border: #e0e0e0;
+      --card-bg: var(--white);
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --transition-speed: 0.3s;
+      --login-bg: #003f5c;
+      --login-text-color: #f5f5f5;
+      --emerald-green: #00b894;
+      --emerald-green-dark: #007f5f;
+      --amber-link: #ffb142;
+      --tomato-color: tomato;
+      --input-border-color: #00b894;
+      --input-bg-color: #ffffff;
+      --input-text-color: #333333;
+      --login-button-bg: #00b894;
+      --login-button-hover-bg: #007f5f;
+    }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: whitesmoke;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+    body {
+      font-family: Arial, sans-serif;
+      background-color: whitesmoke;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      animation: fadeIn 1.5s ease-in-out;
+    }
 
-.login-box {
-    background-color: var(--accent-color); /* Midnight Blue */
-    border-radius: 10px;
-    box-shadow: 0px 4px 12px var(--shadow-color);
-    padding: 20px;
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    color: var(--login-text-color); /* Soft White Text */
-}
+    .login-box {
+      background-color: var(--accent-color);
+      border-radius: 10px;
+      box-shadow: 0px 4px 12px var(--shadow-color);
+      padding: 20px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      color: var(--login-text-color);
+      animation: slideUp 1s ease-out;
+    }
 
-.logo h1 {
-    font-size: 30px;
-    font-weight: bold;
-    color: var(--primary-color); /* Emerald Green for Branding */
-    color: var(--highlight-color);
-}
+    .logo h1 {
+      font-size: 30px;
+      font-weight: bold;
+      color: var(--highlight-color);
+      animation: textPop 1s ease-in-out;
+    }
 
-h2 {
-    color: var(--highlight-color);
-    margin-bottom: 20px;
-}
+    h2 {
+      color: var(--highlight-color);
+      margin-bottom: 20px;
+    }
 
-.input-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
+    .input-group {
+      margin-bottom: 15px;
+      text-align: left;
+      animation: fadeIn 1.5s ease-in-out;
+    }
 
-.input-group label {
-    display: block;
-    font-weight: bold;
-    color: var(--login-text-color);
-    margin-bottom: 5px;
-}
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--input-border-color);
+      border-radius: 5px;
+      font-size: 16px;
+      color: var(--input-text-color);
+      background-color: var(--input-bg-color);
+      transition: box-shadow var(--transition-speed);
+    }
 
-.input-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--input-border-color); /* Emerald Green Border */
-    border-radius: 5px;
-    font-size: 16px;
-    color: var(--input-text-color); /* Dark Gray Text */
-    background-color: var(--input-bg-color); /* White Input Background */
-}
+    .input-group input:focus {
+      outline: none;
+      box-shadow: 0 0 8px var(--input-border-color);
+    }
 
-.login-button {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--login-button-bg); /* Emerald Green Button */
-    color: var(--white);
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color var(--transition-speed) ease;
-}
+    .login-button {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--login-button-bg);
+      color: var(--white);
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color var(--transition-speed), transform 0.2s ease;
+      animation: buttonBounce 1.5s infinite;
+    }
 
-.login-button:hover {
-    background-color: var(--login-button-hover-bg); /* Darker Emerald on Hover */
-}
+    .login-button:hover {
+      background-color: var(--login-button-hover-bg);
+      transform: scale(1.05);
+    }
 
-.footer {
-    margin-top: 20px;
-    font-size: 12px;
-    color: var(--login-text-color);
-}
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--login-text-color);
+      animation: fadeIn 2s ease-in-out;
+    }
 
-.footer a {
-    color: var(--amber-link); /* Amber for Links */
-    text-decoration: none;
-}
+    .footer a {
+      color: var(--amber-link);
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
 
-#ForgetPassword {
-    text-decoration: none;
-    color: var(--tomato-color); /* Tomato for Forget Password */
-    background-color: transparent;
-    font-size: 20px;
-}
+    .footer a:hover {
+      color: var(--highlight-color);
+    }
 
-a {
-    text-decoration: none;
-}
+    #ForgetPassword {
+      text-decoration: none;
+      color: var(--tomato-color);
+      background-color: transparent;
+      font-size: 20px;
+    }
 
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
 
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
 
+    @keyframes textPop {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes buttonBounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="login-container">
     <div class="login-box">
       <div class="logo">
-        <h1> Welcome To SiPS Finance</h1>
+        <h1>Welcome To SiPS Finance</h1>
       </div>
-      <h2>Secured Login</h2>
       <form>
         <div class="input-group">
           <label for="username">Username</label>
@@ -159,10 +203,8 @@ a {
           <label for="password">Password</label>
           <input type="password" id="password" placeholder="Enter your password" required>
         </div>
-       
-        <button class="login-button" onclick="home()">Log In</button>
+        <button type="button" class="login-button" onclick="home()">Log In</button>
       </form>
-     
       <div class="footer">
         <a id="ForgetPassword">Forgot Password</a><br><br>
         <p>Secure SSL Connection</p>
@@ -170,11 +212,9 @@ a {
     </div>
   </div>
   <script>
-function home(){
-  window.location.href="/Home";
-}
-
-
+    function home() {
+      window.location.href = "/Home";
+    }
   </script>
 </body>
 </html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPS ERP System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        :root {
+            --primary-color: #0875e1;
+            --secondary-color: #f0f2f5;
+            --text-dark: #333;
+            --text-light: #666;
+            --white: #ffffff;
+            --success-color: #4CAF50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo img {
+            width: 75px; /* Adjust width as needed */
+            height: 75px; /* Adjust height as needed */
+            object-fit: cover; /* Ensures the image fits properly */
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 2rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(8, 117, 225, 0.1);
+        }
+        .login-button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 24px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .login-button:hover {
+            background-color: #065f9e; /* Darker shade for hover effect */
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .carousel-container {
+            margin-top: 70px;
+            padding: 2rem;
+            background: var(--white);
+        }
+
+        .carousel {
+            position: relative;
+            height: 400px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .carousel-inner {
+            height: 100%;
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .carousel-item h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .carousel-item p {
+            font-size: 1.2rem;
+            max-width: 600px;
+        }
+
+        .carousel-controls {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .carousel-dot.active {
+            background-color: var(--white);
+            transform: scale(1.2);
+        }
+
+        .modules-container {
+            padding: 2rem;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .module-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        .construction-icon { background-color: var(--primary-color); }
+        .finance-icon { background-color: var(--success-color); }
+        .procurement-icon { background-color: var(--warning-color); }
+        .recruitment-icon { background-color: var(--danger-color); }
+
+        .module-title {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .module-menu {
+            list-style: none;
+        }
+
+        .module-menu li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .module-menu li:hover {
+            background-color: var(--secondary-color);
+            padding-left: 1rem;
+        }
+
+        .module-menu li i {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .carousel {
+                height: 300px;
+            }
+
+            .carousel-item h2 {
+                font-size: 2rem;
+            }
+
+            .carousel-item p {
+                font-size: 1rem;
+            }
+
+            .modules-container {
+                padding: 1rem;
+            }
+
+            .module-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="C:\Users\91984\OneDrive\Desktop\SIPS\sips logo.png" alt="SIPS Logo">
+            SIPS ERP
+        </div>
+        <div class="search-container">
+            <input type="search" placeholder="Search across modules..." class="search-bar">
+        </div>
+        <button class="login-button">Login</button>
+    </nav>
+
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="background: linear-gradient(45deg, #0875e1, #05a5e2);">
+                    <h2>Welcome to SIPS ERP System</h2>
+                    <p>Your integrated solution for construction, finance, procurement, and recruitment</p>
+                </div>
+                <div class="carousel-item active" style="background: linear-gradient(45deg, #4CAF50, #45a049);">
+                    <h2>Construction Management</h2>
+                    <p>Streamline your construction projects with our advanced tools and tracking systems</p>
+                </div>
+                <div class="carousel-item active" style="background: linear-gradient(45deg, #ff9800, #f57c00);">
+                    <h2>Financial Control</h2>
+                    <p>Comprehensive financial management and reporting solutions</p>
+                </div>
+                <div class="carousel-item active" style="background: linear-gradient(45deg, #f44336, #e53935);">
+                    <h2>Smart Procurement</h2>
+                    <p>Optimize your supply chain and vendor management processes</p>
+                </div>
+                <div class="carousel-item active" style="background: linear-gradient(45deg, #e108a3, #e2059c);">
+                    <h2>Recruitment</h2>
+                    <p>Helping companies find the right people for their open roles</p>
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <div class="carousel-dot active"></div>
+                <div class="carousel-dot"></div>
+                <div class="carousel-dot"></div>
+                <div class="carousel-dot"></div>
+                <div class="carousel-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modules-container">
+        <div class="modules-grid">
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon construction-icon">🏗️</div>
+                    <h3 class="module-title">Construction</h3>
+                </div>
+                <ul class="module-menu">
+                    <li><i>📋</i> Project Management</li>
+                    <li><i>👥</i> Resource Planning</li>
+                    <li><i>🏢</i> Site Management</li>
+                    <li><i>🚛</i> Equipment Tracking</li>
+                    <li><i>⚠️</i> Safety Compliance</li>
+                </ul>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon finance-icon">💰</div>
+                    <h3 class="module-title">Finance</h3>
+                </div>
+                <ul class="module-menu">
+                    <li><i>📤</i> Accounts Payable</li>
+                    <li><i>📥</i> Accounts Receivable</li>
+                    <li><i>📊</i> Financial Reports</li>
+                    <li><i>💼</i> Budgeting</li>
+                    <li><i>📈</i> Asset Management</li>
+                </ul>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon procurement-icon">🛒</div>
+                    <h3 class="module-title">Procurement</h3>
+                </div>
+                <ul class="module-menu">
+                    <li><i>📝</i> Purchase Orders</li>
+                    <li><i>🤝</i> Vendor Management</li>
+                    <li><i>📦</i> Inventory Control</li>
+                    <li><i>📄</i> Contract Management</li>
+                    <li><i>📊</i> Supply Chain Analytics</li>
+                </ul>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <div class="module-icon recruitment-icon">👥</div>
+                    <h3 class="module-title">Recruitment</h3>
+                </div>
+                <ul class="module-menu">
+                    <li><i>📢</i> Job Postings</li>
+                    <li><i>👤</i> Candidate Management</li>
+                    <li><i>📅</i> Interview Scheduling</li>
+                    <li><i>🎓</i> Onboarding</li>
+                    <li><i>📈</i> Performance Management</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Carousel functionality
+        const carousel = document.querySelector('.carousel-inner');
+        const dots = document.querySelectorAll('.carousel-dot');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            carousel.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[index].classList.add('active');
+        }
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+
+        // Auto-advance carousel
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % dots.length;
+            showSlide(currentSlide);
+        }, 5000);
+
+        // Search functionality
+        const searchBar = document.querySelector('.search-bar');
+        searchBar.addEventListener('input', function(e) {
+            const searchTerm = e.target.value})

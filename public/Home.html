@@ -5,31 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
 *{
-    font-family: 'serif';
+    font-family: 'Merriweather';
 }
-     :root {
-    --primary-color: #0056b3; /* Rich Blue */
-    --secondary-color: #f7f9fc; /* Light Background */
-    --accent-color: #0875e1; /* Lighter Accent */
-    --text-dark: #222; /* Rich Dark */
-    --text-light: #555; /* Muted Text */
+:root {
+    --primary-color: #0056b3; /* Deeper Blue for Trust */
+    --secondary-color: #f8faff; /* Soft Light Blue Background */
+    --accent-color: #0056b3; /* Darker Blue for Emphasis */
+    --text-dark: #2a2a2a; /* Neutral Dark Gray */
+    --text-light: #5f6f81; /* Muted Gray-Blue Text */
     --white: #ffffff;
-    --success-color: #28a745; /* Success Green */
-    --warning-color: #ffc107; /* Warning Yellow */
-    --danger-color: #dc3545; /* Danger Red */
-    --highlight-color: #ffc107; /* Premium Gold */
-    --table-bg: #ffffff; /* White Table Background */
-    --table-border: #e0e0e0; /* Subtle Gray Borders */
-    --card-bg: #ffffff; /* Clean White Cards */
-    --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
+    --success-color: #27ae60; /* Fresh Green */
+    --warning-color: #f39c12; /* Warm Amber */
+    --danger-color: #e74c3c; /* Vibrant Red */
+    --highlight-color: #f1c40f; /* Warm Gold for Highlights */
+    --table-bg: #ffffff; /* Clean White Table */
+    --table-border: #dcdcdc; /* Softer Gray Borders */
+    --card-bg: #f9f9f9; /* Subtle Gray-White for Cards */
+    --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
     --transition-speed: 0.3s; /* Smooth Transitions */
 }
 
 body {
-    font-family: 'Poppins', sans-serif; /* Modern Font */
     margin: 0;
     padding: 0;
     background-color: var(--secondary-color);
@@ -54,6 +55,7 @@ body {
 .navbar-nav .nav-link {
     color: var(--white);
     margin: 0 10px;
+    font-size: large;
     transition: color var(--transition-speed);
 }
 
@@ -62,8 +64,6 @@ body {
     color: var(--highlight-color);
     font-weight: bold;
 }
-
- 
 
 .sign-out:hover {
     color: var(--white);
@@ -75,7 +75,7 @@ body {
     margin: auto;
 }
 
-h3 {
+h5 {
     color: var(--accent-color);
     text-transform: uppercase;
     margin-bottom: 20px;
@@ -90,16 +90,17 @@ h3 {
     box-shadow: 0 4px 8px var(--shadow-color);
     border-radius: 8px;
     overflow: hidden;
+    font-size: small;
 }
 
 .table thead {
-    background: var(--accent-color);
+    background: var(--primary-color);
     color: var(--white);
     font-weight: bold;
     text-transform: uppercase;
 }
 
-.table th, 
+.table th,
 .table td {
     padding: 15px;
     text-align: left;
@@ -111,22 +112,12 @@ h3 {
     cursor: pointer;
 }
 
-.table th:first-child,
-.table td:first-child {
-    border-left: 1px solid var(--table-border);
-}
-
-.table th:last-child,
-.table td:last-child {
-    border-right: 1px solid var(--table-border);
-}
-
 #TotalInvestements, #TotalLendings {
     display: inline-block;
     margin: 20px;
-    border: 2px solid var(--primary-color);
-    background: linear-gradient(135deg, var(--highlight-color), var(--accent-color));
-    color: var(--white);
+    border: 2px solid var(--accent-color);
+    background: linear-gradient(135deg, #4a69bd, #78e08f); /* Cool Blue to Fresh Green */
+    color: #ffffff; /* White */
     font-size: 40px;
     font-weight: bold;
     text-align: center;
@@ -153,7 +144,7 @@ button {
 }
 
 button:hover {
-    background-color: var(--button-hover-bg);
+    background-color: #004bb7; /* Slightly Darker Blue */
     transform: scale(1.05);
 }
 
@@ -173,13 +164,20 @@ button:active {
     }
 
     #TotalInvestements, #TotalLendings {
-        font-size: 30px;
+        font-size: 15px;
         padding: 15px 20px;
     }
 }
 
+.Add {
+    background-color: var(--primary-color);
+    color: #f7f9fc;
+}
 
-    </style>
+.Add:hover {
+    background-color: var(--success-color); /* Success Green */
+}
+</style>
 </head>
 <body>
     <!-- Navbar -->
@@ -189,7 +187,6 @@ button:active {
                 <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
                 <div>
                     <span style="display: block;">Sips Finance</span>
-                    <small style="font-size: 0.7em;">Financial Services</small>
                 </div>
             </a>
 
@@ -209,7 +206,7 @@ button:active {
                         <a class="nav-link" href="/Clients">Clients</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Leads">Leads</a>
+                        <a class="nav-link" href="/Queue">Queue</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/Company">Company</a>
@@ -227,20 +224,17 @@ button:active {
         <!-- Buttons -->
         <div class="add-buttons d-flex justify-content-between mb-4">
             <div style="background-color: whitesnow;">
-                <div ><h3>Total Investements</h3></div>
-                <div id="TotalInvestements"></div>
-            <a href="/AddInvestement" class="btn btn-warning">Add Investment</a>
+            <a href="/AddInvestement" class="btn Add">Add Investment</a>
         </div>
-        <div>
-            <div><h3>Total Lendings</h3></div>
-            <div id="TotalLendings"></div>
-            <a href="/AddOrder" class="btn btn-warning">Add Order</a>
+        <div id="chart_div" style="width: 600px; height: 400px;"></div>
+        <div style="background-color: whitesnow;">
+            <a href="/AddOrder" class="btn Add">Add Order</a>
         </div>
         </div>
 
         <!-- Clients Paying Interest Today -->
         <div class="table-responsive">
-            <h3>Receivable EMI</h3>
+            <h5>Receivable EMI</h5>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -260,7 +254,7 @@ button:active {
 
         <!-- Investors to Pay Today -->
         <div class="table-responsive">
-            <h3>Payable Interest</h3>
+            <h5>Payable Interest</h5>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -282,7 +276,7 @@ button:active {
 
 
         <div class="table-responsive">
-            <h3>Clients Whose TERM is Over </h3>
+            <h5>Clients Whose TERM is Over </h5>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -332,7 +326,7 @@ button:active {
                                 onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}','${clientDetails.ClientName}','${client.PayableInterest}')">
                                 Send Message
                             </button>
-                             <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}" class="btn btn-primary">Received EMI</a>
+                             <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}" class="btn btn-primary btn-sm">Received EMI</a>
                         </td>
 
                     </tr>
@@ -365,7 +359,7 @@ button:active {
                                 onclick="InvestorWhatsappMessage('${investorDetails.PhoneNumber}', '${investor.PayableInterest}')">
                                 Send Message
                             </button>
-                             <a onclick="confirmPay('${investor.InvestmentID}','${investor.PayableInterest}')" class="btn btn-primary">Paid EMI</a>
+                             <button onclick="confirmPay('${investor.InvestmentID}','${investor.PayableInterest}')" class="btn btn-sm btn-primary ">Paid EMI</button>
                         </td>
                             
                         </tr>
@@ -375,24 +369,6 @@ button:active {
                 }
             }
            
-
-            try{
-                const TotalInvestements=await fetch("/TotalInvestements");
-                const TotalInvestement = await TotalInvestements.json();
-                const TotalLendings=await fetch("/TotalLendings");
-                const TotalLending = await TotalLendings.json();
-                console.log(TotalInvestement);
-                console.log(TotalLending);
-
-                document.getElementById("TotalInvestements").innerHTML=`<p>${TotalInvestement.TotalInvestement}</p>`
-                document.getElementById("TotalLendings").innerHTML=`<p>${TotalLending.TotalLeanding }</p>`
-
-            }
-            catch(error){
-                console.error('Error fetching data:', error);
-            }
-
-
 
 const ClosingClientsResponse = await fetch('/ClosingClients');
         const ClosingClients = await ClosingClientsResponse.json();
@@ -486,7 +462,51 @@ function confirmPay(InvestmentID,PayableInterest) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
 
+
+google.charts.load('current', { packages: ['corechart'] });
+google.charts.setOnLoadCallback(drawChart);
+
+async function drawChart() {
+    try {
+        // Fetch total data from the API
+        const response = await fetch('/TotalCompanyAccount');
+        const result = await response.json();
+
+        if (result.status === "success") {
+            // Extract total investments and total orders
+            const totalInvestments = result.breakdown.totalInvestments;
+            const totalOrders = result.breakdown.totalOrders;
+
+            // Prepare data for Google Charts
+            const data = google.visualization.arrayToDataTable([
+                ['Category', 'Amount', { role: 'style' }],
+                ['Investments', totalInvestments, '#4CAF50'], // Total investments
+                ['Orders', totalOrders, '#1565C0']          // Total orders
+            ]);
+
+            // Chart options
+            const options = {
+                title: 'Active Investments vs Orders',
+                width: 600,
+                height: 400,
+                bar: { groupWidth: '40%' },
+                legend: { position: 'none' }
+            };
+
+            // Draw the chart
+            const chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        } else {
+            console.error("Error fetching data:", result.message);
+        }
+    } catch (error) {
+        console.error("Error in drawing chart:", error);
+    }
+}
+
+</script>
 
 
 

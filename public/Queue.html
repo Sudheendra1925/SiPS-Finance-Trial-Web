@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leads</title>
+    <title>Queue</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+    font-family: 'Merriweather';
+}
         :root {
             --primary-color: #0056b3; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
@@ -114,10 +119,9 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
                 <div>
                     <span style="display: block;">Sips Finance</span>
-                    <small style="font-size: 0.7em;">Financial Services</small>
                 </div>
             </a>
     
@@ -137,7 +141,7 @@
                         <a class="nav-link" href="/Clients">Clients</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/Leads">Leads</a>
+                        <a class="nav-link active" href="/Queue">Queue</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/Company">Company</a>
@@ -151,6 +155,7 @@
     </nav>
 
     <div class="container mt-4">
+        <h2>Clients Queue Table</h2>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -168,14 +173,33 @@
             </tbody>
         </table>
     </div>
+    <a href="/AddClientLead" class="btn btn-primary">ADD Client Lead</a>
+    <div class="container mt-4">
+        <h2>Investors Queue Table</h2>
+        <table class="table table-striped Investortable">
+            <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyInvestor">
+                <!-- Dynamic content will be added here -->
+            </tbody>
+        </table>
+    </div>
 
-    <a href="/AddLead" class="btn btn-primary">ADD New Lead</a>
+
+    <a href="/AddInvestorLead" class="btn btn-primary">ADD Investor Lead</a>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
        async function fetchData() {
     try {
         console.log('Fetching data...');
-        const response = await fetch('/LeadsData');
+        const response = await fetch('/ClientLeadData');
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -184,8 +208,8 @@
         console.log('Data received:', data);
 
         if (!Array.isArray(data) || data.length === 0) {
-            console.error('No leads found or invalid data format.');
-            return;
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '<p>No Client Lead</p>';
         }
 
         const tbody = document.getElementById('tbody');
@@ -195,14 +219,14 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index + 1}</td>
-                <td>${lead.LeadName}</td>
+                <td>${lead.ClientName}</td>
                 <td>${lead.Amount}</td>
                 <td>${lead.Duration}</td>
                  <td>${lead.PhoneNumber}</td>
                   <td>${lead.Collateral}</td>
                 <td>
                     <a href="/AddOrder" class="btn btn-primary btn-sm">Convert</a>
-                      <a onclick="confirmDelete('${lead.LeadName}')" class="btn btn-danger">Reject</a>
+                      <a onclick="confirmDeleteC('${lead.ClientName}')" class="btn btn-danger btn-sm">Reject</a>
                     
                 </td>
             `;
@@ -211,15 +235,64 @@
     } catch (error) {
         console.error('Error fetching data:', error);
     }
+
+    try {
+        console.log('Fetching data...');
+        const response = await fetch('/InvestorLeadData');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Data received:', data);
+
+        if (!Array.isArray(data) || data.length === 0) {
+            console.error('No Queue found or invalid data format.');
+            return;
+        }
+
+        const tbody = document.getElementById('tbodyInvestor');
+        tbody.innerHTML = ''; // Clear existing table rows
+
+        data.forEach((lead, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${lead.InvestorName}</td>
+                <td>${lead.Amount}</td>
+                 <td>${lead.PhoneNumber}</td>
+                <td>
+                    <a href="/AddInvestement" class="btn btn-primary btn-sm">Convert</a>
+                      <a onclick="confirmDeleteI('${lead.InvestorName}')" class="btn btn-danger btn-sm">Reject</a>
+                    
+                </td>
+            `;
+            tbody.appendChild(tr); // Add the new row to the table body
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+
 }
 
 // Optionally, call fetchData when the page is ready or on load
 window.onload = fetchData;
-function confirmDelete(LeadName) {
+function confirmDeleteC(LeadName) {
             // Show confirmation alert
             if (confirm("Are you sure you want to delete this Lead?")) {
                 // Action if user confirms
-                window.location.href = `/RejectLead/${LeadName}`;
+                window.location.href = `/RejectClientLead/${LeadName}`;
+                alert("Deletion Done.");
+            } else {
+                // Action if user cancels
+                alert("Deletion canceled.");
+            }
+        }
+        function confirmDeleteI(LeadName) {
+            // Show confirmation alert
+            if (confirm("Are you sure you want to delete this Lead?")) {
+                // Action if user confirms
+                window.location.href = `/RejectInvestorLead/${LeadName}`;
                 alert("Deletion Done.");
             } else {
                 // Action if user cancels
@@ -269,7 +342,7 @@ function confirmDelete(LeadName) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leads</title>
+    <title>Queue</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
 <body>
@@ -300,7 +373,7 @@ function confirmDelete(LeadName) {
                     </li>
                 
                     <li class="nav-item">
-                        <a class="nav-link active" href="/Leads">Leads</a>
+                        <a class="nav-link active" href="/Queue">Queue</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center ms-3">

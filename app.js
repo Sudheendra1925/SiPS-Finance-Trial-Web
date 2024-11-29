@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 const crypto = require('crypto');
+const cors = require('cors');
 
+app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -45,8 +47,8 @@ app.get('/Clients', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Clients.html'));
 });
 
-app.get('/Leads', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/Leads.html'));
+app.get('/Queue', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/Queue.html'));
 });
 
 
@@ -59,10 +61,13 @@ app.get('/AddClient', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddClient.html'));
 });
 
-app.get('/AddLead', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/AddLead.html'));
+app.get('/AddClientLead', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/AddClientLead.html'));
 });
 
+app.get('/AddInvestorLead', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/AddInvestorLead.html'));
+});
 app.get('/AddInvestement', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddInvestement.html'));
 });
@@ -110,6 +115,37 @@ app.get('/ClientEMIPage/:OrderID', (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/ClientEMIPage.html'));
 });
+app.get('/InvestmentEMIHistoryPage/:InvestementID', (req, res) => {
+    // Serve the HTML file
+    res.sendFile(path.join(__dirname, 'public/InvestmentEMIHistoryPage.html'));
+});
+app.get('/OrderEMIHistoryPage/:OrderID', (req, res) => {
+    // Serve the HTML file
+    res.sendFile(path.join(__dirname, 'public/OrderEMIHistoryPage.html'));
+});
+
+app.get('/TotalInvestmentEMIHistoryPage', (req, res) => {
+    // Serve the HTML file
+    res.sendFile(path.join(__dirname, 'public/TotalInvestmentEMIHistoryPage.html'));
+});
+app.get('/TotalOrderEMIHistoryPage', (req, res) => {
+    // Serve the HTML file
+    res.sendFile(path.join(__dirname, 'public/TotalOrderEMIHistoryPage.html'));
+});
+
+app.get('/DueEMIPage', (req, res) => {
+    // Serve the HTML file
+    res.sendFile(path.join(__dirname, 'public/DueEMIPage.html'));
+});
+app.get('/ChangeDueEMI/:OrderID', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ChangeDueEMI.html'));
+});
+app.get('/AddExtraExpensesPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/AddExtraExpensesPage.html'));
+});
+app.get('/ExtraExpensesHistoryPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ExtraExpensesHistoryPage.html'));
+});
 
 
 
@@ -120,8 +156,8 @@ app.post('/NewInvestor', (req, res) => {
     const { InvestorName,PhoneNumber} = req.body;
 
 
-    const sql = `INSERT INTO Investors (InvestorID, InvestorName,AmountInvested, PhoneNumber)
-                 VALUES (?, ?,0,?)`;
+    const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber)
+                 VALUES (?, ?,curDate(),0,?)`;
 
     db.query(sql, [ InvestorID,InvestorName, PhoneNumber], (err, result) => {
         if (err) {
@@ -142,6 +178,7 @@ app.post('/NewClient', (req, res) => {
    ClientID, ClientName, TotalAmount, AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments)
                  VALUES (?, ?,0, ?, ?, ?, ?, ?, ?,?,?)`;
 
+
     // Execute the query, passing values from the request body
     db.query(sql, [ ClientID, ClientName,AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments], (err, result) => {
         if (err) {
@@ -150,28 +187,47 @@ app.post('/NewClient', (req, res) => {
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/Clients.html'));
+        res.sendFile(path.join(__dirname, 'public/AddOrder.html'));
     });
 });
 
-app.post("/NewLead",(req,res)=>{
+app.post("/NewClientLead",(req,res)=>{
 
-    const {LeadName,Amount,PhoneNumber,Years,Months,Days,Collateral} = req.body;
+    const {ClientName,Amount,PhoneNumber,Years,Months,Days,Collateral} = req.body;
     const Duration=parseInt(Years)*365+parseInt(Months)*30+parseInt(Days);
 
-    const sql = `INSERT INTO Leads ( LeadName, Amount,Duration,PhoneNumber,Collateral)
+    const sql = `INSERT INTO ClientLead ( ClientName, Amount,Duration,PhoneNumber,Collateral)
                  VALUES (?,?,?,?,?)`;
 
 
     // Execute the query, passing values from the request body
-    db.query(sql, [ LeadName,Amount,Duration,PhoneNumber,Collateral], (err, result) => {
+    db.query(sql, [ ClientName,Amount,Duration,PhoneNumber,Collateral], (err, result) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/Leads.html'));
+        res.sendFile(path.join(__dirname, 'public/Queue.html'));
+    });
+})
+app.post("/NewInvestorLead",(req,res)=>{
+
+    const {InvestorName,Amount,PhoneNumber} = req.body;
+
+    const sql = `INSERT INTO InvestorLead ( InvestorName, Amount,PhoneNumber)
+                 VALUES (?,?,?)`;
+
+
+    // Execute the query, passing values from the request body
+    db.query(sql, [ InvestorName,Amount,PhoneNumber], (err, result) => {
+        if (err) {
+            console.error('Error inserting record:', err);
+            res.status(500).send('Error inserting record');
+            return;
+        }
+        console.log('Record inserted');
+        res.sendFile(path.join(__dirname, 'public/Queue.html'));
     });
 })
 
@@ -281,8 +337,8 @@ app.get("/ClientsData",(req,res)=>{
 })
 
 
-app.get("/LeadsData",(req,res)=>{
-    db.query('SELECT * FROM Leads', (err, results) => {
+app.get("/ClientLeadData",(req,res)=>{
+    db.query('SELECT * FROM ClientLead', (err, results) => {
         if (err) {
             console.error('Error fetching data:', err);
             return res.status(500).json({ error: 'Error fetching data' });
@@ -290,6 +346,17 @@ app.get("/LeadsData",(req,res)=>{
         res.json(results);
     });
 })
+
+app.get("/InvestorLeadData",(req,res)=>{
+    db.query('SELECT * FROM InvestorLead', (err, results) => {
+        if (err) {
+            console.error('Error fetching data:', err);
+            return res.status(500).json({ error: 'Error fetching data' });
+        }
+        res.json(results);
+    });
+})
+
 
 
 
@@ -620,28 +687,42 @@ app.post('/UpdateInvestement', (req, res) => {
     });
     
 
-app.get ('/RejectLead/:LeadName',(req,res)=>{
+app.get ('/RejectClientLead/:ClientName',(req,res)=>{
     
-const LeadName = req.params.LeadName;
+const ClientName = req.params.ClientName;
 
     const query = `
-   DELETE  FROM Leads WHERE LeadName=? ;
+   DELETE  FROM ClientLead WHERE ClientName=? ;
 `;
 
-db.query(query, [LeadName], (err, results) => {
+db.query(query, [ClientName], (err, results) => {
     if (err) {
         console.error('Error updating order:', err);
         return res.status(500).json({ message: 'Error updating order' });
     }
 
-    if (results.affectedRows === 0) {
-        return res.send("WHYYy");
-    }
-
-    res.sendFile(path.join(__dirname, 'public/Leads.html'));
+    res.sendFile(path.join(__dirname, 'public/Queue.html'));
 });
 })
 
+app.get ('/RejectInvestorLead/:InvestorName',(req,res)=>{
+    
+    const InvestorName = req.params.InvestorName;
+    
+        const query = `
+       DELETE  FROM InvestorLead WHERE InvestorName=? ;
+    `;
+    
+    db.query(query, [InvestorName], (err, results) => {
+        if (err) {
+            console.error('Error updating order:', err);
+            return res.status(500).json({ message: 'Error updating order' });
+        }
+    
+    
+        res.sendFile(path.join(__dirname, 'public/Queue.html'));
+    });
+    })
 
 
 
@@ -661,9 +742,6 @@ db.query(query, [InvestorID], (err, results) => {
         return res.status(500).json({ message: 'Error updating order' });
     }
 
-    if (results.affectedRows === 0) {
-        return res.send("WHYYy");
-    }
 
     res.sendFile(path.join(__dirname, 'public/Investors.html'));
 });
@@ -741,7 +819,7 @@ app.get('/DeleteInvestement/:InvestmentID', (req, res) => {
                         }
 
                         console.log('Investment deleted and moved to ClosedInvestment successfully.');
-                        res.send('Investment closed successfully.');
+                        res.sendFile(path.join(__dirname, 'public/Home.html'));
                     });
                 });
             }
@@ -841,7 +919,7 @@ app.get("/InvestorEMIPay/:investmentID", (req, res) => {
 
     // SQL query to insert data
     const query = `
-        INSERT INTO InvestorEMIHistory (InvestmentID, EMIDate, PaidEMI)
+        INSERT INTO InvestmentEMIHistory (InvestmentID, EMIDate, PaidEMI)
         VALUES (?, CURDATE(), ?)
     `;
 
@@ -853,7 +931,7 @@ app.get("/InvestorEMIPay/:investmentID", (req, res) => {
         }
 
         console.log("EMI payment recorded successfully:", result);
-        res.status(200).json({ message: "EMI payment recorded successfully" });
+        res.sendFile(path.join(__dirname, 'public/Investors.html'));
     });
 });
 
@@ -863,7 +941,7 @@ app.post("/ClientEMIPayement", (req, res) => {
     const{OrderID,ActualEMI,PaidEMI}=req.body;
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
-        INSERT INTO ClientEMIHistory (OrderID,EMIDate,ActualEMI,PaidEMI)
+        INSERT INTO OrderEMIHistory (OrderID,EMIDate,ActualEMI,PaidEMI)
         VALUES (?,CURDATE(),?,?)
     `;
 
@@ -873,20 +951,11 @@ app.post("/ClientEMIPayement", (req, res) => {
             res.status(500).send("Error processing EMI payment");
         } else {
             console.log("EMI payment recorded successfully:", result);
-            res.sendFile(path.join(__dirname, 'public/Investors.html'))
+            res.sendFile(path.join(__dirname, 'public/Clients.html'))
         }
     });
 });
 
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/getInvestmentData', (req, res) => {
     const query = `SELECT InvestorID, CAST(SUM(Amount) AS SIGNED) AS TotalInvestment
     FROM investments
@@ -917,23 +986,309 @@ console.log(results)
 
 
 
+app.get('/InvestmentEMIHistoryData/:ID',(req,res)=>{
+const id=req.params.ID;
+    const query = `SELECT * FROM InvestmentEMIHistory where InvestmentId=?;`
+
+    db.query(query,[id] ,(err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to fetch investment data' });
+        }
+console.log(results)
+        res.status(200).json(results);
+    });
+
+})
+
+
+app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
+    const id=req.params.ID;
+        const query = `SELECT * FROM OrderEMIHistory where OrderId=?;`
+    
+        db.query(query,[id] ,(err, results) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to fetch investment data' });
+            }
+    console.log(results)
+            res.status(200).json(results);
+        });
+    
+    })
+
+    app.get('/TotalInvestmentEMIHistory',(req,res)=>{
+        
+            const query = `   SELECT iemh.InvestmentID, iemh.EMIDate, iemh.PaidEMI, inv.InvestorName
+            FROM InvestmentEMIHistory iemh
+            JOIN Investments invt ON iemh.InvestmentID = invt.InvestmentID
+            JOIN Investors inv ON invt.InvestorID = inv.InvestorID; ;`
+        
+            db.query(query ,(err, results) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Failed to fetch investment data' });
+                }
+        console.log(results)
+                res.status(200).json(results);
+            });
+        
+        })
+    
+        app.get('/TotalOrderEMIHistory', async (req, res) => {
+            try {
+                // SQL Query to join Orders and Clients to get ClientName
+                const query = `
+                    SELECT o.OrderId, o.EMIDate, o.ActualEMI, o.PaidEMI, c.ClientName 
+                    FROM OrderEMIHistory o
+                    JOIN Orders ord ON o.OrderId = ord.OrderId
+                    JOIN Clients c ON ord.ClientId = c.ClientId
+                `;
+                
+                const [orderEMIHistory] = await db.promise().query(query);
+                
+                res.json(orderEMIHistory); // Return data with ClientName
+            } catch (error) {
+                console.error('Error fetching order EMI history:', error);
+                res.status(500).json({ message: 'Internal Server Error' });
+            }
+        });
+        
 
 
 
+    app.get("/TotalCompanyAccount", async (req, res) => {
+        try {
+          // SQL Queries
+          const investmentsSumQuery = "SELECT SUM(Amount) AS total FROM Investments";
+          const clientEmiSumQuery = "SELECT SUM(PaidEMI) AS total FROM OrderEMIHistory";
+          const ordersSumQuery = "SELECT SUM(Amount) AS total FROM Orders";
+          const investorEmiSumQuery = "SELECT SUM(PaidEMI) AS total FROM InvestmentEMIHistory";
+          const ExtraExpenses = "SELECT SUM(Amount) AS total FROM ExtraExpenses";
+
+          // Execute Queries
+          const [investmentsSum] = await db.promise().query(investmentsSumQuery);
+          const [clientEmiSum] = await db.promise().query(clientEmiSumQuery);
+          const [ordersSum] = await db.promise().query(ordersSumQuery);
+          const [investorEmiSum] = await db.promise().query(investorEmiSumQuery);
+          const [ExtraExpensesSum] = await db.promise().query(ExtraExpenses);
+      
+          // Extract Results
+          const totalInvestments = parseInt(investmentsSum[0].total) || 0;
+          const totalClientEmi = parseInt(clientEmiSum[0].total) || 0;
+          const totalOrders = parseInt(ordersSum[0].total) || 0;
+          const totalInvestorEmi = parseInt(investorEmiSum[0].total) || 0;
+            const totalExtraExpenses=parseInt(ExtraExpensesSum[0].total) || 0;
+          // Perform Calculation
+          const totalSum = (totalInvestments + totalClientEmi) - (totalOrders + totalInvestorEmi+totalExtraExpenses);
+      
+          // Send Response
+          res.json({
+            status: "success",
+            totalSum: totalSum,
+            breakdown: {
+              totalInvestments,
+              totalClientEmi,
+              totalOrders,
+              totalInvestorEmi,
+              totalExtraExpenses
+            }
+          });
+        } catch (error) {
+          console.error("Error in calculation:", error);
+          res.status(500).json({ status: "error", message: "Internal Server Error" });
+        }
+      });
+      
 
 // Start the server
 app.listen(2001,()=>{
 
     console.log("SUCCESFUL")
-}
-
-)
+})
 
 
 
 
 
+app.get("/AddDueEMI/:ID", (req, res) => {
+    const OrderID=req.params.ID
+    const{ClientName,OrderAmount,EMIDate,EMIAmount}=req.query;
+    console.log(ClientName,OrderAmount,EMIDate,EMIAmount)
+    // Query to insert data into InvestorEMIHistory with only the current date
+    const query = `
+        INSERT INTO DueEMI (OrderID,IssuedDate,ClientName,OrderAmount,EMIDate,EMIAmount)
+        VALUES (?,CURDate(),?,?,?,?)
+    `;
 
+    db.query(query, [OrderID,ClientName,OrderAmount,EMIDate,EMIAmount], (err, result) => {
+        if (err) {
+            console.error("Error inserting data into InvestorEMIHistory:", err);
+            res.status(500).send("We Have Already Added It in Pending");
+        } else {
+            console.log("EMI payment recorded successfully:", result);
+            res.sendFile(path.join(__dirname, 'public/Clients.html'))
+        }
+    });
+});
+
+app.get('/DueEMIs', async (req, res) => {
+    try {
+        // SQL Query to join Orders and Clients to get ClientName
+        const query = `select * from DueEMI`;
+        
+        const [DueEMIHistory] = await db.promise().query(query);
+        
+        res.json(DueEMIHistory); // Return data with ClientName
+    } catch (error) {
+        console.error('Error fetching order EMI history:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+app.post('/UpdateDueEMI', async (req, res) => {
+    const { OrderID, DueEMI, NewEMI } = req.body; // Assuming the data is passed in the body
+
+    if (!OrderID || !DueEMI || !NewEMI) {
+        return res.status(400).json({ message: 'Missing required parameters: OrderID, EMIAmount, oldEMIAmount' });
+    }
+
+    try {
+        // SQL Query to update the EMIAmount for the given OrderID and old EMIAmount
+        const query = `UPDATE DueEMI SET EMIAmount = ? WHERE OrderID = ? AND EMIAmount = ?`;
+
+        // Execute the query with the parameters passed
+        const [result] = await db.promise().query(query, [NewEMI, OrderID, DueEMI]);
+        // Send a success response with the result
+        res.sendFile(path.join(__dirname, 'public/DueEMIPage.html'))
+    } catch (error) {
+        console.error('Error updating EMIAmount:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+
+app.get('/DeleteDueEMI/:OrderID', async (req, res) => {
+    const { OrderID } = req.params; // Access OrderID from URL parameters
+    const { EMIAmount } = req.query; // Access EMIAmount from query parameters
+
+    if (!EMIAmount) {
+        return res.status(400).json({ message: 'EMIAmount is required to delete the record' });
+    }
+
+    try {
+        // SQL Query to delete the record from DueEMI for the given OrderID and EMIAmount
+        const query = `DELETE FROM DueEMI WHERE OrderID = ? AND EMIAmount = ?`;
+
+        // Execute the query with the parameters passed
+        const [result] = await db.promise().query(query, [OrderID, EMIAmount]);
+
+        // Check if the record was deleted successfully
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'No record found to delete' });
+        }
+
+        // Send a success response and redirect to the DueEMIPage
+        res.sendFile(path.join(__dirname, 'public/DueEMIPage.html'));
+    } catch (error) {
+        console.error('Error deleting EMIAmount:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////
+app.get('/GrowthGraph', async (req, res) => {
+    const { year } = req.query; // Get year from query parameter
+
+    if (!year || isNaN(year)) {
+        return res.status(400).json({ status: "error", message: "Invalid or missing year" });
+    }
+
+    try {
+        // Fetch data from Investments table (filtered by year)
+        const investmentQuery = `
+            SELECT MONTH(InvestmentDate) AS month, SUM(Amount) AS total
+            FROM Investments
+            WHERE YEAR(InvestmentDate) = ?
+            GROUP BY MONTH(InvestmentDate)
+            ORDER BY MONTH(InvestmentDate)
+        `;
+        const [investmentResults] = await db.promise().query(investmentQuery, [year]);
+
+        // Fetch data from Orders table (filtered by year)
+        const ordersQuery = `
+            SELECT MONTH(StartDate) AS month, SUM(Amount) AS total
+            FROM Orders
+            WHERE YEAR(StartDate) = ?
+            GROUP BY MONTH(StartDate)
+            ORDER BY MONTH(StartDate)
+        `;
+        const [orderResults] = await db.promise().query(ordersQuery, [year]);
+
+        // Format data for response
+        const investments = Array.from({ length: 12 }, (_, i) => ({
+            month: i + 1,
+            total: parseInt(investmentResults.find(row => row.month === i + 1)?.total) || 0
+        }));
+
+        const orders = Array.from({ length: 12 }, (_, i) => ({
+            month: i + 1,
+            total:parseInt( orderResults.find(row => row.month === i + 1)?.total) || 0
+        }));
+
+        res.json({
+            status: "success",
+            year,
+            investments,
+            orders
+        });
+     
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({ status: "error", message: "Internal Server Error" });
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.post('/AddExtraExpenses', (req, res) => {
+    const {Reason,Amount}=req.body;
+    const sql = `INSERT INTO ExtraExpenses (Reason,Amount,Date)
+                 VALUES (?, ?,curDate())`;
+
+    db.query(sql, [Reason,Amount], (err, result) => {
+        if (err) {
+            console.error('Error inserting record:', err);
+            res.status(500).send('Error inserting record');
+            return;
+        }
+        console.log('Record inserted');
+        res.sendFile(path.join(__dirname, 'public/Company.html'));
+    });
+});
+
+app.get('/ExtraExpensesHistory', async (req, res) => {
+    try {
+        // SQL Query to join Orders and Clients to get ClientName
+        const query = `select * from ExtraExpenses`;
+        
+        const [ExtraExpensesHistory] = await db.promise().query(query);
+        
+        res.json(ExtraExpensesHistory); // Return data with ClientName
+    } catch (error) {
+        console.error('Error fetching order EMI history:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // app.get('/graph',(req,res)=>{
 //     res.sendFile(path.join(__dirname, 't.html'))
 // })

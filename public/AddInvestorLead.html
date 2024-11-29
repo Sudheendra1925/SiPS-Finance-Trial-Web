@@ -1,22 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Investor</title>
+    <title>Add Queue</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
-
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
 *{
     font-family: 'Merriweather';
 }
-       :root {
-    --primary-color: #0056b3;  /* Primary blue */
-    --secondary-color: #f7f9fc;  /* Light background color */
+        :root {
+    --primary-color: #0056b3;  /* Deep blue */
+    --secondary-color: #f7f9fc;  /* Light background */
     --accent-color: #0875e1;  /* Accent blue */
-    --highlight-color: #ffc107;  /* Gold highlight color */
+    --highlight-color: #ffc107;  /* Gold highlight */
     --danger-color: #dc3545;  /* Red for error/warnings */
     --white: #ffffff;  /* White */
     --shadow: rgba(0, 0, 0, 0.1);  /* Subtle shadow */
@@ -63,6 +61,7 @@ body {
     color: var(--white);
 }
 
+
 /* Main Form Container */
 #main {
     max-width: 600px;
@@ -70,7 +69,7 @@ body {
     padding: 30px;
     background-color: var(--white);  /* White background */
     border-radius: 10px;
-    box-shadow: 0 4px 15px var(--shadow);  /* Larger shadow for emphasis */
+    box-shadow: 0 4px 15px var(--shadow);  /* Soft shadow */
 }
 
 /* Input Fields */
@@ -84,7 +83,7 @@ label {
     color: #555;  /* Darker label text */
 }
 
-input, select {
+input[type="text"], input[type="date"], input[type="file"] {
     width: 100%;
     padding: 12px;
     font-size: 1em;
@@ -93,18 +92,18 @@ input, select {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input:focus, select:focus {
-    border-color: var(--accent-color);  /* Accent color on focus */
-    box-shadow: 0 0 5px var(--accent-color);  /* Soft glow effect */
+input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
+    border-color: var(--accent-color);  /* Blue border on focus */
+    box-shadow: 0 0 5px var(--accent-color);  /* Blue glow */
 }
 
-/* Button */
+/* Submit Button */
 #Submit {
     width: 100%;
     padding: 12px;
     font-size: 1.1em;
     color: var(--white);
-    background-color: var(--primary-color);  /* Deep blue */
+    background-color: var(--primary-color);  /* Blue button */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -112,7 +111,7 @@ input:focus, select:focus {
 }
 
 #Submit:hover {
-    background-color: var(--accent-color);  /* Lighter blue on hover */
+    background-color: var(--accent-color);  /* Accent blue on hover */
 }
 
 /* Back Button */
@@ -129,8 +128,9 @@ input:focus, select:focus {
     color: #c82333;  /* Darker red on hover */
 }
 .container-fluid{
-    background-color:var(--primary-color) ;
+    background-color: var(--primary-color);
 }
+
     </style>
 </head>
 <body>
@@ -140,7 +140,6 @@ input:focus, select:focus {
                 <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
                 <div>
                     <span style="display: block;">Sips Finance</span>
-            
                 </div>
             </a>
 
@@ -160,7 +159,7 @@ input:focus, select:focus {
                         <a class="nav-link" href="/Clients">Clients</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Queue">Queue</a>
+                        <a class="nav-link" href="/Queue">Queues</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/Company">Company</a>
@@ -172,24 +171,52 @@ input:focus, select:focus {
             </div>
         </div>
     </nav>
+    
     <div id="main">
-        <form action="/NewInvestor" method="post">
+        <form action="/NewInvestorLead" method="post">
             <div>
                 <label for="InvestorName">Investor Name *</label>
                 <input type="text" id="InvestorName" name="InvestorName" required>
             </div>
-             
 
             <div>
-                <label for="PhoneNumber">Phone Number *</label>
+                <label for="Amount">Amount *</label>
+                <input type="number" id="Amount" name="Amount" oninput="roundInput(this)">
+            </div>
+
+
+            <div>
+                <label for="PhoneNumber"> Phone Number*</label>
                 <input type="number" id="PhoneNumber" name="PhoneNumber" required>
             </div>
-            
             <button id="Submit" type="submit">Submit</button>
+            </div>
+            
+           
         </form>
     </div>
-    <script>
-    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+ws9y5p4p6wPflb4EL1pLf0PdCgSm" crossorigin="anonymous"></script>
+
+
+    <script>
+        document.getElementById('InvestedAmount').addEventListener('input', function (e) 
+        {
+            this.value = this.value.replace(/\D/g, ''); // Only allows numeric input
+        });
+
+        function roundInput(input) 
+        {
+input.value = Math.round(input.value); // Rounds to the nearest integer
+// For specific decimal places (e.g., 1 decimal): 
+// input.value = Math.round(input.value * 10) / 10;
+        }
+      </script> 
+
+
+
+
 </body>
 </html>
+
+

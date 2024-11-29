@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment History</title>
+    <title>Investment EMI History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
     <style>
@@ -151,15 +151,14 @@
     </nav>
 
     <div class="container mt-4">
-        <h1>Investment History</h1>
+        <h1>Investment EMI  History</h1>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th scope="col">S.No</th>
-                    <th scope="col">Investor Name</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Rate of Interest</th>
+                    <th scope="col">Investment ID</th>
+                    <th scope="col">EMI Date</th>
+                    <th scope="col">EMI Amount</th>
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -170,43 +169,49 @@
 
     <script>
         async function fetchInvestmentHistory() {
-            try {
-                // Fetch investment history
-                const response = await fetch('/InvestmentHistoryData');
-                if (!response.ok) throw new Error('Failed to fetch investment history');
+            const id = window.location.pathname.split('/').pop();
+  try {
+    let TotalEMIPaid = 0; // Initialize total EMI paid
+    let i = 0; // Initialize row counter
 
-                const investments = await response.json();
+    const response = await fetch(`/InvestmentEMIHistoryData/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch investment history');
 
-                const tbody = document.getElementById('tbody');
-                tbody.innerHTML = ''; // Clear existing rows
+    const investmentEMIHistory = await response.json(); // Expecting an array of EMI history objects
+console.log(investmentEMIHistory)
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = ''; // Clear existing rows
 
-                // Process each investment
-                for (let i = 0; i < investments.length; i++) {
-                    const investment = investments[i];
+    // Loop through each record and add it to the table
+    investmentEMIHistory.forEach((item) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+          <td>${++i}</td> <!-- Increment row number -->
+          <td>${item.InvestmentId || 'Unknown'}</td>
+          <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+          <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
+      `;
+      TotalEMIPaid += item.PaidEMI || 0; // Add PaidEMI to TotalEMIPaid
+      tbody.appendChild(tr);
+    });
 
-                    // Fetch investor details for the current investment
-                    const investorResponse = await fetch(`/InvestorDetails/${investment.InvestorID}`);
-                    if (!investorResponse.ok) throw new Error(`Failed to fetch details for InvestorID ${investment.InvestorID}`);
+    // Add a row for the total
+    const totalRow = document.createElement('tr');
+    totalRow.innerHTML = `
+        <td colspan="3" class="text-right font-weight-bold">Total EMI Paid:</td>
+        <td>${TotalEMIPaid.toLocaleString()}</td>
+    `;
+    tbody.appendChild(totalRow);
 
-                    const investorDetails = await investorResponse.json();
+  } catch (error) {
+    
+    console.error('Error fetching data:', error);
 
-                    // Create table row
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${i + 1}</td>
-                        <td>${investorDetails.InvestorName || 'Unknown'}</td>
-                        <td>${investment.Amount}</td>
-                        <td>${investment.InvestmentDate}</td>
-                        <td>${investment.InterestRate}</td>      
-                    `;
-                    tbody.appendChild(tr);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                const tbody = document.getElementById('tbody');
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load data.</td></tr>';
-            }
-        }
+    // Show error message in the table
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load data.</td></tr>';
+  }
+}
 
         document.addEventListener('DOMContentLoaded', fetchInvestmentHistory);
     </script>

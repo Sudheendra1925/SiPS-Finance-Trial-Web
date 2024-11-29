@@ -179,93 +179,42 @@
     </nav>
 
     <div class="container">
-        <h2>Update Investor Details</h2>
-        <form action="/UpdateOrder" method="POST">
+        <h2>Update Due EMI</h2>
+        <form action="/UpdateDueEMI" method="POST">
             <div class="form-group">
                 <label for="OrderID">Order ID</label>
                 <input type="text" class="form-control" id="OrderID" name="OrderID" readonly>
             </div>
             <div class="form-group">
-                <label for="Amount">Amount </label>
-                <input type="number" class="form-control" id="Amount"  name="Amount" required>
-            </div>
-
-        
-            <div class="form-group">
-                <label for="RateOfInterest">Interest Rate</label>
-                <input type="text" class="form-control" id="RateOfInterest"  name="RateOfInterest" required>
+                <label for="ClientName">Client Name</label>
+                <input type="text" class="form-control" id="ClientName" name="ClientName" readonly>
             </div>
             <div class="form-group">
-                <label for="PayableInterest">Payable Interest</label>
-                <input type="text" class="form-control" id="PayableInterest"  name="PayableInterest" required>
+                <label for="DueEMI">Actual Due EMI</label>
+                <input type="number" class="form-control" id="DueEMI" name="DueEMI" readonly>
             </div>
-
+            <div class="form-group">
+                <label for="NewEMI">New EMI *</label>
+                <input type="number" class="form-control" id="NewEMI" name="NewEMI" required>
+            </div>
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
 
     <script>
-        // Fetch investor details using ID
-        async function fetchOrderDetails(id) {
-            try {
-                const response = await fetch(`/OrderDetails/${id}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch Order details');
-                }
-                const data = await response.json();
-console.log(data);
-                // Fill form with previous data
-                document.getElementById('OrderID').value = data.OrderID;
-                document.getElementById('Amount').value = data.Amount;
-                document.getElementById('PayableInterest').value = data.PayableInterest;
-                document.getElementById('RateOfInterest').value = data.RateOfInterest;
-               
-                
-                // Display image preview if availabl
-            } catch (error) {
-                console.error('Error fetching investor details:', error);
-            }
-        }
-
         window.onload = function() {
-            const orderID =window.location.pathname.split('/').pop(); // Replace with the actual ID you want to fetch
-            fetchOrderDetails(orderID);
+            // Extract the query parameters from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderID = window.location.pathname.split('/').pop();  // Extract OrderID from path
+            const clientName = urlParams.get('ClientName');
+            const emiAmount = urlParams.get('EMIAmount');
+console.log(orderID,clientName,emiAmount)
+            // Populate the form fields with the extracted data
+            document.getElementById('OrderID').value = orderID;
+            document.getElementById('ClientName').value = clientName;
+            document.getElementById('DueEMI').value = emiAmount;
         };
-
-     
     </script>
- <script>
-
-    const PayableInterest = document.getElementById("PayableInterest");
-    const RateOfInterest = document.getElementById("RateOfInterest");
-    const Amount = document.getElementById("Amount");
-    
-    Amount.addEventListener("change", () => {
-        // Convert the input values to numbers before performing calculations
-        const RateOfInterestValue = parseFloat(RateOfInterest.value);
-        const amountValue = parseFloat(Amount.value);
-    
-        // Validate that both values are numbers
-        if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
-            // Calculate payable interest and assign it to the PayableInterest input
-            PayableInterest.value = (RateOfInterestValue * amountValue) / 100;
-        } else {
-            PayableInterest.value = ""; // Clear the PayableInterest field if inputs are invalid
-        }
-    });
-    RateOfInterest.addEventListener("change", () => {
-        // Convert the input values to numbers before performing calculations
-        const RateOfInterestValue = parseFloat(RateOfInterest.value);
-        const amountValue = parseFloat(Amount.value);
-    
-        // Validate that both values are numbers
-        if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
-            // Calculate payable interest and assign it to the PayableInterest input
-            PayableInterest.value = (RateOfInterestValue * amountValue) / 100;
-        } else {
-            PayableInterest.value = ""; // Clear the PayableInterest field if inputs are invalid
-        }
-    });
-    </script>
+ 
 </body>
 </html>
