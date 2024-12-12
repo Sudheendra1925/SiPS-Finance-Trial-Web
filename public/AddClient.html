@@ -13,7 +13,7 @@
     font-family: 'Merriweather';
 }
        :root {
-    --primary-color: #0056b3; /* Deep blue for navigation */
+    --primary-color: #0875e1; /* Deep blue for navigation */
     --secondary-color: #f7f9fc; /* Light background for content */
     --accent-color: #0875e1; /* Vibrant blue for accents */
     --highlight-color: #ffc107; /* Warm gold for highlights */
@@ -128,6 +128,17 @@ input:focus {
     color: #c82333; /* Darker red on hover */
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+
     </style>
 </head>
 <body>
@@ -170,10 +181,10 @@ input:focus {
     </nav>
 
     <div id="main">
-        <form action="/NewClient" method="post">
+        <form action="/NewClient" method="post" onsubmit="alert('Client has been added successfully')">
             <div>
                 <label for="ClientName">Client Name *</label>
-                <input type="text" id="ClientName" pattern="[A-Za-z]+" inputmode="text" title="Only letters are allowed" name="ClientName" required>
+                <input type="text" id="ClientName"  inputmode="text" title="Only letters are allowed" name="ClientName" required>
             </div>
 
             <div>
@@ -181,26 +192,26 @@ input:focus {
                 <input type="text" id="AddressAndOccupation" name="AddressAndOccupation" required>
             </div>
             <div>
-                <label for="PhoneNumber">Phone Number</label>
-                <input type="tel" pattern="[0-9]{10}" maxlength="10" placeholder="Enter valid Phone number" id="PhoneNumber" name="PhoneNumber" required>
+                <label for="PhoneNumber">Phone Number *</label>
+                <input type="tel" minlength="10" maxlength="10" placeholder="Enter valid Phone number" id="PhoneNumber" name="PhoneNumber" required>
             </div>
             <div>
-                <label for="Aadhar">Aadhar Card</label>
-                <input type="number"  placeholder="Enter valid Aadhar number" maxlength="12" id="Aadhar" name="Aadhar" required>
+                <label for="Aadhar">Aadhar Card *</label>
+                <input type="tel"  placeholder="Enter valid Aadhar number"  minlength="12" maxlength="12" id="Aadhar" name="Aadhar" required>
             </div>
 
                 <div>
-                <label for="AadharCard">Upload Aadhar Card</label>
+                <label for="AadharCard">Upload Aadhar Card *</label>
                 <input type="file" id="AadharCard" name="AadharCard" placeholder="Upload if required">
             </div>
 
             <div>
-                <label for="Pan">Pan Card</label>
-                <input type="text" maxlength="10" id="Pan" name="Pan" required>
+                <label for="Pan">Pan Card *</label>
+                <input type="tel" minlength="10" maxlength="10" id="Pan" name="Pan" required>
             </div>
              
             <div>
-                <label for="PanCard">Upload Pan Card</label>
+                <label for="PanCard">Upload Pan Card *</label>
                 <input type="file" id="PanCard" name="PanCard">
             </div>
             
@@ -210,16 +221,27 @@ input:focus {
             </div>
             <div>
                 <label for="Comments">Comments</label>
-                <input type="text" id="Comments" name="Comments" required>
+                <input type="text" id="Comments" name="Comments">
             </div>
-
-           
-
-           
-            <button id="Submit" type="submit">Submit</button>
+            <button id="Submit" type="submit" >Submit</button>
         </form>
     </div>
+<script>
 
+
+document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (!/^\d{0,10}$/.test(value)) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
+document.getElementById('Aadhar').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (!/^\d{0,10}$/.test(value)) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+ws9y5p4p6wPflb4EL1pLf0PdCgSm" crossorigin="anonymous"></script>
 0
 </body>

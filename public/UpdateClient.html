@@ -11,7 +11,7 @@
     font-family: 'Merriweather';
 }
         :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -135,6 +135,16 @@
         .container-fluid{
             background-color: var(--accent-color);
         }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -178,7 +188,7 @@
     </nav>
     <div class="container">
         <h2>Update Client Details</h2>
-        <form id="ClientForm" action="/UpdateClient" method="POST">
+        <form id="ClientForm" action="/UpdateClient" method="POST" onsubmit="alert('Client updated sucessfully')">
             <div class="form-group">
                 <label for="ClientID">Client ID</label>
                 <input type="text" class="form-control" id="ClientID" name="ClientID" readonly>
@@ -193,7 +203,12 @@
             </div>
             <div class="form-group">
                 <label for="PhoneNumber">Phone Number</label>
-                <input type="text" class="form-control" id="PhoneNumber"  name="PhoneNumber"  required>
+                <input type="tel" class="form-control" id="PhoneNumber"  name="PhoneNumber"  minlength="10" maxlength="10" required>
+            </div>
+
+            <div class="form-group">
+                <label for="Comments">Comments</label>
+                <input type="text" class="form-control" id="Comments" name="Comments" required>
             </div>
             <div class="form-group img-container">
                 <label for="image">Client Image</label>
@@ -219,7 +234,7 @@
                 document.getElementById('ClientName').value = data.ClientName;
                 document.getElementById('TotalAmount').value = data.TotalAmount;
                 document.getElementById('PhoneNumber').value = data.PhoneNumber;
-    
+                document.getElementById('Comments').value = data.Comments;
                 
                 // Display image preview if available
                 const imagePreview = document.getElementById('imagePreview');
@@ -239,6 +254,16 @@
             fetchClientDetails(ClientID);
         };
     </script>
+<script>
 
+
+    document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+        const value = e.target.value;
+        if (!/^\d{0,10}$/.test(value)) {
+            e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+        }
+    });
+    
+    </script>
 </body>
 </html>

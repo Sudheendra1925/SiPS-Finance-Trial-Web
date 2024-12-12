@@ -11,8 +11,8 @@
 *{
     font-family: 'Merriweather';
 }
-       :root {
-            --primary-color: #0056b3; /* Rich Blue */
+:root {
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -77,6 +77,7 @@
     color: var(--white);
 }
 
+
         /* Form Group Styling */
         .form-group {
             margin-bottom: var(--form-group-margin-bottom);
@@ -136,6 +137,16 @@
         .container-fluid{
             background-color: var(--accent-color);
         }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -179,17 +190,20 @@
     </nav>
 
     <div class="container">
-        <h2>Update Investor Details</h2>
-        <form action="/UpdateOrder" method="POST">
+        <h2>Update Order Details</h2>
+        <form action="/UpdateOrder" method="POST" onsubmit="alert('Order updated sucessfully')">
             <div class="form-group">
                 <label for="OrderID">Order ID</label>
                 <input type="text" class="form-control" id="OrderID" name="OrderID" readonly>
             </div>
             <div class="form-group">
                 <label for="Amount">Amount </label>
-                <input type="number" class="form-control" id="Amount"  name="Amount" required>
+                <input type="number" class="form-control" id="Amount"  name="Amount" required readonly>
             </div>
-
+            <div class="form-group">
+                <label for="ActiveAmount">Active Amount </label>
+                <input type="number" class="form-control" id="ActiveAmount"  name="ActiveAmount" required>
+            </div>
         
             <div class="form-group">
                 <label for="RateOfInterest">Interest Rate</label>
@@ -213,10 +227,11 @@
                     throw new Error('Failed to fetch Order details');
                 }
                 const data = await response.json();
-console.log(data);
+
                 // Fill form with previous data
                 document.getElementById('OrderID').value = data.OrderID;
                 document.getElementById('Amount').value = data.Amount;
+                document.getElementById('ActiveAmount').value = data.ActiveAmount;
                 document.getElementById('PayableInterest').value = data.PayableInterest;
                 document.getElementById('RateOfInterest').value = data.RateOfInterest;
                
@@ -238,17 +253,17 @@ console.log(data);
 
     const PayableInterest = document.getElementById("PayableInterest");
     const RateOfInterest = document.getElementById("RateOfInterest");
-    const Amount = document.getElementById("Amount");
+    const ActiveAmount = document.getElementById("ActiveAmount");
     
-    Amount.addEventListener("change", () => {
+    ActiveAmount.addEventListener("change", () => {
         // Convert the input values to numbers before performing calculations
         const RateOfInterestValue = parseFloat(RateOfInterest.value);
-        const amountValue = parseFloat(Amount.value);
+        const ActiveAmountValue = parseFloat(ActiveAmount.value);
     
         // Validate that both values are numbers
-        if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
+        if (!isNaN(RateOfInterestValue) && !isNaN(ActiveAmountValue)) {
             // Calculate payable interest and assign it to the PayableInterest input
-            PayableInterest.value = (RateOfInterestValue * amountValue) / 100;
+            PayableInterest.value = Math.round((RateOfInterestValue * ActiveAmountValue) /(12* 100));
         } else {
             PayableInterest.value = ""; // Clear the PayableInterest field if inputs are invalid
         }
@@ -256,12 +271,12 @@ console.log(data);
     RateOfInterest.addEventListener("change", () => {
         // Convert the input values to numbers before performing calculations
         const RateOfInterestValue = parseFloat(RateOfInterest.value);
-        const amountValue = parseFloat(Amount.value);
+        const ActiveAmountValue = parseFloat(ActiveAmount.value);
     
         // Validate that both values are numbers
-        if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
+        if (!isNaN(RateOfInterestValue) && !isNaN(ActiveAmountValue)) {
             // Calculate payable interest and assign it to the PayableInterest input
-            PayableInterest.value = (RateOfInterestValue * amountValue) / 100;
+            PayableInterest.value = Math.round((RateOfInterestValue * ActiveAmountValue) /(12* 100));
         } else {
             PayableInterest.value = ""; // Clear the PayableInterest field if inputs are invalid
         }

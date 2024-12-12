@@ -12,7 +12,7 @@
     font-family: 'Merriweather';
 }
        :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -136,6 +136,16 @@
         .container-fluid{
             background-color: var(--accent-color);
         }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -190,12 +200,12 @@
                 <input type="text" class="form-control" id="ClientName" name="ClientName" readonly>
             </div>
             <div class="form-group">
-                <label for="DueEMI">Actual Due EMI</label>
+                <label for="DueEMI">Due EMI</label>
                 <input type="number" class="form-control" id="DueEMI" name="DueEMI" readonly>
             </div>
             <div class="form-group">
-                <label for="NewEMI">New EMI *</label>
-                <input type="number" class="form-control" id="NewEMI" name="NewEMI" required>
+                <label for="PaidEMI">Paid EMI *</label>
+                <input type="number" class="form-control" id="PaidEMI" name="PaidEMI" required>
             </div>
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
@@ -206,13 +216,13 @@
             // Extract the query parameters from the URL
             const urlParams = new URLSearchParams(window.location.search);
             const orderID = window.location.pathname.split('/').pop();  // Extract OrderID from path
-            const clientName = urlParams.get('ClientName');
-            const emiAmount = urlParams.get('EMIAmount');
-console.log(orderID,clientName,emiAmount)
+            const clientName = urlParams.get('ClientName');   
+            const RemainingEMI = urlParams.get('RemainingEMI');
             // Populate the form fields with the extracted data
             document.getElementById('OrderID').value = orderID;
             document.getElementById('ClientName').value = clientName;
-            document.getElementById('DueEMI').value = emiAmount;
+            document.getElementById('DueEMI').value = RemainingEMI;
+            
         };
     </script>
  

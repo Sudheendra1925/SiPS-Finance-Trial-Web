@@ -11,7 +11,7 @@
     font-family: 'Merriweather';
 }
         :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -157,13 +157,18 @@
 
     <div class="container mt-4">
         <h1>Order History</h1>
+        <div class="mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search by OrderID, Client Name, Start or End Date">
+        </div>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th scope="col">S.No</th>
+                    <th scope="col">Order ID</th>
                     <th scope="col">Client Name</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Date</th>
+                    <th scope="col">EndDate</th>
                     <th scope="col">Rate of Interest</th>
                     <th scope="col">Documents</th>
                 </tr>
@@ -175,47 +180,122 @@
     </div>
 
     <script>
-        async function fetchOrderHistory() {
-            try {
-                // Fetch order history
-                const response = await fetch('/OrderHistoryData');
-                if (!response.ok) throw new Error('Failed to fetch order history');
+   document.addEventListener('DOMContentLoaded', () => {
+            let originalData = [];
+            let clientCache = new Map(); // Cache for client details
+            const rowsPerPage = 10;
+            let currentPage = 1;
 
-                const orders = await response.json();
+            async function fetchOrderHistory() {
+                try {
+                    const response = await fetch('/OrderHistoryData');
+                    if (!response.ok) throw new Error('Failed to fetch order history');
 
+                    const orderData = await response.json();
+                    originalData = await fetchClientDetails(orderData);
+                    displayPage(1); // Display the first page of data
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    showError('Failed to load data.');
+                }
+            }
+
+            async function fetchClientDetails(orderData) {
+                const uniqueClientIDs = [...new Set(orderData.map(order => order.ClientID))];
+
+                await Promise.all(uniqueClientIDs.map(async (clientID) => {
+                    if (!clientCache.has(clientID)) {
+                        try {
+                            const clientResponse = await fetch(`/ClientDetails/${clientID}`);
+                            if (clientResponse.ok) {
+                                const clientDetails = await clientResponse.json();
+                                clientCache.set(clientID, clientDetails.ClientName || 'Unknown');
+                            } else {
+                                clientCache.set(clientID, 'Unknown');
+                            }
+                        } catch (error) {
+                            console.error(`Failed to fetch details for ClientID ${clientID}`, error);
+                            clientCache.set(clientID, 'Unknown');
+                        }
+                    }
+                }));
+
+                return orderData.map(order => ({
+                    ...order,
+                    ClientName: clientCache.get(order.ClientID)
+                }));
+            }
+
+            function populateTable(data) {
                 const tbody = document.getElementById('tbody');
-                tbody.innerHTML = ''; // Clear existing rows
+                tbody.innerHTML = '';
 
-                // Process each order
-                for (let i = 0; i < orders.length; i++) {
-                    const order = orders[i];
-
-                    // Fetch Client details for the current order
-                    const clientResponse = await fetch(`/ClientDetails/${order.ClientID}`);
-                    if (!clientResponse.ok) throw new Error(`Failed to fetch details for ClientID ${order.ClientID}`);
-
-                    const clientDetails = await clientResponse.json();
-
-                    // Create table row
+                let totalAmount = 0;
+                data.forEach((order, index) => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${i + 1}</td>
-                        <td>${clientDetails.ClientName || 'Unknown'}</td>
-                        <td>${order.Amount}</td>
-                        <td>${order.StartDate}</td>
-                        <td>${order.RateOfInterest}</td>      
-                        <td>${order.Documents || 'No Documents'}</td>     
+                        <td>${index + 1}</td>
+                        <td>${order.OrderID}</td>
+                        <td>${order.ClientName}</td>
+                        <td>${order.Amount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(order.Amount) : '$0.00'}</td>
+                        <td>${order.StartDate ? order.StartDate.split('T')[0] : 'N/A'}</td>
+                        <td>${order.EndDate ? order.EndDate.split('T')[0] : 'N/A'}</td>
+                        <td>${order.RateOfInterest || '0'}%</td>
+                        <td>${order.Documents || 'No Documents'}</td>
                     `;
                     tbody.appendChild(tr);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                const tbody = document.getElementById('tbody');
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Failed to  whyy  load data.</td></tr>';
-            }
-        }
+                    totalAmount += order.Amount || 0;
+                });
 
-        document.addEventListener('DOMContentLoaded', fetchOrderHistory);
+                const totalRow = document.createElement('tr');
+                totalRow.innerHTML = `
+                    <td colspan="2" class="text-right font-weight-bold">Total Amount:</td>
+                    <td>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(totalAmount)}</td>
+                    <td colspan="4"></td>
+                `;
+                tbody.appendChild(totalRow);
+            }
+
+            function filterData(query) {
+                const filteredData = originalData.filter(order => {
+                    return (
+                        (order.OrderID && order.OrderID.toLowerCase().includes(query.toLowerCase())) ||
+                        (order.ClientName && order.ClientName.toLowerCase().includes(query.toLowerCase())) ||
+                        (order.StartDate && order.StartDate.toLowerCase().includes(query.toLowerCase())) ||
+                        (order.EndDate && order.EndDate.toLowerCase().includes(query.toLowerCase())) ||
+                        (order.Amount && order.Amount.toString().includes(query))
+                    );
+                });
+
+                currentPage = 1;
+                displayPage(currentPage, filteredData);
+            }
+
+            function displayPage(page, data = originalData) {
+                const startIndex = (page - 1) * rowsPerPage;
+                const paginatedData = data.slice(startIndex, startIndex + rowsPerPage);
+
+                populateTable(paginatedData);
+                updatePaginationControls(page, Math.ceil(data.length / rowsPerPage));
+            }
+
+            function updatePaginationControls(current, totalPages) {
+                // Implement pagination UI update logic (if needed)
+                console.log(`Current Page: ${current}, Total Pages: ${totalPages}`);
+            }
+
+            function showError(message) {
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">${message}</td></tr>`;
+            }
+
+            document.getElementById('searchBar').addEventListener('input', (e) => {
+                filterData(e.target.value);
+            });
+
+            fetchOrderHistory();
+        });
+
     </script>
 </body>
 </html>

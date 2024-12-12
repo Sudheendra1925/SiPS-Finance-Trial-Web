@@ -8,25 +8,25 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
-*{
-    font-family: 'Merriweather';
-}
+        * {
+            font-family: 'Merriweather';
+        }
         :root {
-            --primary-color: #0056b3; /* Rich Blue */
-            --secondary-color: #f7f9fc; /* Light Background */
-            --accent-color: #0875e1; /* Lighter Accent */
-            --text-dark: #222; /* Rich Dark */
-            --text-light: #555; /* Muted Text */
+            --primary-color: #0875e1;
+            --secondary-color: #f7f9fc;
+            --accent-color: #0875e1;
+            --text-dark: #222;
+            --text-light: #555;
             --white: #ffffff;
-            --success-color: #28a745; /* Success Green */
-            --warning-color: #ffc107; /* Warning Yellow */
-            --danger-color: #dc3545; /* Danger Red */
-            --highlight-color: #ffc107; /* Premium Gold */
-            --table-bg: #ffffff; /* White Table Background */
-            --table-border: #e0e0e0; /* Subtle Gray Borders */
-            --card-bg: #ffffff; /* Clean White Cards */
-            --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
-            --transition-speed: 0.3s; /* Smooth Transitions */
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --highlight-color: #ffc107;
+            --table-bg: #ffffff;
+            --table-border: #e0e0e0;
+            --card-bg: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
         }
 
         body {
@@ -38,37 +38,34 @@
         }
 
         .navbar {
-    background: var(--primary-color);
-    padding: 10px 20px;
-    box-shadow: 0 4px 8px var(--shadow-color);
-}
+            background: var(--primary-color);
+            padding: 10px 20px;
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
 
-.navbar-brand {
-    color: var(--white);
-    font-size: 1.8em;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+        .navbar-brand {
+            color: var(--white);
+            font-size: 1.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-.navbar-nav .nav-link {
-    color: var(--white);
-    margin: 0 10px;
-    transition: color var(--transition-speed);
-}
+        .navbar-nav .nav-link {
+            color: var(--white);
+            margin: 0 10px;
+            transition: color var(--transition-speed);
+        }
 
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-    color: var(--highlight-color);
-    font-weight: bold;
-}
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--highlight-color);
+            font-weight: bold;
+        }
 
- 
-
-.sign-out:hover {
-    color: var(--white);
-}
-
+        .sign-out:hover {
+            color: var(--white);
+        }
 
         .container h1 {
             color: var(--primary-color);
@@ -143,7 +140,7 @@
                         <a class="nav-link" href="/Company">Company</a>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center ms-3 " >
+                <div class="d-flex align-items-center ms-3">
                     <a href="./Login.html" class="sign-out btn btn-danger">Sign Out</a>
                 </div>
             </div>
@@ -151,7 +148,12 @@
     </nav>
 
     <div class="container mt-4">
-        <h1>Total Investment EMI  History</h1>
+        <h1>Total Investment EMI History</h1>
+
+        <div class="mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search by Investor Name, Investment ID, or Date">
+        </div>
+
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -169,51 +171,92 @@
     </div>
 
     <script>
-       async function fetchInvestmentEMIHistory() {
-    try {
-        let TotalEMIPaid = 0; 
-        let i = 0; 
+        let originalData = [];
 
-        const response = await fetch(`/TotalInvestmentEMIHistory`);
-        if (!response.ok) throw new Error('Failed to fetch investment EMI history');
+        async function fetchInvestmentEMIHistory() {
+            try {
+                let TotalEMIPaid = 0;
+                let i = 0;
 
-        const InvestmentEMIHistory = await response.json();
-        console.log(InvestmentEMIHistory);
+                const response = await fetch(`/TotalInvestmentEMIHistory`);
+                if (!response.ok) throw new Error('Failed to fetch investment EMI history');
 
-        const tbody = document.getElementById('tbody');
-        tbody.innerHTML = ''; 
+                originalData = await response.json();
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = '';
 
-        InvestmentEMIHistory.forEach((item) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${++i}</td> 
-                <td>${item.InvestmentID || 'Unknown'}</td>
-                <td>${item.InvestorName || 'N/A'}</td>
-                <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
-                <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
-                
-            `;
-            TotalEMIPaid += item.PaidEMI || 0; 
-            tbody.appendChild(tr);
+                originalData.forEach((item) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${++i}</td>
+                        <td>${item.InvestmentId || 'Unknown'}</td>
+                        <td>${item.InvestorName || 'N/A'}</td>
+                        <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                        <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
+                    `;
+                    TotalEMIPaid += item.PaidEMI || 0;
+                    tbody.appendChild(tr);
+                });
+
+                const totalRow = document.createElement('tr');
+                totalRow.innerHTML = `
+                    <td colspan="4" class="text-right font-weight-bold">Total EMI Paid:</td>
+                    <td>${TotalEMIPaid.toLocaleString()}</td>
+                `;
+                tbody.appendChild(totalRow);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load data.</td></tr>';
+            }
+        }
+
+        function filterData(query) {
+            let TotalEMIPaid = 0;
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+
+            let filteredData = originalData.filter(item => {
+                return (
+                    (item.InvestorName && item.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
+                    (item.InvestmentId && item.InvestmentId.toLowerCase().includes(query.toLowerCase())) ||
+                    (item.EMIDate && item.EMIDate.toLowerCase().includes(query.toLowerCase()))
+                );
+            });
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">No matching results found.</td></tr>';
+                return;
+            }
+
+            let i = 0;
+            filteredData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${++i}</td>
+                    <td>${item.InvestmentId || 'Unknown'}</td>
+                    <td>${item.InvestorName || 'N/A'}</td>
+                    <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                    <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
+                `;  
+                TotalEMIPaid += item.PaidEMI || 0;
+                tbody.appendChild(tr);
+            });
+            const totalRow = document.createElement('tr');
+                totalRow.innerHTML = `
+                    <td colspan="4" class="text-right font-weight-bold">Total EMI Paid:</td>
+                    <td>${TotalEMIPaid.toLocaleString()}</td>
+                `;
+                tbody.appendChild(totalRow);
+        }
+
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            filterData(e.target.value);
         });
 
-        const totalRow = document.createElement('tr');
-        totalRow.innerHTML = `
-            <td colspan="4" class="text-right font-weight-bold">Total EMI Paid:</td>
-            <td>${TotalEMIPaid.toLocaleString()}</td>
-            <td></td>
-        `;
-        tbody.appendChild(totalRow);
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-
-        const tbody = document.getElementById('tbody');
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load data.</td></tr>';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fetchInvestmentEMIHistory);
+        document.addEventListener('DOMContentLoaded', fetchInvestmentEMIHistory);
     </script>
 </body>
 </html>

@@ -12,7 +12,7 @@
     font-family: 'Merriweather';
 }
         :root {
-    --primary-color: #0056b3; /* Rich Blue */
+    --primary-color: #0875e1; /* Rich Blue */
     --secondary-color: #f7f9fc; /* Light Background */
     --accent-color: #0875e1; /* Lighter Accent */
     --text-dark: #222; /* Rich Dark */
@@ -117,7 +117,7 @@ body {
 .investor-info {
     flex: 1;
     min-width: 250px;
-    text-align: center;
+    text-align: start;
     background: var(--card-bg);
     padding: 20px;
     border-radius: 8px;
@@ -211,10 +211,7 @@ body {
     </div>
 
     <div class="investor-container" style="display: none;">
-        <!-- Investment Details Section -->
-        
-
-        <!-- Investor Info Section -->
+      
         <div class="investor-info">
             <img src="https://via.placeholder.com/150" alt="Investor Photo">
             <h2>Name</h2>
@@ -237,6 +234,7 @@ body {
                 <tr>
                     <th>InvestmentID</th>
                     <th>Amount</th>
+                    <th>Outstanding Balance</th>
                     <th>Interest</th>
                     <th>Date</th>
                     <th>Interest</th>
@@ -251,10 +249,10 @@ body {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
         async function fetchData() {
             const id = window.location.pathname.split('/').pop();
-            let InvestorName=''
+            let InvestorName = '';
+    
             // Function to fetch and update investor details
             async function fetchInvestorDetails(id) {
                 try {
@@ -264,90 +262,86 @@ body {
     
                     // Update Investor Info
                     const investorInfo = document.querySelector('.investor-info');
-                    investorInfo.querySelector('img').src = data.Image || 'https://via.placeholder.com/150';
+                    investorInfo.querySelector('img').src = `../Images/DummyProfile.png`;
                     investorInfo.querySelector('h2').textContent = data.InvestorName || 'N/A';
                     investorInfo.querySelector('p:nth-of-type(1)').innerHTML = `<strong>InvestorID:</strong> ${data.InvestorID || 'N/A'}`;
                     investorInfo.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Since:</strong> ${data.StartDate ? new Date(data.StartDate).toLocaleDateString() : 'N/A'}`;
                     investorInfo.querySelector('p:nth-of-type(3)').innerHTML = `<strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}`;
-                    document.getElementById("UpdateInvestor").href=`/UpdateInvestorPage/${id}`
-                    // Display Total Investment Amount in the investments section (left side)
+                    document.getElementById("UpdateInvestor").href = `/UpdateInvestorPage/${id}`;
+                    // document.getElementById("DeleteInvestor").href = `/DeleteInvestor/${id}`;
+    
+                    InvestorName = data.InvestorName || 'Investor';
+    
+                    // Handle delete confirmation
+                    document.getElementById("DeleteInvestor").addEventListener("click", () => {
+                        if (confirm(`Are you sure you want to delete ${InvestorName}?`)) {
+                            window.location.href = `/DeleteInvestor/${id}`;
+                            alert("Deletion Done.");
+                        } else {
+                            alert("Deletion canceled.");
+                        }
+                    });
+    
                     const totalAmountDiv = document.querySelector('.investments-section .total-amount');
                     totalAmountDiv.innerHTML = `Total Investment Amount: ₹${data.AmountInvested?.toLocaleString() || '0'}`;
-                    document.getElementById("DeleteInvestor").href=`/DeleteInvestor/${id}`
-                    InvestorName=data.InvestorName;
-                    const deleteButton = document.getElementById("DeleteInvestor");
-    deleteButton.addEventListener("click", () => {
-        if (confirm("Are you sure you want to delete this Investor?")) {
-            window.location.href = `/DeleteInvestor/${id}`;
-            alert("Deletion Done.");
-        } else {
-            alert("Deletion canceled.");
-        }
-    });
-                    
+    
                     document.getElementById('loader').style.display = 'none';
                     document.querySelector('.investor-container').style.display = 'flex';
-                    
-                    
                 } catch (error) {
                     console.error('Investor API Error:', error);
-                    document.querySelector('.investor-info').innerHTML = `<p class="text-danger text-center">Failed to load investor details.</p>`;
+                    document.querySelector('.investor-info').innerHTML = `<p class="text-danger text-center">Failed to load investor details. Please try again later.</p>`;
                 }
             }
     
             // Function to fetch and update investment details
-    async function fetchInvestmentDetails(id) {
-    let activeInvestment = 0; // Initialize the total active investment
-
-    try {
-        const response = await fetch(`/InvestmentDetails/${id}`);
-        if (!response.ok) throw new Error('Failed to fetch investment details');
-
-        const data = await response.json();
-        console.log(data);
-
-        // Update Investment Table
-        const tbody = document.querySelector('.investments-section table tbody');
-        tbody.innerHTML = ''; // Clear existing rows
-
-        let rows = ''; // Temporary string to store table rows
-        data.forEach(investment => {
-            rows += `
-                <tr>
-                    <td>${investment.InvestmentID || 'N/A'}</td>
-                    <td>₹${investment.Amount?.toLocaleString('en-IN') || '0'}</td>
-                    <td>₹${investment.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
-                    <td>${investment.InvestmentDate ? new Date(investment.InvestmentDate).toLocaleDateString('en-IN') : 'N/A'}</td>
-                    <td>${investment.InterestRate || 'N/A'}%</td>
-                    <td>
-                        <a href="/UpdateInvestementPage/${investment.InvestmentID}" class="btn btn-primary">Update</a>
-                        <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.Amount}','${investment.InvestmentDate}')" class="btn btn-danger">Close</button>
-                        <a onclick="confirmPay('${investment.InvestmentID}', '${investment.PayableInterest}')" class="btn btn-primary">Pay EMI</a>
-                        <a href="/InvestmentEMIHistoryPage/${investment.InvestmentID}" class="btn btn-primary">EMI History</a>
-                    </td>
-                </tr>
-            `;
-            activeInvestment += investment.Amount || 0; // Add investment amount
-        });
-
-        tbody.innerHTML = rows; // Update the table body once
-
-        // Update Active Investment Amount
-        const activeInvestmentElement = document.getElementById("ActiveInvestment");
-        if (activeInvestmentElement) {
-            activeInvestmentElement.innerHTML = `Active Investment Amount: ₹${activeInvestment.toLocaleString('en-IN')}`;
-        }
-    } catch (error) {
-        console.error('Investments API Error:', error);
-        const investmentsSection = document.querySelector('.investments-section');
-        if (investmentsSection) {
-            investmentsSection.innerHTML = `<p class="text-danger text-center">No Investments Yet.</p>`;
-        }
-    }
-
-}
-
-try {
+            async function fetchInvestmentDetails(id) {
+                let activeInvestment = 0;
+    
+                try {
+                    const response = await fetch(`/InvestmentsDetails/${id}`);
+                    if (!response.ok) throw new Error('Failed to fetch investment details');
+                    const data = await response.json();
+    
+                    const tbody = document.querySelector('.investments-section table tbody');
+                    tbody.innerHTML = '';
+    
+                    let rows = '';
+                    data.forEach(investment => {
+                        rows += `
+                            <tr>
+                                <td>${investment.InvestmentID || 'N/A'}</td>
+                                <td>₹${investment.Amount?.toLocaleString('en-IN') || '0'}</td>
+                                <td>₹${investment.ActiveAmount?.toLocaleString('en-IN') || '0'}</td>
+                                <td>₹${investment.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
+                                <td>${investment.InvestmentDate ? new Date(investment.InvestmentDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                                <td>${investment.InterestRate || 'N/A'}%</td>
+                                <td>
+                                    <a href="/UpdateInvestmentPage/${investment.InvestmentID}" class="btn btn-primary" aria-label="Update Investment">Update</a>
+                                    <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.Amount}','${investment.InvestmentDate}')" class="btn btn-danger" aria-label="Close Investment">Close</button>
+                                    <a onclick="confirmPay('${investment.InvestmentID}', '${InvestorName}','${investment.PayableInterest}')" class="btn btn-primary" aria-label="Pay EMI">Pay EMI</a>
+                                    <a href="/InvestmentEMIHistoryPage/${investment.InvestmentID}" class="btn btn-primary" aria-label="View EMI History">EMI History</a>
+                                </td>
+                            </tr>
+                        `;
+                        activeInvestment += investment.ActiveAmount || 0;
+                    });
+    
+                    tbody.innerHTML = rows;
+    
+                    const activeInvestmentElement = document.getElementById("ActiveInvestment");
+                    if (activeInvestmentElement) {
+                        activeInvestmentElement.innerHTML = `Active Investment Amount: ₹${activeInvestment.toLocaleString('en-IN')}`;
+                    }
+                } catch (error) {
+                    console.error('Investments API Error:', error);
+                    const investmentsSection = document.querySelector('.investments-section');
+                    if (investmentsSection) {
+                        investmentsSection.innerHTML = `<p class="text-danger text-center">No Investments Yet.</p>`;
+                    }
+                }
+            }
+    
+            try {
                 await fetchInvestorDetails(id);
                 await fetchInvestmentDetails(id);
             } catch (error) {
@@ -356,31 +350,34 @@ try {
         }
     
         document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+    <script>
 
-
-        
-        function confirmDelete(InvestmentID,InvestorName,Amount,StartDate) {
+function confirmDelete(InvestmentID,InvestorName,Amount,InvestmentDate) {
             // Show confirmation alert
-            if (confirm("Are you sure you want to delete this Investement?")) {
+            if (confirm("Are you sure you want to Close this Order?")) {
                 // Action if user confirms
-                window.location.href = `/DeleteInvestement/${InvestmentID}?InvestorName=${InvestorName}&Amount=${Amount}&StartDate=${StartDate}`;
+              
+                InvestmentDate=InvestmentDate.split('T')[0]
+                window.location.href = `/DeleteInvestment/${InvestmentID}?InvestorName=${InvestorName}&Amount=${Amount}&InvestmentDate=${InvestmentDate}`;
                 alert("Deletion Done.");
             } else {
                 // Action if user cancels
                 alert("Deletion canceled.");
             }
         }
-        function confirmPay(InvestmentID,PayableInterest) {
+
+        
+function confirmPay(InvestmentID,InvestorName,PayableInterest) {
             // Show confirmation alert
-            if (confirm("Are you sure you  paid this Invester")) {
-                window.location.href = `/InvestorEMIPay/${InvestmentID}?payableInterest=${PayableInterest}`;
-                alert(" Done.");
+            if (confirm("Are you sure you want to Pay EMI to this Investment?")) {
+                window.location.href = `/InvestorEMIPay/${InvestmentID}?InvestorName=${InvestorName}&PayableInterest=${PayableInterest}`;
+                alert("Payment succesful.");
             } else {
                 // Action if user cancels
-                alert(" canceled.");
+                alert("Payment canceled.");
             }
         }
-
     </script>
 </body>
 </html>

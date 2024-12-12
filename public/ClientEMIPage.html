@@ -13,7 +13,7 @@
 }
 
 :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -31,7 +31,7 @@
         }
 
         :root {
-    --primary-color: #0056b3;  /* Deep blue */
+    --primary-color: #0875e1;  /* Deep blue */
     --secondary-color: #f7f9fc;  /* Light background */
     --accent-color: #0875e1;  /* Accent blue */
     --highlight-color: #ffc107;  /* Gold highlight */
@@ -103,7 +103,7 @@ label {
     color: #555;  /* Darker label text */
 }
 
-input[type="text"], input[type="date"], input[type="file"] {
+input[type="text"], input[type="date"], input[type="file"],input[type="number"] {
     width: 100%;
     padding: 12px;
     font-size: 1em;
@@ -112,7 +112,7 @@ input[type="text"], input[type="date"], input[type="file"] {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
+input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus,input[type="number"]:focus {
     border-color: var(--accent-color);  /* Blue border on focus */
     box-shadow: 0 0 5px var(--accent-color);  /* Blue glow */
 }
@@ -150,6 +150,17 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
 .container-fluid{
     background-color: var(--primary-color);
 }
+
+input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -198,7 +209,10 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
                 <label for="OrderID">Order ID</label>
                 <input type="text" id="OrderID" name="OrderID" required readonly>
             </div>
-        
+            <div>
+                <label for="ClientName">Client Name</label>
+                <input type="text" id="ClientName" name="ClientName" readonly>
+            </div>
             <div>
                 <label for="ActualEMI">Actual EMI</label>
                 <input type="number" id="ActualEMI" name="ActualEMI" readonly>
@@ -215,12 +229,12 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
         // Fetch Order details using OrderID and PayableInterest from URL
-        async function fetchOrderDetails(OrderID, PayableInterest) {
+        async function fetchOrderDetails(OrderID, PayableInterest,ClientName) {
             try {
                 // Fill form with previous data
                 document.getElementById('OrderID').value = OrderID;
                 document.getElementById('ActualEMI').value = PayableInterest ;
-    
+                document.getElementById('ClientName').value = ClientName ;
             }catch (error) {
                 console.error('Error fetching Order details:', error);
             }
@@ -230,18 +244,20 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
         function getURLParams() {
             const params = new URLSearchParams(window.location.search);
             const PayableInterest = params.get('PayableInterest');
+            const ClientName = params.get('ClientName');
+            
             const OrderID = window.location.pathname.split('/').pop();
-            return { OrderID, PayableInterest };
+            return { OrderID, PayableInterest ,ClientName};
         }
     
         // Call fetchOrderDetails function with parameters on page load
         window.onload = function () {
-            const { OrderID, PayableInterest } = getURLParams();
-            console.log(OrderID,PayableInterest)
-            if (OrderID && PayableInterest) {
-                fetchOrderDetails(OrderID, PayableInterest);
+            const { OrderID, PayableInterest,ClientName } = getURLParams();
+        
+            if (OrderID && PayableInterest&& ClientName) {
+                fetchOrderDetails(OrderID, PayableInterest,ClientName);
             } else {
-                console.error('Missing required URL parameters: OrderID or PayableInterest');
+                console.error('Missing required URL parameters: OrderID or PayableInterest or Client Name');
             }
         };
     </script>

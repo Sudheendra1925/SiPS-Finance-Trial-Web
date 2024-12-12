@@ -12,7 +12,7 @@
     font-family: 'Merriweather';
 }
         :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -152,6 +152,10 @@
 
     <div class="container mt-4">
         <h1>Order EMI  History</h1>
+        
+        <div class="mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search by Investor Name, Investment ID, or Date">
+        </div>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -169,60 +173,115 @@
             </tbody>
         </table>
     </div>
-
-    <script>
-     async function fetchOrderEMIHistory() {
-    try {
-        let TotalEMIPaid = 0; // Initialize total EMI paid
-        let ActualEMIToBePaid = 0; // Initialize total actual EMI
-        let i = 0; // Initialize row counter
-
-        const response = await fetch(`/TotalOrderEMIHistory`);
-        if (!response.ok) throw new Error('Failed to fetch order history');
-
-        const OrderEMIHistory = await response.json(); // Expecting an array of EMI history objects
-        console.log(OrderEMIHistory);
-
-        const tbody = document.getElementById('tbody');
-        tbody.innerHTML = ''; // Clear existing rows
-
-        // Loop through each record and add it to the table
-        OrderEMIHistory.forEach((item) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${++i}</td> <!-- Increment row number -->
-                <td>${item.OrderId || 'Unknown'}</td>
-                <td>${item.ClientName || 'N/A'}</td>
-                <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
-                <td>${item.ActualEMI ? item.ActualEMI.toLocaleString() : 'Unknown'}</td>
-                <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
-               <!-- Client Name -->
-            `;
-            TotalEMIPaid += item.PaidEMI || 0; // Add PaidEMI to TotalEMIPaid
-            ActualEMIToBePaid += item.ActualEMI || 0; // Add ActualEMI to ActualEMIToBePaid
-            tbody.appendChild(tr);
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let originalData = []; // Declare originalData to store the fetched data
+    
+        // Fetching order EMI history data
+        async function fetchOrderEMIHistory() {
+            try {
+                let TotalEMIPaid = 0; // Initialize total EMI paid
+                let ActualEMIToBePaid = 0; // Initialize total actual EMI
+                let i = 0; // Initialize row counter
+    
+                const response = await fetch('/TotalOrderEMIHistory');
+                if (!response.ok) throw new Error('Failed to fetch order history');
+    
+                originalData = await response.json(); // Store the fetched data for filtering
+    
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = ''; // Clear existing rows
+    
+                // Loop through each record and add it to the table
+                originalData.forEach((item) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${++i}</td> <!-- Increment row number -->
+                        <td>${item.OrderId || 'Unknown'}</td>
+                        <td>${item.ClientName || 'N/A'}</td>
+                        <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                        <td>${item.ActualEMI ? item.ActualEMI.toLocaleString() : 'Unknown'}</td>
+                        <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
+                    `;
+                    TotalEMIPaid += item.PaidEMI || 0; // Add PaidEMI to TotalEMIPaid
+                    ActualEMIToBePaid += item.ActualEMI || 0; // Add ActualEMI to ActualEMIToBePaid
+                    tbody.appendChild(tr);
+                });
+    
+                // Add a row for the totals
+                addTotalRow(TotalEMIPaid, ActualEMIToBePaid);
+    
+            } catch (error) {
+                console.error('Error fetching data:', error);
+    
+                // Show error message in the table
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Failed to load data.</td></tr>';
+            }
+        }
+    
+        // Adding the total row for EMI
+        function addTotalRow(TotalEMIPaid, ActualEMIToBePaid) {
+            const tbody = document.getElementById('tbody');
+            const totalRow = document.createElement('tr');
+            totalRow.innerHTML = `
+                <td colspan="4" class="text-right font-weight-bold">Total EMI Paid:</td>
+                <td>${ActualEMIToBePaid.toLocaleString()}</td>
+                <td>${TotalEMIPaid.toLocaleString()}</td>
+            ;`
+            tbody.appendChild(totalRow);
+        }
+    
+        // Filter data based on search query
+        function filterData(query) {
+            let TotalEMIPaid = 0;
+            let ActualEMIToBePaid = 0; 
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+    
+            // Filter the data based on the query
+            let filteredData = originalData.filter(item => {
+                return (
+                    (item.ClientName && item.ClientName.toLowerCase().includes(query.toLowerCase())) ||
+                    (item.OrderId && item.OrderId.toLowerCase().includes(query.toLowerCase())) ||
+                    (item.EMIDate && item.EMIDate.toLowerCase().includes(query.toLowerCase()))
+                );
+            });
+    
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">No matching results found.</td></tr>';
+                return;
+            }
+    
+            // Loop through filtered data and display it
+            let i = 0;
+            filteredData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${++i}</td>
+                    <td>${item.OrderId || 'Unknown'}</td>
+                    <td>${item.ClientName || 'N/A'}</td>
+                    <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                    <td>${item.ActualEMI ? item.ActualEMI.toLocaleString() : 'Unknown'}</td>
+                    <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
+                ;`
+                TotalEMIPaid += item.PaidEMI || 0;
+                ActualEMIToBePaid += item.ActualEMI || 0; 
+                tbody.appendChild(tr);
+            });
+    
+            // Add the total row for filtered data
+            addTotalRow(TotalEMIPaid, ActualEMIToBePaid); // ActualEMIToBePaid can be left 0 as we're only summing PaidEMI here
+        }
+    
+        // Event listener for the search bar input
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            filterData(e.target.value);
         });
-
-        // Add a row for the totals
-        const totalRow = document.createElement('tr');
-        totalRow.innerHTML = `
-            <td colspan="4" class="text-right font-weight-bold">Total EMI Paid:</td>
-            <td>${ActualEMIToBePaid.toLocaleString()}</td>
-            <td>${TotalEMIPaid.toLocaleString()}</td>
-        `;
-        tbody.appendChild(totalRow);
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
-
-        // Show error message in the table
-        const tbody = document.getElementById('tbody');
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">Failed to load data.</td></tr>';
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fetchOrderEMIHistory);
-
+    
+        // Fetch the EMI history when the page loads
+        fetchOrderEMIHistory();
+    }); 
     </script>
     
 </body>

@@ -12,7 +12,7 @@
     font-family: 'Merriweather';
 }
         :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -178,7 +178,7 @@
     if (!response.ok) throw new Error('Failed to fetch investment history');
 
     const investmentEMIHistory = await response.json(); // Expecting an array of EMI history objects
-console.log(investmentEMIHistory)
+
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = ''; // Clear existing rows
 

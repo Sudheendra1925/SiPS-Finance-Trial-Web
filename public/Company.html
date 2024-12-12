@@ -13,7 +13,7 @@
     }
 
     :root {
-      --primary-color: #0056b3;
+      --primary-color: #0875e1;
       --secondary-color: #f8faff;
       --success-color: #27ae60;
       --danger-color: #e74c3c;
@@ -187,7 +187,9 @@
 <div id="ThreeButtons">
   <a class="btn btn-primary TopButton" href="/TotalInvestmentEMIHistoryPage">Total Investor EMI History</a>
     <a class="btn btn-primary TopButton" href="/TotalOrderEMIHistoryPage">Total Client EMI History</a>
-    <a class="btn btn-primary TopButton" href="/DueEMIPage">Pending EMI</a>
+    <a class="btn btn-primary TopButton" href="/DueEMIPage">Due EMI</a>
+    <a class="btn btn-primary TopButton" href="/ClosedInvestmentsPage">Closed Investments</a>
+    <a class="btn btn-primary TopButton" href="/ClosedOrdersPage">Closed Orders</a>
 </div>
 
   <div class="container">
@@ -201,13 +203,17 @@
     <button class="details-toggle" onclick="toggleDetails()">Show Details</button>
 
   <a class="btn btn-primary" href="/AddExtraExpensesPage">Add Extra Expenses</a>
+  
     <div class="details-content" id="detailsContent">
       <p>Active Investments: <span id="totalInvestments" style="color:green">Loading...</span></p>
       <p>Total Client EMI: <span id="totalClientEmi" style="color:green">Loading...</span></p>
       <p>Active Orders: <span id="totalOrders" style="color:red">Loading...</span></p>
       <p>Total Investor EMI: <span id="totalInvestorEmi" style="color:red">Loading...</span></p>
-      <a href="ExtraExpensesHistoryPage"><p> Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
+      <a href="/ExtraExpensesHistoryPage" style="color:black"><p> Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
+      <a href="/ExtraIncomesHistoryPage" style="color:black"><p> Total Extra Incomes: <span id="ExtraIncomes" style="color:red">Loading...</span></p></a>
+   
     </div>
+    <a class="btn btn-primary" href="/AddExtraIncomesPage">Add Extra Incomess</a>
   </div>
 
   <script>
@@ -245,6 +251,7 @@
         document.getElementById("totalOrders").textContent = data.breakdown.totalOrders.toLocaleString();
         document.getElementById("totalInvestorEmi").textContent = data.breakdown.totalInvestorEmi.toLocaleString();
         document.getElementById("ExtraExpenses").textContent = data.breakdown.totalExtraExpenses.toLocaleString();
+        document.getElementById("ExtraIncomes").textContent = data.breakdown.totalExtraIncomes.toLocaleString();
       } catch (error) {
         console.error("Error fetching data:", error);
         document.getElementById("totalSum").textContent = "Error loading data";

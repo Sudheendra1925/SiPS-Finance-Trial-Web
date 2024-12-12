@@ -13,7 +13,7 @@
     font-family: 'Merriweather';
 }
        :root {
-    --primary-color: #0056b3; /* Rich Blue */
+    --primary-color: #0875e1; /* Rich Blue */
     --secondary-color: #f7f9fc; /* Light Background */
     --accent-color: #0875e1; /* Lighter Accent */
     --text-dark: #222; /* Rich Dark */
@@ -268,9 +268,12 @@ align-items: center;
             </div>
         </div>
     </nav>
+    <div class="mb-3">
+        <input type="text" id="searchBar" class="form-control" placeholder="Search by Investor Name, Investment ID, or Date">
+    </div>
     <div id="TwoButtons">
         <a href="/AddClient" class="btn btn-primary">Add New Client</a>
-        <a href="/OrderHistory" class="btn btn-primary">Order History</a>
+        <a href="/OrderHistory" class="btn btn-primary">Active Order History</a>
     </div>
     <div class="container my-5">
         <div class="row" id="profile-cards-container">
@@ -292,7 +295,7 @@ align-items: center;
 if (!response.ok) throw new Error('Failed to fetch order data');
 
 const data = await response.json();
-console.log('Fetched Data:', data);
+
 
 // Validate data format
 if (!Array.isArray(data) || data.length === 0) {
@@ -321,7 +324,6 @@ for (const item of data) {
     chartData.push([clientName, item.TotalOrder]);
   }
 }
-            console.log(chartData)
         
             // Ensure chartData has at least one row of data
             if (chartData.length <= 1) {
@@ -370,14 +372,14 @@ for (const item of data) {
     <script>
         async function fetchData() {
             try {
-                console.log('Fetching data...');
+        
                 const response = await fetch('/ClientsData');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
 
                 const data = await response.json();
-                console.log('Data received:', data);
+            
 
                 const container = document.getElementById('profile-cards-container');
                 container.innerHTML = ''; // Clear existing cards
@@ -396,7 +398,7 @@ for (const item of data) {
 
                     profileCard.innerHTML = `
                         <div class="profile-card border shadow p-3 rounded">
-                            <img src="${imageUrl}" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
+                            <img src="../Images/DummyProfile.png" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
                             <h2 class="text-primary">${client.ClientName}</h2>
                             <p class="job-title text-muted">ID: ${client.ClientID}</p>
                             <div class="profile-details mt-3">
@@ -404,6 +406,7 @@ for (const item of data) {
                                     <span><strong>Total Loan Amount :</strong></span>
                                     <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(client.TotalAmount)}</span>
                                 </div>
+                               
                                 <div class="detail-row">
                                     <span><strong>Phone Number:</strong></span>
                                     <span>${client.PhoneNumber}</span>

@@ -13,7 +13,7 @@
     font-family: 'Merriweather';
 }
        :root {
-    --primary-color: #0056b3;  /* Primary blue */
+    --primary-color: #0875e1;  /* Primary blue */
     --secondary-color: #f7f9fc;  /* Light background color */
     --accent-color: #0875e1;  /* Accent blue */
     --highlight-color: #ffc107;  /* Gold highlight color */
@@ -131,6 +131,17 @@ input:focus, select:focus {
 .container-fluid{
     background-color:var(--primary-color) ;
 }
+
+input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -173,7 +184,9 @@ input:focus, select:focus {
         </div>
     </nav>
     <div id="main">
-        <form action="/NewInvestor" method="post">
+
+       
+        <form action="/NewInvestor" method="post" onsubmit="alert('Investor has been added successfully')">
             <div>
                 <label for="InvestorName">Investor Name *</label>
                 <input type="text" id="InvestorName" name="InvestorName" required>
@@ -182,14 +195,23 @@ input:focus, select:focus {
 
             <div>
                 <label for="PhoneNumber">Phone Number *</label>
-                <input type="number" id="PhoneNumber" name="PhoneNumber" required>
+                <input type="tel" id="PhoneNumber" name="PhoneNumber" minlength="10" maxlength="10" required>
             </div>
             
             <button id="Submit" type="submit">Submit</button>
         </form>
     </div>
     <script>
-    </script>
+
+
+        document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+            const value = e.target.value;
+            if (!/^\d{0,10}$/.test(value)) {
+                e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+            }
+        });
+        
+        </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+ws9y5p4p6wPflb4EL1pLf0PdCgSm" crossorigin="anonymous"></script>
 </body>
 </html>

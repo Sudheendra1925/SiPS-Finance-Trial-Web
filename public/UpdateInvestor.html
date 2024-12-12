@@ -12,7 +12,7 @@
     font-family: 'Merriweather';
 }
       :root {
-            --primary-color: #0056b3; /* Rich Blue */
+            --primary-color: #0875e1; /* Rich Blue */
             --secondary-color: #f7f9fc; /* Light Background */
             --accent-color: #0875e1; /* Lighter Accent */
             --text-dark: #222; /* Rich Dark */
@@ -136,6 +136,16 @@
         .container-fluid{
             background-color: var(--accent-color);
         }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -178,7 +188,7 @@
     </nav>
     <div class="container">
         <h2>Update Investor Details</h2>
-        <form action="/UpdateInvestor" method="POST">
+        <form action="/UpdateInvestor" method="POST" onsubmit="alert('Investor updated sucessfully')">
             <div class="form-group">
                 <label for="InvestorID">Investor ID</label>
                 <input type="text" class="form-control" id="InvestorID" name="InvestorID" readonly>
@@ -194,7 +204,7 @@
             </div>
             <div class="form-group">
                 <label for="PhoneNumber">Phone Number</label>
-                <input type="text" class="form-control" id="PhoneNumber"  name="PhoneNumber" required>
+                <input type="tel" class="form-control" id="PhoneNumber"  name="PhoneNumber" minlength="10" maxlength="10" required>
             </div>
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
@@ -229,6 +239,16 @@
 
      
     </script>
+<script>
 
+
+    document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+        const value = e.target.value;
+        if (!/^\d{0,10}$/.test(value)) {
+            e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+        }
+    });
+    
+    </script>
 </body>
 </html>

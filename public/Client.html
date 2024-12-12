@@ -13,7 +13,7 @@
         :root {
     --primary-color: #003366; /* Dark navy blue */
     --secondary-color: #f4f4f9; /* Light background */
-    --highlight-color: #0056b3; /* Accent blue */
+    --highlight-color: #0875e1; /* Accent blue */
     --shadow-color: rgba(0, 0, 0, 0.15); /* Subtle shadow */
     --text-color: #555; /* Dark gray text */
     --border-color: #ddd; /* Light border */
@@ -110,7 +110,7 @@ body {
 .Client-info {
     flex: 1;
     min-width: 250px;
-    text-align: center;
+    text-align: start;
 }
 
 .Client-info img {
@@ -162,6 +162,9 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+a{
+    margin:3px;
 }
     </style>
 </head>
@@ -222,8 +225,8 @@ body {
             <p><strong>PAN Card:</strong></p>
             <p><strong>Comments:</strong></p>
         </div>
-        <a id="UpdateClient" class="btn btn-primary">EDIT</a>
-        <a id="DeleteClient"  class="btn btn-danger">Delete</a>
+        <a id="UpdateClient" class="btn btn-primary" style="display:inline-block">EDIT</a>
+        <a id="DeleteClient"  class="btn btn-danger" style="display:inline-block">Delete</a>
     </div>
         <!-- Order Details Section -->
         <div class="Orders-section">
@@ -233,6 +236,7 @@ body {
                     <tr>
                         <th>OrderID</th>
                         <th>Amount</th>
+                        <th>Outstanding Amount</th>
                         <th>Payable Interest</th>
                         <th>Start Date</th>
                         <th>Rate of Interest</th>
@@ -266,7 +270,7 @@ body {
     const data = await response.json();
 
     const clientInfo = document.querySelector('.Client-info');
-    clientInfo.querySelector('img').src = data.Image || 'https://via.placeholder.com/150';
+    clientInfo.querySelector('img').src = `../Images/DummyProfile.png`;
     clientInfo.querySelector('h2').textContent = data.ClientName || 'N/A';
     clientInfo.querySelector('p:nth-of-type(1)').innerHTML = `<strong>ClientID:</strong> ${data.ClientID || 'N/A'}`;
     clientInfo.querySelector('p:nth-of-type(2)').innerHTML = `<strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}`;
@@ -318,6 +322,7 @@ ClientName= data.ClientName;
                                   <tr>
             <td>${order.OrderID || 'N/A'}</td>
             <td>₹${order.Amount?.toLocaleString('en-IN') || '0'}</td>
+            <td>₹${order.ActiveAmount?.toLocaleString('en-IN') || '0'}</td>
             <td>₹${order.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
             <td>${order.StartDate ? new Date(order.StartDate).toLocaleDateString() : 'N/A'}</td>
             <td>${order.RateOfInterest || 'N/A'}%</td>
@@ -325,13 +330,13 @@ ClientName= data.ClientName;
             <td>
                 <a href="/UpdateOrderPage/${order.OrderID}" class="btn btn-primary">Update</a>
                 <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.Amount}','${order.StartDate}')" class="btn btn-danger">Close Order</button>
-               <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}" class="btn btn-primary">Recived EMI</a>
-               <a href="/OrderEMIHistoryPage/${order.OrderID}" class="btn btn-primary">Recived EMI History</a>
+               <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}" class="btn btn-primary">Recived EMI</a>
+               <a href="/OrderEMIHistoryPage/${order.OrderID}" class="btn btn-primary"> EMI History</a>
              <a 
     onclick="alert('Done')" 
-    href="/AddDueEMI/${order.OrderID}?ClientName=${ClientName}&OrderAmount=${order.Amount}&EMIDate=${order.StartDate.split('T')[0]}&EMIAmount=${order.PayableInterest}" 
+    href="/AddDueEMI/${order.OrderID}?ClientName=${ClientName}&ActiveAmount=${order.ActiveAmount}&EMIDate=${order.StartDate.split('T')[0]}&EMIAmount=${order.PayableInterest}" 
     class="btn btn-primary">
-    Add In Pending
+     Due
 </a>
 
             </td>
@@ -367,9 +372,9 @@ ClientName= data.ClientName;
 
         function confirmDelete(OrderID,ClientName,Amount,StartDate) {
             // Show confirmation alert
-            if (confirm("Are you sure you want to delete this Order?")) {
+            if (confirm("Are you sure you want to Close this Order?")) {
                 // Action if user confirms
-                console.log(StartDate)
+               
                 StartDate=StartDate.split('T')[0]
                 window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&Amount=${Amount}&StartDate=${StartDate}`;
                 alert("Deletion Done.");
@@ -378,6 +383,8 @@ ClientName= data.ClientName;
                 alert("Deletion canceled.");
             }
         }
+
+
     </script>
 </body>
 </html>

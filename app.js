@@ -1,3 +1,5 @@
+
+//Declarations  
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
@@ -5,18 +7,23 @@ const path = require('path');
 const app = express();
 const crypto = require('crypto');
 const cors = require('cors');
+const bcrypt = require('bcrypt'); 
 
+/////////////////////////////Use////
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let Sno=0;
+
+//////generate ID function ////////////////
 const generateSmallId = (prefix) => {
     const id = crypto.randomBytes(3).toString('hex'); // Generates a 6-character hex string
     return `${prefix}-${id}`;
   };
 
+
+ /////////DB connections///////////////////////////////
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -30,7 +37,7 @@ db.connect((err) => {
     }
     console.log('MySQL Connected...');
 });
-
+////////////// PAGE DECLARATIONS////////////////////////////////////
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Login.html'));
 });
@@ -68,8 +75,8 @@ app.get('/AddClientLead', (req, res) => {
 app.get('/AddInvestorLead', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddInvestorLead.html'));
 });
-app.get('/AddInvestement', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/AddInvestement.html'));
+app.get('/AddInvestment', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/AddInvestment.html'));
 });
 
 app.get('/AddOrder', (req, res) => {
@@ -85,8 +92,8 @@ app.get('/Client/:ID', (req, res) => {
 });
 
 
-app.get('/InvestementHistory', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/InvestementHistory.html'));
+app.get('/InvestmentHistory', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/InvestmentHistory.html'));
 });
 
 app.get('/OrderHistory', (req, res) => {
@@ -100,8 +107,8 @@ app.get('/UpdateClientPage/:ID', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/UpdateClient.html'));
 });
 
-app.get('/UpdateInvestementPage/:ID', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/UpdateInvestement.html'));
+app.get('/UpdateInvestmentPage/:ID', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/UpdateInvestment.html'));
 });
 app.get('/UpdateOrderPage/:ID', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/UpdateOrder.html'));
@@ -115,7 +122,7 @@ app.get('/ClientEMIPage/:OrderID', (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/ClientEMIPage.html'));
 });
-app.get('/InvestmentEMIHistoryPage/:InvestementID', (req, res) => {
+app.get('/InvestmentEMIHistoryPage/:InvestmentID', (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/InvestmentEMIHistoryPage.html'));
 });
@@ -143,12 +150,30 @@ app.get('/ChangeDueEMI/:OrderID', (req, res) => {
 app.get('/AddExtraExpensesPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddExtraExpensesPage.html'));
 });
+app.get('/AddExtraIncomesPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/AddExtraIncomesPage.html'));
+});
 app.get('/ExtraExpensesHistoryPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ExtraExpensesHistoryPage.html'));
 });
+app.get('/ExtraIncomesHistoryPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ExtraIncomesHistoryPage.html'));
+});
+app.get('/ClosedInvestmentsPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ClosedInvestmentsPage.html'));
+});
+app.get('/ClosedOrdersPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ClosedOrdersPage.html'));
+});
+app.get('/ForgetPasswordPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ForgetPasswordPage.html'));
+});
 
+app.get('/LoanRequestPage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/LoanRequestPage.html'));
+});
 
-
+///////////////////////////////  ADDING INVESTOR CLIENTS LEADS 
 
 app.post('/NewInvestor', (req, res) => {
 
@@ -166,9 +191,16 @@ app.post('/NewInvestor', (req, res) => {
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/AddInvestement.html'));
+        res.redirect('/AddInvestment')
     });
-});
+})
+
+
+
+/////////////////////////////// CLIENT CODES 
+
+///////////////////////////////
+
 app.post('/NewClient', (req, res) => {
     const ClientID = generateSmallId('CLI');
     const { ClientName,AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments} = req.body;
@@ -187,9 +219,8 @@ app.post('/NewClient', (req, res) => {
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/AddOrder.html'));
+        res.redirect('/AddOrder')})
     });
-});
 
 app.post("/NewClientLead",(req,res)=>{
 
@@ -208,7 +239,7 @@ app.post("/NewClientLead",(req,res)=>{
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/Queue.html'));
+        res.redirect('/Queue');
     });
 })
 app.post("/NewInvestorLead",(req,res)=>{
@@ -227,7 +258,7 @@ app.post("/NewInvestorLead",(req,res)=>{
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/Queue.html'));
+        res.redirect('/Queue');
     });
 })
 
@@ -251,11 +282,11 @@ app.post("/NewInvestment", (req, res) => {
         console.log('Investor AmountInvested updated');
 
         const insertInvestmentSql = `
-            INSERT INTO Investments (InvestmentID, InvestorID, Amount,PayableInterest, InvestmentDate, InterestRate)
-            VALUES (?, ?, ?,?, ?, ?)
+            INSERT INTO Investments (InvestmentID, InvestorID, Amount,ActiveAmount,PayableInterest, InvestmentDate, InterestRate)
+            VALUES (?, ?, ?,?,?, ?, ?)
         `;
 
-        db.query(insertInvestmentSql, [InvestmentID, Investor, Amount,PayableInterest, InvestmentDate, InterestRate], (insertErr, insertResult) => {
+        db.query(insertInvestmentSql, [InvestmentID, Investor, Amount,Amount,PayableInterest, InvestmentDate, InterestRate], (insertErr, insertResult) => {
             if (insertErr) {
                 console.error('Error inserting Investment:', insertErr);
                 res.status(500).send('Error inserting Investment');
@@ -264,7 +295,7 @@ app.post("/NewInvestment", (req, res) => {
 
             console.log('New Investment record inserted');
 
-            res.sendFile(path.join(__dirname, 'public/Home.html'));
+            res.redirect('/Home');
         });
     });
 });
@@ -274,13 +305,11 @@ app.post("/NewOrder", (req, res) => {
     const { Client, Amount, PayableInterest, Years = 0, Months = 0, Days = 0, RateOfInterest, StartDate, Documents } = req.body;
 
     const Duration = parseInt(Years * 365) + parseInt(Months * 30) + parseInt(Days);
-    console.log(Duration)
     // Calculate the EndDate
     const startDateObj = new Date(StartDate).toISOString().split('T')[0]; // Ensure StartDate is a valid date string or format
     const endDateObj = new Date(startDateObj);
     endDateObj.setDate(endDateObj.getDate() + Duration); // Add duration in days
     const EndDate = endDateObj.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
-console.log(EndDate)
     // Update Investor's total investment first
     const updateInvestorSql = `UPDATE Clients SET TotalAmount = TotalAmount + ? WHERE ClientID = ?`;
 
@@ -294,11 +323,11 @@ console.log(EndDate)
         console.log('Client Total Debt updated');
 
         const insertOrderSql = `
-            INSERT INTO Orders (OrderID, ClientID, Amount, PayableInterest, RateOfInterest, StartDate, EndDate, Documents)
-            VALUES (?, ?, ?, ?, ?, ?,?, ?)
+            INSERT INTO Orders (OrderID, ClientID, Amount,ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Documents)
+            VALUES (?, ?, ?,?, ?, ?, ?,?, ?)
         `;
 
-        db.query(insertOrderSql, [OrderID, Client, Amount, PayableInterest, RateOfInterest, StartDate,EndDate, Documents], (insertErr, insertResult) => {
+        db.query(insertOrderSql, [OrderID, Client, Amount,Amount, PayableInterest, RateOfInterest, StartDate,EndDate, Documents], (insertErr, insertResult) => {
             if (insertErr) {
                 console.error('Error inserting Order:', insertErr);
                 res.status(500).send('Error inserting Order');
@@ -306,7 +335,7 @@ console.log(EndDate)
             }
 
             console.log('New Order record inserted');
-            res.sendFile(path.join(__dirname, 'public/Home.html'));
+            res.redirect('/Home');
         });
     });
 });
@@ -395,7 +424,7 @@ app.get("/ClientDetails/:ID", (req, res) => {
 
 
 
-app.get("/InvestmentDetails/:ID", (req, res) => {
+app.get("/InvestmentsDetails/:ID", (req, res) => {
     const InvestorID = req.params.ID;
     db.query('SELECT * FROM Investments WHERE InvestorID = ?', [InvestorID], (err, results) => {
         if (err) {
@@ -404,12 +433,13 @@ app.get("/InvestmentDetails/:ID", (req, res) => {
         }
 
         if (results.length === 0) {
-            return res.status(404).json({ error: "Investor not found" });
+            return res.status(404).json({ error: "Investments not found" });
         }
 
         res.status(200).json(results); 
     });
 });
+
 
 app.get("/OrdersDetails/:ID", (req, res) => {
     const ClientID = req.params.ID;
@@ -431,7 +461,7 @@ app.get("/OrdersDetails/:ID", (req, res) => {
 app.get("/TodayInvestor", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the investment date
     const query = `
-SELECT InvestmentID,InvestorID, Amount,PayableInterest
+SELECT InvestmentID,InvestorID, ActiveAmount,PayableInterest
 FROM Investments 
 WHERE DAY(InvestmentDate) = DAY(CURDATE());
     `;
@@ -449,7 +479,7 @@ WHERE DAY(InvestmentDate) = DAY(CURDATE());
 app.get("/TodayClient", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the start date
     const query = `
-SELECT OrderID,ClientID, Amount, PayableInterest
+SELECT OrderID,ClientID, ActiveAmount, PayableInterest,StartDate
 FROM Orders
 WHERE DAY(StartDate) = DAY(CURDATE());
     `;
@@ -466,9 +496,9 @@ WHERE DAY(StartDate) = DAY(CURDATE());
 });
 
 
-app.get("/TotalInvestements", (req, res) => {
+app.get("/TotalInvestments", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the investment date
-    const query = `SELECT sum(Amount) AS TotalInvestement FROM Investments`;
+    const query = `SELECT sum(Amount) AS TotalInvestment,sum(ActiveAmount) as ActiveAmount FROM Investments`;
    
     db.query(query, (err, results) => {
         if (err) {
@@ -482,7 +512,7 @@ app.get("/TotalInvestements", (req, res) => {
 app.get("/TotalLendings", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the investment date
     const query = `
-SELECT sum(Amount) AS TotalLeanding FROM Orders`;
+SELECT sum(Amount) AS TotalLeanding,sum(ActiveAmount) as ActiveAmount FROM Orders`;
    
     db.query(query, (err, results) => {
         if (err) {
@@ -513,7 +543,7 @@ SELECT  InvestorID,Amount,InvestmentDate,InterestRate FROM Investments`;
 app.get("/OrderHistoryData", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the investment date
     const query = `
-SELECT  ClientID,Amount,StartDate,RateOfInterest,Documents FROM Orders`;
+SELECT  * FROM Orders`;
    
     db.query(query, (err, results) => {
         if (err) {
@@ -535,12 +565,16 @@ SELECT
     orderid,
     clientID,
     amount,
+    ActiveAmount,
     PayableInterest,
-    startdate
+    Startdate,
+    EndDate
 FROM
     Orders
 WHERE 
-    EndDate = CURDATE();
+    MONTH(EndDate) = MONTH(CURDATE()) 
+    AND YEAR(EndDate) = YEAR(CURDATE());
+
 `
    
     db.query(query, (err, results) => {
@@ -571,30 +605,30 @@ app.post('/UpdateInvestor', (req, res) => {
             console.error(err);
             return res.status(500).send('Error updating investor details');
         }
-        res.sendFile(path.join(__dirname, 'public/Investors.html'));
+        res.redirect('/Investors');
     });
 });
 
 
 
 app.post('/UpdateClient', (req, res) => {
-    const { ClientID,ClientName, TotalAmount, PhoneNumber} = req.body;
+    const { ClientID,ClientName, TotalAmount, PhoneNumber,Comments} = req.body;
 
     const query = `
         UPDATE Clients 
-        SET ClientName = ?, TotalAmount = ?, PhoneNumber = ?
+        SET ClientName = ?, TotalAmount = ?, PhoneNumber = ?,Comments=?
         WHERE ClientID = ?`;
 
     db.query(
         query,
-        [ClientName,  TotalAmount, PhoneNumber, ClientID],
+        [ClientName,  TotalAmount, PhoneNumber,Comments, ClientID],
         (err, results) => {
             if(err){
                 console.log(err)
                 res.send("GONE WRONG");
             }
            else{
-            res.sendFile(path.join(__dirname, 'public/Clients.html'));
+            res.redirect('/Clients');
             }
         }
     );
@@ -602,45 +636,48 @@ app.post('/UpdateClient', (req, res) => {
 
 
 
-app.get('/InvestementDetails/:investmentID', (req, res) => {
-    const investmentID = req.params.investmentID;
-    const query = 'SELECT * FROM Investments WHERE InvestmentID = ?';
-    
-    db.execute(query, [investmentID], (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to fetch investment details' });
-        }
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'Investment not found' });
-        }
-        res.json(results[0]);
-    });
-});
 
 // Route to update investment details
-app.post('/UpdateInvestement', (req, res) => {
-   const{InvestementID,Amount,PayableInterest,InterestRate}=req.body;
+app.post('/UpdateInvestment', (req, res) => {
+   const{InvestmentID,ActiveAmount,PayableInterest,InterestRate}=req.body;
 
     const query = `
         UPDATE Investments SET
-         Amount = ?, PayableInterest = ?, InterestRate = ?
+         ActiveAmount = ?, PayableInterest = ?, InterestRate = ?
         WHERE InvestmentID = ?`;
 
         db.query(
             query,
-            [Amount,PayableInterest,InterestRate,InvestementID],
+            [ActiveAmount,PayableInterest,InterestRate,InvestmentID],
             (err, results) => {
                 if(err){
                     console.log(err)
                     res.send("GONE WRONG");
                 }
                else{
-                res.sendFile(path.join(__dirname, 'public/Investors.html'));
+                res.redirect('/Investors');
                 }
             }
         );
     });
-
+    app.get('/InvestmentDetails/:investmentID', (req, res) => {
+        const investmentID = req.params.investmentID;
+        const query = 'SELECT * FROM investments WHERE investmentID = ?';
+        
+        db.query(query, [investmentID], (err, results) => {
+            if (err) {
+                console.error('Error fetching order:', err);
+                return res.status(500).json({ message: 'Error fetching order details' });
+            }
+    
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Order not found' });
+            }
+    
+            // Send the order data as JSON
+            res.json(results[0]);
+        });
+    });
 
 
     app.get('/OrderDetails/:orderID', (req, res) => {
@@ -664,15 +701,15 @@ app.post('/UpdateInvestement', (req, res) => {
     
     
     app.post('/UpdateOrder', (req, res) => {
-        const {OrderID,Amount,PayableInterest,RateOfInterest } = req.body;
+        const {OrderID,ActiveAmount,PayableInterest,RateOfInterest } = req.body;
         
         const query = `
             UPDATE Orders
-            SET Amount = ?,PayableInterest=?, RateOfInterest = ?
+            SET ActiveAmount = ?,PayableInterest=?, RateOfInterest = ?
             WHERE OrderID = ?
         `;
     
-        db.query(query, [Amount,PayableInterest,RateOfInterest, OrderID], (err, results) => {
+        db.query(query, [ActiveAmount,PayableInterest,RateOfInterest, OrderID], (err, results) => {
             if (err) {
                 console.error('Error updating order:', err);
                 return res.status(500).json({ message: 'Error updating order' });
@@ -682,7 +719,7 @@ app.post('/UpdateInvestement', (req, res) => {
                 return res.status(404).json({ message: 'Order not found' });
             }
     
-            res.sendFile(path.join(__dirname, 'public/Clients.html'));
+            res.redirect('/Clients');
         });
     });
     
@@ -690,37 +727,38 @@ app.post('/UpdateInvestement', (req, res) => {
 app.get ('/RejectClientLead/:ClientName',(req,res)=>{
     
 const ClientName = req.params.ClientName;
-
+const {Amount}=req.query;
+console.log(ClientName,Amount)
     const query = `
-   DELETE  FROM ClientLead WHERE ClientName=? ;
+    DELETE FROM ClientLead WHERE ClientName = ? AND Amount = ?;
 `;
 
-db.query(query, [ClientName], (err, results) => {
+db.query(query, [ClientName,Amount], (err, results) => {
     if (err) {
         console.error('Error updating order:', err);
         return res.status(500).json({ message: 'Error updating order' });
     }
 
-    res.sendFile(path.join(__dirname, 'public/Queue.html'));
+    res.redirect('/Queue');
 });
 })
 
 app.get ('/RejectInvestorLead/:InvestorName',(req,res)=>{
     
     const InvestorName = req.params.InvestorName;
-    
+    const {Amount}=req.query;
         const query = `
-       DELETE  FROM InvestorLead WHERE InvestorName=? ;
+       DELETE  FROM InvestorLead WHERE InvestorName=? And Amount=? ;
     `;
     
-    db.query(query, [InvestorName], (err, results) => {
+    db.query(query, [InvestorName,Amount], (err, results) => {
         if (err) {
             console.error('Error updating order:', err);
             return res.status(500).json({ message: 'Error updating order' });
         }
     
     
-        res.sendFile(path.join(__dirname, 'public/Queue.html'));
+        res.redirect('/Queue');
     });
     })
 
@@ -743,7 +781,7 @@ db.query(query, [InvestorID], (err, results) => {
     }
 
 
-    res.sendFile(path.join(__dirname, 'public/Investors.html'));
+    res.redirect('/Investors');
 });
 });
 
@@ -764,16 +802,16 @@ db.query(query, [ClientID], (err, results) => {
         return res.send("WHYYy");
     }
 
-    res.sendFile(path.join(__dirname, 'public/Clients.html'));
+    res.redirect('/Clients');
 });
 });
 
-app.get('/DeleteInvestement/:InvestmentID', (req, res) => {
+app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
     const { InvestmentID } = req.params;
-    var { InvestorName, Amount, StartDate } = req.query;
+    var { InvestorName, Amount, InvestmentDate } = req.query;
 
 
-    StartDate=StartDate.split('T')[0]
+    InvestmentDate=InvestmentDate.split('T')[0]
     // SQL queries
     const deleteQuery = `DELETE FROM Investments WHERE InvestmentID = ?`;
     const insertQuery = `
@@ -791,7 +829,7 @@ app.get('/DeleteInvestement/:InvestmentID', (req, res) => {
         // Insert into ClosedInvestment table
         db.query(
             insertQuery,
-            [InvestmentID, InvestorName, Amount, StartDate],
+            [InvestmentID, InvestorName, Amount, InvestmentDate],
             (insertErr, insertResult) => {
                 if (insertErr) {
                     return db.rollback(() => {
@@ -819,7 +857,7 @@ app.get('/DeleteInvestement/:InvestmentID', (req, res) => {
                         }
 
                         console.log('Investment deleted and moved to ClosedInvestment successfully.');
-                        res.sendFile(path.join(__dirname, 'public/Home.html'));
+                        res.redirect('/Home');
                     });
                 });
             }
@@ -898,7 +936,7 @@ app.get('/DeleteOrder/:OrderID', (req, res) => {
                             console.log(
                                 `Order ${OrderID} moved to ClosedOrders and deleted from Orders successfully.`
                             );
-                            res.sendFile(path.join(__dirname, 'public/Clients.html'));
+                            res.redirect('/Clients');
                         });
                     });
                 }
@@ -909,55 +947,55 @@ app.get('/DeleteOrder/:OrderID', (req, res) => {
 
 app.get("/InvestorEMIPay/:investmentID", (req, res) => {
     const InvestmentID = req.params.investmentID;
-    const payableInterest = parseFloat(req.query.payableInterest);
-
+    const PayableInterest = parseFloat(req.query.PayableInterest);
+const InvestorName=req.query.InvestorName
     // Validate parameters
-    if (!InvestmentID || isNaN(payableInterest)) {
+    if (!InvestmentID || isNaN(PayableInterest)) {
         console.error("Invalid parameters");
         return res.status(400).json({ error: "Invalid InvestmentID or PayableInterest" });
     }
 
     // SQL query to insert data
     const query = `
-        INSERT INTO InvestmentEMIHistory (InvestmentID, EMIDate, PaidEMI)
-        VALUES (?, CURDATE(), ?)
+        INSERT INTO InvestmentEMIHistory (InvestmentID,InvestorName, EMIDate, PaidEMI)
+        VALUES (?,?, CURDATE(), ?)
     `;
 
     // Execute query
-    db.query(query, [InvestmentID, payableInterest], (err, result) => {
+    db.query(query, [InvestmentID,InvestorName, PayableInterest], (err, result) => {
         if (err) {
             console.error("Error inserting data into InvestorEMIHistory:", err);
             return res.status(500).json({ error: "Error processing EMI payment" });
         }
 
         console.log("EMI payment recorded successfully:", result);
-        res.sendFile(path.join(__dirname, 'public/Investors.html'));
+        res.redirect('/Investors');
     });
 });
 
 
 app.post("/ClientEMIPayement", (req, res) => {
 
-    const{OrderID,ActualEMI,PaidEMI}=req.body;
+    const{OrderID,ActualEMI,PaidEMI,ClientName}=req.body;
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
-        INSERT INTO OrderEMIHistory (OrderID,EMIDate,ActualEMI,PaidEMI)
-        VALUES (?,CURDATE(),?,?)
+        INSERT INTO OrderEMIHistory (OrderID,ClientName,EMIDate,ActualEMI,PaidEMI)
+        VALUES (?,?,CURDATE(),?,?)
     `;
 
-    db.query(query, [OrderID, ActualEMI,PaidEMI], (err, result) => {
+    db.query(query, [OrderID,ClientName, ActualEMI,PaidEMI], (err, result) => {
         if (err) {
             console.error("Error inserting data into InvestorEMIHistory:", err);
             res.status(500).send("Error processing EMI payment");
         } else {
             console.log("EMI payment recorded successfully:", result);
-            res.sendFile(path.join(__dirname, 'public/Clients.html'))
+            res.redirect('/Clients')
         }
     });
 });
 
 app.get('/getInvestmentData', (req, res) => {
-    const query = `SELECT InvestorID, CAST(SUM(Amount) AS SIGNED) AS TotalInvestment
+    const query = `SELECT InvestorID, CAST(SUM(ActiveAmount) AS SIGNED) AS TotalInvestment
     FROM investments
     GROUP BY InvestorID;`
 
@@ -971,7 +1009,7 @@ console.log(results)
 });
 
 app.get('/getOrderData', (req, res) => {
-    const query = `SELECT ClientID, CAST(SUM(Amount) AS SIGNED) AS TotalOrder
+    const query = `SELECT ClientID, CAST(SUM(ActiveAmount) AS SIGNED) AS TotalOrder
     FROM Orders
     GROUP BY ClientID;`
 
@@ -1017,10 +1055,7 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
 
     app.get('/TotalInvestmentEMIHistory',(req,res)=>{
         
-            const query = `   SELECT iemh.InvestmentID, iemh.EMIDate, iemh.PaidEMI, inv.InvestorName
-            FROM InvestmentEMIHistory iemh
-            JOIN Investments invt ON iemh.InvestmentID = invt.InvestmentID
-            JOIN Investors inv ON invt.InvestorID = inv.InvestorID; ;`
+            const query = `select * from InvestmentEMIHistory`
         
             db.query(query ,(err, results) => {
                 if (err) {
@@ -1036,10 +1071,7 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
             try {
                 // SQL Query to join Orders and Clients to get ClientName
                 const query = `
-                    SELECT o.OrderId, o.EMIDate, o.ActualEMI, o.PaidEMI, c.ClientName 
-                    FROM OrderEMIHistory o
-                    JOIN Orders ord ON o.OrderId = ord.OrderId
-                    JOIN Clients c ON ord.ClientId = c.ClientId
+                select * from OrderEMIHistory
                 `;
                 
                 const [orderEMIHistory] = await db.promise().query(query);
@@ -1057,27 +1089,31 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
     app.get("/TotalCompanyAccount", async (req, res) => {
         try {
           // SQL Queries
-          const investmentsSumQuery = "SELECT SUM(Amount) AS total FROM Investments";
+          const investmentsSumQuery = "SELECT SUM(ActiveAmount) AS total FROM Investments";
           const clientEmiSumQuery = "SELECT SUM(PaidEMI) AS total FROM OrderEMIHistory";
-          const ordersSumQuery = "SELECT SUM(Amount) AS total FROM Orders";
+          const ordersSumQuery = "SELECT SUM(ActiveAmount) AS total FROM Orders";
           const investorEmiSumQuery = "SELECT SUM(PaidEMI) AS total FROM InvestmentEMIHistory";
-          const ExtraExpenses = "SELECT SUM(Amount) AS total FROM ExtraExpenses";
-
+          const ExtraExpenses = "SELECT SUM(CAST(Amount AS DECIMAL(20, 0))) AS total FROM ExtraExpenses";
+          const ExtraIncomes = "SELECT SUM(CAST(Amount AS DECIMAL(20, 0))) AS total FROM ExtraIncomes";
+          
           // Execute Queries
           const [investmentsSum] = await db.promise().query(investmentsSumQuery);
           const [clientEmiSum] = await db.promise().query(clientEmiSumQuery);
           const [ordersSum] = await db.promise().query(ordersSumQuery);
           const [investorEmiSum] = await db.promise().query(investorEmiSumQuery);
           const [ExtraExpensesSum] = await db.promise().query(ExtraExpenses);
-      
+          const [ExtraIncomesSum] = await db.promise().query(ExtraIncomes);
           // Extract Results
           const totalInvestments = parseInt(investmentsSum[0].total) || 0;
           const totalClientEmi = parseInt(clientEmiSum[0].total) || 0;
           const totalOrders = parseInt(ordersSum[0].total) || 0;
           const totalInvestorEmi = parseInt(investorEmiSum[0].total) || 0;
             const totalExtraExpenses=parseInt(ExtraExpensesSum[0].total) || 0;
+            const totalExtraIncomes=parseInt(ExtraIncomesSum[0].total) || 0;
+            console.log(totalExtraIncomes)
+            console.log(totalExtraExpenses)
           // Perform Calculation
-          const totalSum = (totalInvestments + totalClientEmi) - (totalOrders + totalInvestorEmi+totalExtraExpenses);
+          const totalSum = (totalInvestments + totalClientEmi+totalExtraIncomes) - (totalOrders + totalInvestorEmi+totalExtraExpenses);
       
           // Send Response
           res.json({
@@ -1088,7 +1124,8 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
               totalClientEmi,
               totalOrders,
               totalInvestorEmi,
-              totalExtraExpenses
+              totalExtraExpenses,
+              totalExtraIncomes
             }
           });
         } catch (error) {
@@ -1099,10 +1136,6 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
       
 
 // Start the server
-app.listen(2001,()=>{
-
-    console.log("SUCCESFUL")
-})
 
 
 
@@ -1110,21 +1143,21 @@ app.listen(2001,()=>{
 
 app.get("/AddDueEMI/:ID", (req, res) => {
     const OrderID=req.params.ID
-    const{ClientName,OrderAmount,EMIDate,EMIAmount}=req.query;
-    console.log(ClientName,OrderAmount,EMIDate,EMIAmount)
+    const{ClientName,ActiveAmount,EMIDate,EMIAmount}=req.query;
+   
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
-        INSERT INTO DueEMI (OrderID,IssuedDate,ClientName,OrderAmount,EMIDate,EMIAmount)
-        VALUES (?,CURDate(),?,?,?,?)
+        INSERT INTO DueEMI (OrderID,IssuedDate,ClientName,OrderAmount,EMIDate,EMIAmount,RemainingEMI)
+        VALUES (?,CURDate(),?,?,?,?,?)
     `;
 
-    db.query(query, [OrderID,ClientName,OrderAmount,EMIDate,EMIAmount], (err, result) => {
+    db.query(query, [OrderID,ClientName,ActiveAmount,EMIDate,EMIAmount,EMIAmount], (err, result) => {
         if (err) {
             console.error("Error inserting data into InvestorEMIHistory:", err);
             res.status(500).send("We Have Already Added It in Pending");
         } else {
             console.log("EMI payment recorded successfully:", result);
-            res.sendFile(path.join(__dirname, 'public/Clients.html'))
+            res.redirect('/Clients')
         }
     });
 });
@@ -1145,20 +1178,20 @@ app.get('/DueEMIs', async (req, res) => {
 
 
 app.post('/UpdateDueEMI', async (req, res) => {
-    const { OrderID, DueEMI, NewEMI } = req.body; // Assuming the data is passed in the body
-
-    if (!OrderID || !DueEMI || !NewEMI) {
+    const { OrderID, DueEMI, PaidEMI } = req.body; // Assuming the data is passed in the body
+    let RemainingEMI=DueEMI-PaidEMI;
+    if (!OrderID || !DueEMI || !PaidEMI) {
         return res.status(400).json({ message: 'Missing required parameters: OrderID, EMIAmount, oldEMIAmount' });
     }
 
     try {
         // SQL Query to update the EMIAmount for the given OrderID and old EMIAmount
-        const query = `UPDATE DueEMI SET EMIAmount = ? WHERE OrderID = ? AND EMIAmount = ?`;
+        const query = `UPDATE DueEMI SET RemainingEMI = ? WHERE OrderID = ? AND RemainingEMI = ?`;
 
         // Execute the query with the parameters passed
-        const [result] = await db.promise().query(query, [NewEMI, OrderID, DueEMI]);
+        const [result] = await db.promise().query(query, [RemainingEMI, OrderID, DueEMI]);
         // Send a success response with the result
-        res.sendFile(path.join(__dirname, 'public/DueEMIPage.html'))
+        res.redirect('/DueEMIPage')
     } catch (error) {
         console.error('Error updating EMIAmount:', error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -1168,96 +1201,63 @@ app.post('/UpdateDueEMI', async (req, res) => {
 
 
 app.get('/DeleteDueEMI/:OrderID', async (req, res) => {
-    const { OrderID } = req.params; // Access OrderID from URL parameters
-    const { EMIAmount } = req.query; // Access EMIAmount from query parameters
+   // Insert EMI Payment into OrderEMIHistory
+const { OrderID } = req.params;
+const { ClientName, EMIAmount, RemainingEMI } = req.query;
 
-    if (!EMIAmount) {
-        return res.status(400).json({ message: 'EMIAmount is required to delete the record' });
-    }
+if (!EMIAmount || !RemainingEMI) {
+    return res.status(400).json({ message: 'EMIAmount and RemainingEMI are required' });
+}
 
-    try {
-        // SQL Query to delete the record from DueEMI for the given OrderID and EMIAmount
-        const query = `DELETE FROM DueEMI WHERE OrderID = ? AND EMIAmount = ?`;
+// Ensure EMIAmount and RemainingEMI are valid numbers
+const EMIAmountFloat = parseFloat(EMIAmount);
+const RemainingEMIFloat = parseFloat(RemainingEMI);
 
-        // Execute the query with the parameters passed
-        const [result] = await db.promise().query(query, [OrderID, EMIAmount]);
+if (isNaN(EMIAmountFloat) || isNaN(RemainingEMIFloat)) {
+    return res.status(400).json({ message: 'EMIAmount and RemainingEMI must be valid numbers' });
+}
 
-        // Check if the record was deleted successfully
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'No record found to delete' });
-        }
+const PaidEMI = EMIAmountFloat - RemainingEMIFloat;
 
-        // Send a success response and redirect to the DueEMIPage
-        res.sendFile(path.join(__dirname, 'public/DueEMIPage.html'));
-    } catch (error) {
-        console.error('Error deleting EMIAmount:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
+const Insertquery = `
+    INSERT INTO OrderEMIHistory (OrderID, ClientName, EMIDate, ActualEMI, PaidEMI)
+    VALUES (?, ?, CURDATE(), ?, ?)
+`;
 
-
-
-
-
-
-
-
-
-
-///////////////////////////////////////////////
-app.get('/GrowthGraph', async (req, res) => {
-    const { year } = req.query; // Get year from query parameter
-
-    if (!year || isNaN(year)) {
-        return res.status(400).json({ status: "error", message: "Invalid or missing year" });
-    }
-
-    try {
-        // Fetch data from Investments table (filtered by year)
-        const investmentQuery = `
-            SELECT MONTH(InvestmentDate) AS month, SUM(Amount) AS total
-            FROM Investments
-            WHERE YEAR(InvestmentDate) = ?
-            GROUP BY MONTH(InvestmentDate)
-            ORDER BY MONTH(InvestmentDate)
-        `;
-        const [investmentResults] = await db.promise().query(investmentQuery, [year]);
-
-        // Fetch data from Orders table (filtered by year)
-        const ordersQuery = `
-            SELECT MONTH(StartDate) AS month, SUM(Amount) AS total
-            FROM Orders
-            WHERE YEAR(StartDate) = ?
-            GROUP BY MONTH(StartDate)
-            ORDER BY MONTH(StartDate)
-        `;
-        const [orderResults] = await db.promise().query(ordersQuery, [year]);
-
-        // Format data for response
-        const investments = Array.from({ length: 12 }, (_, i) => ({
-            month: i + 1,
-            total: parseInt(investmentResults.find(row => row.month === i + 1)?.total) || 0
-        }));
-
-        const orders = Array.from({ length: 12 }, (_, i) => ({
-            month: i + 1,
-            total:parseInt( orderResults.find(row => row.month === i + 1)?.total) || 0
-        }));
-
-        res.json({
-            status: "success",
-            year,
-            investments,
-            orders
-        });
-     
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).json({ status: "error", message: "Internal Server Error" });
+db.query(Insertquery, [OrderID, ClientName, EMIAmountFloat, PaidEMI], (err, result) => {
+    if (err) {
+        console.error("Error inserting data into OrderEMIHistory:", err);
+        return res.status(500).send("Error processing EMI payment");
+    } else {
+        console.log("EMI payment recorded successfully:", result);
     }
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Delete EMI Record and Insert into OrderEMIHistory
+if (!EMIAmount) {
+    return res.status(400).json({ message: 'EMIAmount is required to delete the record' });
+}
+
+try {
+    // SQL Query to delete the record from DueEMI for the given OrderID and EMIAmount
+    const deleteQuery = `DELETE FROM DueEMI WHERE OrderID = ? AND EMIAmount = ?`;
+
+    // Execute the query with the parameters passed
+    const [deleteResult] = await db.promise().query(deleteQuery, [OrderID, EMIAmount]);
+
+    // Check if the record was deleted successfully
+    if (deleteResult.affectedRows === 0) {
+        return res.status(404).json({ message: 'No record found to delete' });
+    }
+
+    res.redirect('/DueEMIPage');
+} catch (error) {
+    console.error('Error processing request:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+}
+
+});
+
 
 app.post('/AddExtraExpenses', (req, res) => {
     const {Reason,Amount}=req.body;
@@ -1271,7 +1271,23 @@ app.post('/AddExtraExpenses', (req, res) => {
             return;
         }
         console.log('Record inserted');
-        res.sendFile(path.join(__dirname, 'public/Company.html'));
+        res.redirect('/Company');
+    });
+});
+
+app.post('/AddExtraIncomes', (req, res) => {
+    const {Reason,Amount}=req.body;
+    const sql = `INSERT INTO ExtraIncomes (Reason,Amount,Date)
+                 VALUES (?, ?,curDate())`;
+
+    db.query(sql, [Reason,Amount], (err, result) => {
+        if (err) {
+            console.error('Error inserting record:', err);
+            res.status(500).send('Error inserting record');
+            return;
+        }
+        console.log('Record inserted');
+        res.redirect('/Company');
     });
 });
 
@@ -1288,75 +1304,131 @@ app.get('/ExtraExpensesHistory', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// app.get('/graph',(req,res)=>{
-//     res.sendFile(path.join(__dirname, 't.html'))
-// })
-
-// app.get('/api/graph/:type', (req, res) => {
-//     const graphType = req.params.type;
-
-//     let query = '';
-
-//     // Construct SQL query based on the selected graph type
-//     if (graphType === 'InvestorsVsClients') {
-//         query = 'SELECT ClientName, COUNT(ClientID) AS numInvestors FROM Clients GROUP BY InvestorName';
-//     } else if (graphType === 'InvestementsVsOrders') {
-//         query = 'SELECT InvestmentID, COUNT(OrderID) AS numOrders FROM Orders GROUP BY InvestmentID';
-//     } else if (graphType === 'InvestementsSplit') {
-//         query = 'SELECT InvestmentType, SUM(Amount) AS totalAmount FROM Investments GROUP BY InvestmentType';
-//     } else if (graphType === 'OrdersSplit') {
-//         query = 'SELECT OrderStatus, COUNT(OrderID) AS numOrders FROM Orders GROUP BY OrderStatus';
-//     } else if (graphType === 'GrowthGraph') {
-//         query = 'SELECT YEAR(OrderDate) AS year, COUNT(OrderID) AS totalOrders FROM Orders GROUP BY YEAR(OrderDate)';
-//     }
-
-//     // Execute the query
-//     db.query(query, (err, result) => {
-//         if (err) {
-//             console.error(err);
-//             return res.status(500).send('Error fetching data');
-//         }
-//         res.json(result);
-//     });
-// });
-
-
-// app.get("/InvestorData", (req, res) => {
-//     db.query('SELECT * FROM Investors where InvestorId="INV-96885b"', (err, results) => {
-//         if (err) {
-//             console.error('Error fetching data:', err);
-//             return res.status(500).json({ error: 'Error fetching data' });
-//         }
-//         res.json(results);
-//     });
-// });
+app.get('/ExtraIncomesHistory', async (req, res) => {
+    try {
+        // SQL Query to join Orders and Clients to get ClientName
+        const query = `select * from ExtraIncomes`;
+        
+        const [ExtraIncomesHistory] = await db.promise().query(query);
+        
+        res.json(ExtraIncomesHistory); 
+    } catch (error) {
+        console.error('Error fetching order EMI history:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 
 
 
 
 
-// app.get("/ClientData", (req, res) => {
-//     db.query('SELECT * FROM Clients', (err, results) => {
-//         if (err) {
-//             console.error('Error fetching data:', err);
-//             return res.status(500).json({ error: 'Error fetching data' });
-//         }
-//         // ClientID, ClientName, TotalAmount, AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments
-//         const clients = results.map(row => ({
-//             ClientID: row.ClientID,
-//             ClientName: row.ClientName,
-//             TotalAmount: row.TotalAmount,
-//             AddressAndOccupation: row.AddressAndOccupation,
-//             PhoneNumber: row.PhoneNumber,
-//             Aadhar: row.Aadhar,
-//             AadharCard: row.AadharCard ? `data:image/jpeg;base64,${row.AadharCard.toString('base64')}` : null ,
-//             Pan: row.Pan,
-//             PanCard: row.PanCard ? `data:image/jpeg;base64,${row.PanCard.toString('base64')}` : null ,
-//             Image: row.Image ? `data:image/jpeg;base64,${row.Image.toString('base64')}` : null ,
-//             Comments: row.Comments,
-//         }));
+app.get('/ClosedInvestments', async (req, res) => {
+    try {
+        // SQL Query to join Orders and Clients to get ClientName
+        const query = `select * from ClosedInvestments`;
+        
+        const [ClosedInvestments] = await db.promise().query(query);
+        
+        res.json(ClosedInvestments); // Return data with ClientName
+    } catch (error) {
+        console.error('Error fetching Closed Investments:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 
-//         res.json(clients);
-//     });
-// });
+app.get('/ClosedOrders', async (req, res) => {
+    try {
+        // SQL Query to join Orders and Clients to get ClientName
+        const query = `select * from ClosedOrders`;
+        
+        const [ClosedOrders] = await db.promise().query(query);
+        
+        res.json(ClosedOrders); // Return data with ClientName
+    } catch (error) {
+        console.error('Error fetching Closed order :', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+app.get('/UserData', async (req, res) => {
+    try {
+        // SQL Query to join Orders and Clients to get ClientName
+        const query = `select * from Users`;
+        
+        const [Users] = await db.promise().query(query);
+        
+        res.json(Users); // Return data with ClientName
+    } catch (error) {
+        console.error('Error fetching order EMI history:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+
+
+app.get('/signup',(req,res)=>{
+
+
+    const {UserName,PhoneNumber,Password}=req.query;
+    const sql = `INSERT INTO Users (UserName,Password,PhoneNumber,Access)
+                 VALUES (?, ?,?,1)`;
+
+    db.query(sql, [UserName,Password,PhoneNumber,], (err, result) => {
+        if (err) {
+            console.error('Error inserting record:', err);
+            res.status(500).send('Error inserting record');
+            return;
+        }
+        console.log('Record inserted');
+        res.redirect('/')
+    });
+})
+  
+
+app.get('/login',(req,res)=>{
+
+res.redirect('/home')
+
+})
+
+app.get('/ForgetPassword',(req,res)=>{
+
+    
+    
+    })
+
+
+
+    ///////////////////////////////CLIENT LOAN AN CLIENT SIDE/////////////////////
+app.post("/SubmitLoanRequest",(req,res)=>{
+    const {ClientName,Amount,PhoneNumber,Years,Months,Days,Collateral} = req.body;
+    const Duration=parseInt(Years)*365+parseInt(Months)*30+parseInt(Days);
+
+    const sql = `INSERT INTO ClientLead ( ClientName, Amount,Duration,PhoneNumber,Collateral)
+                 VALUES (?,?,?,?,?)`;
+
+
+    // Execute the query, passing values from the request body
+    db.query(sql, [ ClientName,Amount,Duration,PhoneNumber,Collateral], (err, result) => {
+        if (err) {
+            console.error('Error inserting record:', err);
+            res.status(500).send('Error inserting record');
+            return;
+        }
+        console.log('Record inserted');
+        res.sendFile(path.join(__dirname, 'public/ClientThankyouPage.html'));
+    });
+
+
+})
+  
+
+app.listen(2001,()=>{
+
+    console.log("SUCCESFUL")
+})
+
+
+
+
+

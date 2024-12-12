@@ -11,7 +11,7 @@
     font-family: 'Merriweather';
 }
         :root {
-    --primary-color: #0056b3;  /* Deep blue */
+    --primary-color: #0875e1;  /* Deep blue */
     --secondary-color: #f7f9fc;  /* Light background */
     --accent-color: #0875e1;  /* Accent blue */
     --highlight-color: #ffc107;  /* Gold highlight */
@@ -83,7 +83,7 @@ label {
     color: #555;  /* Darker label text */
 }
 
-input[type="text"], input[type="date"], input[type="file"] {
+input {
     width: 100%;
     padding: 12px;
     font-size: 1em;
@@ -92,7 +92,7 @@ input[type="text"], input[type="date"], input[type="file"] {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
+input:focus {
     border-color: var(--accent-color);  /* Blue border on focus */
     box-shadow: 0 0 5px var(--accent-color);  /* Blue glow */
 }
@@ -130,7 +130,16 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
 .container-fluid{
     background-color: var(--primary-color);
 }
+input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
 
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -173,7 +182,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
     </nav>
     
     <div id="main">
-        <form action="/NewInvestorLead" method="post">
+        <form action="/NewInvestorLead" method="post" onsubmit="alert('Investor has been added to the queue')">
             <div>
                 <label for="InvestorName">Investor Name *</label>
                 <input type="text" id="InvestorName" name="InvestorName" required>
@@ -187,7 +196,7 @@ input[type="text"]:focus, input[type="date"]:focus, input[type="file"]:focus {
 
             <div>
                 <label for="PhoneNumber"> Phone Number*</label>
-                <input type="number" id="PhoneNumber" name="PhoneNumber" required>
+                <input type="tel" id="PhoneNumber" name="PhoneNumber" minlength="10" maxlength="10" required>
             </div>
             <button id="Submit" type="submit">Submit</button>
             </div>
@@ -214,7 +223,17 @@ input.value = Math.round(input.value); // Rounds to the nearest integer
       </script> 
 
 
+<script>
 
+
+    document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+        const value = e.target.value;
+        if (!/^\d{0,10}$/.test(value)) {
+            e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+        }
+    });
+    
+    </script>
 
 </body>
 </html>

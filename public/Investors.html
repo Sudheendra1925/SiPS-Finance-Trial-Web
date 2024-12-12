@@ -14,7 +14,7 @@
     font-family: 'Merriweather';
 }
         :root {
-    --primary-color: #0056b3; /* Rich Blue */
+    --primary-color: #0875e1; /* Rich Blue */
     --secondary-color: #f7f9fc; /* Light Background */
     --accent-color: #0875e1; /* Lighter Accent */
     --text-dark: #222; /* Rich Dark */
@@ -68,13 +68,13 @@ body {
 /* Profile Card Styling */
 .profile-card {
     padding: 20px;
-    background: rgb(184, 182, 182);
+    background:rgb(184, 182, 182) ;
     box-shadow: 0 4px 8px var(--shadow-color);
     border-radius: 10px;
     text-align: center;
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
-
+/*  */
 .profile-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
@@ -178,9 +178,15 @@ body {
             </div>
         </div>
     </nav>
+
+    
+    <input type="text" id="investorSearch" class="form-control mb-3" placeholder="Search Investor Leads" onkeyup="searchInvestorLeads()">
+        
+      
+
     <div id="TwoButtons">
         <a href="/AddInvestor" class="btn btn-primary">Add Investor</a>
-    <a href="/InvestementHistory" class="btn btn-primary">Investement History</a>
+    <a href="/InvestmentHistory" class="btn btn-primary">Active Investment History</a>
     </div>
     <div class="container my-5">
         <div class="row" id="profile-cards-container" >
@@ -189,7 +195,7 @@ body {
     </div>
   
 <div id="ChartBox">
-<h2>Investors Split</h2>
+<h4>Investors Split</h4>
 <div id="piechart_3d" style="width: 400px; height: 300px;"></div>
 </div>
 
@@ -202,7 +208,7 @@ async function fetchInvestmentData() {
     const response = await fetch('/getInvestmentData');
 if (!response.ok) throw new Error('Failed to fetch investment data');
 const data = await response.json();
-console.log('Fetched Data:', data);
+
 
 // Validate data format
 if (!Array.isArray(data) || data.length === 0) {
@@ -232,7 +238,6 @@ for (const item of data) {
   }
 }
 
-console.log('Chart Data:', chartData);
 
     // Ensure chartData has at least one row of data
     if (chartData.length <= 1) {
@@ -278,18 +283,19 @@ function drawChart(chartData) {
 
 document.addEventListener('DOMContentLoaded', fetchInvestmentData);
 </script>
-<script>        async function fetchData() {
+<script>     
+   async function fetchData() {
             try {
                
 
-                console.log('Fetching data...');
+         
                 const response = await fetch('/InvestorsData');
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
 
                 const data = await response.json();
-                console.log('Data received:', data);
+             
 
                 const container = document.getElementById('profile-cards-container');
                 container.innerHTML = ''; // Clear existing cards
@@ -308,7 +314,7 @@ document.addEventListener('DOMContentLoaded', fetchInvestmentData);
 
                     profileCard.innerHTML = `
                         <div class="profile-card border shadow p-3 rounded" onclick="investor(${investor.InvestorID})" >
-                            <img src="${imageUrl}" alt="${investor.InvestorName}" class="profile-image img-fluid rounded-circle mb-3">
+                            <img src="../Images/DummyProfile.png" alt="${investor.InvestorName}" class="profile-image img-fluid rounded-circle mb-3">
                             <h2 class="text-primary">${investor.InvestorName}</h2>
                             <p class="job-title text-muted">ID: ${investor.InvestorID}</p>
                             <div class="profile-details mt-3">
@@ -317,8 +323,8 @@ document.addEventListener('DOMContentLoaded', fetchInvestmentData);
                                     <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(investor.AmountInvested)}</span>
                                 </div>
                                 <div class="detail-row">
-                                    <span><strong>Since:</strong></span>
-                                    <span>${new Date(investor.StartDate).toLocaleDateString()}</span>
+                                    <span><strong>Phone Number:</strong></span>
+                                    <span>${investor.PhoneNumber}</span>
                                 </div>
                             </div>
                         </div>
@@ -344,6 +350,8 @@ document.addEventListener('DOMContentLoaded', fetchInvestmentData);
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+
 </body>
 </html>
 

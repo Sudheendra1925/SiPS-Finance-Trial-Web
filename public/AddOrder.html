@@ -13,7 +13,7 @@
     font-family: 'Merriweather';
 }
        :root {
-    --primary-color: #0056b3;  /* Deep blue */
+    --primary-color: #0875e1;  /* Deep blue */
     --secondary-color: #f7f9fc;  /* Light background */
     --accent-color: #0875e1;  /* Accent blue */
     --highlight-color: #ffc107;  /* Gold highlight */
@@ -132,6 +132,16 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus {
 .container-fluid{
     background-color: var(--primary-color);
 }
+input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
@@ -174,7 +184,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus {
     </nav>
 
     <div id="main">
-        <form action="/NewOrder" method="post">
+        <form action="/NewOrder" method="post" onsubmit="alert('Your order has been added successfully')">
             <div>
                 <label for="Client">Client*</label>
                 <select name="Client" id="Client">
@@ -187,7 +197,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus {
             </div>
 
             <div>
-                <label for="RateOfInterest">Rate Of Interest*</label>
+                <label for="RateOfInterest">Rate Of Interest(Per Annum)*</label>
                 <input type="number" name="RateOfInterest" id="RateOfInterest" min="0" value="0" step="any" placeholder="Intrest per month" required >
           </div>
           <div>
@@ -199,13 +209,13 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus {
         <label for="Duration" style="font-weight: bold;">Duration</label><br>
         <div style="margin-top: 10px;">
             <label for="Years">Years</label>
-            <input type="number" id="Years" name="Years" placeholder="No of Years" min="0" step="1" style="margin-right: 10px; padding: 5px; width: 80px;">
+            <input type="number" id="Years" name="Years" placeholder="No of Years" min="0" step="1" value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
             
             <label for="Months">Months</label>
-            <input type="number" id="Months" name="Months" placeholder="No of Months" min="0" max="11" step="1" style="margin-right: 10px; padding: 5px; width: 80px;">
+            <input type="number" id="Months" name="Months" placeholder="No of Months" min="0" max="11" value="0" step="1" style="margin-right: 10px; padding: 5px; width: 80px;">
     
             <label for="Days">Days</label>
-            <input type="number" id="Days" name="Days" placeholder="No of Days" min="0" max="30" step="1" style="padding: 5px; width: 80px;">
+            <input type="number" id="Days" name="Days" placeholder="No of Days" min="0" max="30" step="1"  value="0" style="padding: 5px; width: 80px;">
         </div>
     </div>
     
@@ -214,7 +224,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus {
         <input type="file" name="Documents" id="Documents"  required >
   </div>
   <div>
-    <label for="PayableInterest">Rate Of Interest*</label>
+    <label for="PayableInterest">Monthly  Interest*</label>
     <input type="number" name="PayableInterest" id="PayableInterest"  required >
 </div>
             <button id="Submit" type="submit">Submit</button>
@@ -315,7 +325,7 @@ RateOfInterest.addEventListener("change", () => {
     // Validate that both values are numbers
     if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
         // Calculate payable interest and assign it to the PayableInterest input
-        PayableInterest.value = (RateOfInterestValue * amountValue) / 100;
+        PayableInterest.value = Math.round((RateOfInterestValue * amountValue) / (12*100));
     } else {
         PayableInterest.value = ""; // Clear the PayableInterest field if inputs are invalid
     }
@@ -329,7 +339,7 @@ Amount.addEventListener("change", () => {
     // Validate that both values are numbers
     if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
         // Calculate payable interest and assign it to the PayableInterest input
-        PayableInterest.value = (RateOfInterestValue * amountValue) / 100;
+        PayableInterest.value =Math.round( (RateOfInterestValue * amountValue) / (12*100));
     } else {
         PayableInterest.value = ""; // Clear the PayableInterest field if inputs are invalid
     }

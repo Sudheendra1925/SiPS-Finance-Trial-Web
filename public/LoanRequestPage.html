@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Request Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0875e1; /* Deeper Blue for Trust */
+            --secondary-color: #f8faff; /* Soft Light Blue Background */
+            --accent-color: #0875e1; /* Darker Blue for Emphasis */
+            --text-dark: #2a2a2a; /* Neutral Dark Gray */
+            --text-light: #5f6f81; /* Muted Gray-Blue Text */
+            --white: #ffffff;
+            --success-color: #27ae60; /* Fresh Green */
+            --warning-color: #f39c12; /* Warm Amber */
+            --danger-color: #e74c3c; /* Vibrant Red */
+            --highlight-color: #f1c40f; /* Warm Gold for Highlights */
+            --card-bg: #f9f9f9; /* Subtle Gray-White for Cards */
+            --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
+            --transition-speed: 0.3s; /* Smooth Transitions */
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+        }
+        .form-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px 40px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        .form-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .btn-primary:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px var(--shadow-color);
+        }
+        .form-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container shadow-lg">
+        <div class="logo">
+            <img src="./Images/Sips Finance Logo.jpg" alt="Company Logo">
+        </div>
+        <h2 class="text-center">Loan Request Form</h2>
+        <form action="/SubmitLoanRequest" method="POST">
+            <div class="mb-3">
+                <label for="ClientName" class="form-label">Full Name</label>
+                <input type="text" id="ClientName" name="ClientName" class="form-control" placeholder="Enter your full name" required>
+            </div>
+            <div class="mb-3">
+                <label for="PhoneNumber" class="form-label">Phone Number</label>
+                <input type="number" id="PhoneNumber" name="PhoneNumber" class="form-control" placeholder="Enter loan amount" required>
+            </div>
+            <div class="mb-3">
+                <label for="Amount" class="form-label">Loan Amount (₹)</label>
+                <input type="number" id="Amount" name="Amount" class="form-control" placeholder="Enter loan amount (max amount 50,00,000)" required>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label for="Duration" class="form-label">Duration</label><br>
+                <div style="margin-top: 10px;">
+                    <label for="Years">Years</label>
+                    <input type="number" id="Years" name="Years" placeholder="No of Years" min="0" step="1"  value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
+                    
+                    <label for="Months">Months</label>
+                    <input type="number" id="Months" name="Months" placeholder="No of Months" min="0" max="11" step="1"  value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
+            
+                    <label for="Days">Days</label>
+                    <input type="number" id="Days" name="Days" placeholder="No of Days" min="0" max="30" step="1" value="0" style="padding: 5px; width: 80px;">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="Collateral" class="form-label">Collateral</label>
+                <textarea id="Collateral" name="Collateral" class="form-control" rows="2" placeholder="List down surety" required></textarea>
+            </div>
+        
+            <button type="submit" class="btn btn-primary w-100">Submit Request</button>
+        </form>
+    </div>
+    <script>
+
+document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (!/^\d{0,10}$/.test(value)) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
+
+document.getElementById('Amount').addEventListener('input', function (e) {
+    let value = e.target.value;
+    if (isNaN(value) || value > 5000000) {
+        e.target.value = value.slice(0, -1); // Remove the last input if it exceeds the limit
+    }
+});
+
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
