@@ -1,217 +1,433 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Investor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
-      :root {
-            --primary-color: #0056b3;
-            --secondary-color: #f7f9fc;
-            --accent-color: #0875e1;
-            --highlight-color: #ffc107;
-            --danger-color: #dc3545;
-            --white: #ffffff;
-            --shadow: rgba(0, 0, 0, 0.1);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+    font-family: 'Merriweather';
+}
+        :root {
+    --primary-color: #0875e1; /* Rich Blue */
+    --secondary-color: #f7f9fc; /* Light Background */
+    --accent-color: #0875e1; /* Lighter Accent */
+    --text-dark: #222; /* Rich Dark */
+    --text-light: #555; /* Muted Text */
+    --white: #ffffff;
+    --success-color: #28a745; /* Success Green */
+    --warning-color: #ffc107; /* Warning Yellow */
+    --danger-color: #dc3545; /* Danger Red */
+    --highlight-color: #ffc107; /* Premium Gold */
+    --table-bg: var(--white); /* White Table Background */
+    --table-border: #e0e0e0; /* Subtle Gray Borders */
+    --card-bg: var(--white); /* Clean White Cards */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
+    --transition-speed: 0.3s; /* Smooth Transitions */
+}
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--secondary-color);
-            color: #333;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    padding: 0;
+    margin: 0;
+    color: var(--text-dark);
+}
 
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
-            box-shadow: 0 4px 8px var(--shadow);
-        }
 
-        .navbar-brand {
-            color: var(--white);
-            font-size: 1.8em;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+.navbar {
+    background: var(--primary-color);
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
 
-        .navbar-nav .nav-link {
-            color: var(--white);
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
-        .navbar-nav .nav-link:hover, 
-        .navbar-nav .nav-link.active {
-            color: var(--highlight-color);
-        }
+.navbar-nav .nav-link {
+    color: var(--white);
+    margin: 0 10px;
+    transition: color var(--transition-speed);
+}
 
-        .sign-out {
-            color: var(--white);
-            font-weight: bold;
-            padding: 5px 15px;
-            background: var(--danger-color);
-            border-radius: 5px;
-            transition: background 0.3s, transform 0.3s;
-        }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
+/* Profile Card Styling */
+.profile-card {
+    padding: 20px;
+    background:rgb(184, 182, 182) ;
+    box-shadow: 0 4px 8px var(--shadow-color);
+    border-radius: 10px;
+    text-align: center;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+/*  */
+.profile-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
 
-        .sign-out:hover {
-            transform: scale(1.05);
-        }
+.profile-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid var(--primary-color);
+    margin-bottom: 15px;
+}
 
-        /* Content */
-        .content {
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: auto;
-        }
+.profile-card h2 {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
 
-        h3 {
-            color: var( --accent-color);
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
+.profile-card p.job-title {
+    font-size: 1em;
+    color: var(--text-light);
+    margin: 5px 0;
+}
 
-        /* Buttons */
-        .btn-warning, .btn-danger {
-            font-weight: 600;
-            transition: transform 0.3s;
-        }
+/* Profile Details Styling */
+.profile-details {
+    text-align: left;
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: var(--text-dark);
+}
 
-        .btn-warning:hover, .btn-danger:hover {
-            transform: scale(1.1);
-        }
+.profile-details .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--table-border);
+}
 
-        /* Cards */
-        #TotalInvestements, #TotalLendings {
-            display: inline-block;
-            text-align: center;
-            background: var(--highlight-color);
-            color: var(--white);
-            font-size: 1.5rem;
-            font-weight: 700;
-            padding: 20px 30px;
-            border-radius: 10px;
-            margin: 20px;
-            box-shadow: 0 6px 12px var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+.profile-details .detail-row:last-child {
+    border-bottom: none;
+}
+.container-fluid{
+    background-color:var(--primary-color) ;
+}
+#ChartBox{
 
-        #TotalInvestements:hover, #TotalLendings:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px var(--highlight-color);
-        }
-
-        /* Tables */
-        .table {
-            border-collapse: separate;
-            border-spacing: 0 10px;
-            background-color: var(--white);
-            box-shadow: 0 4px 8px var(--shadow);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .table thead {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .table th, .table td {
-            padding: 15px;
-            vertical-align: middle;
-        }
-
-        .table tbody tr {
-            background: var(--white);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .table tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            #TotalInvestements, #TotalLendings {
-                font-size: 1.2rem;
-                padding: 15px;
-            }
-
-            .table th, .table td {
-                font-size: 0.9rem;
-            }
-        }
+    width:97%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+  
+    #TwoButtons{
+        display:flex;
+        align-items: center;
+        justify-content: space-between;
+        padding:60px;
+    }
 
     </style>
 </head>
 <body>
-    <br><br>
-    <div id="chart_div" style="width: 800px; height: 500px;"></div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart', 'bar']});
-      google.charts.setOnLoadCallback(drawStuff);
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/home">
+                <img src="./Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <div>
+                    <span style="display: block;">Sips Finance</span>
+                </div>
+            </a>
+    
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link  " href="/Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Investors">Investors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Clients">Clients</a>
+                    </li>
+                  
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Queue">Queue</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Company">Company</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center ms-3">
+                    <a href="./Login.html" class="sign-out ms-3 btn btn-danger">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-      function drawStuff() {
+    
+    <input type="text" id="investorSearch" class="form-control mb-3" placeholder="Search Investor Leads">
+        
+      
 
-        var button = document.getElementById('change-chart');
-        var chartDiv = document.getElementById('chart_div');
+    <div id="TwoButtons">
+        <a href="/AddInvestor" class="btn btn-primary">Add Investor</a>
+    <a href="/InvestmentHistory" class="btn btn-primary">Active Investment History</a>
+    </div>
+    <div class="container my-5">
+        <div class="row" id="profile-cards-container" >
+            <!-- Dynamic profile cards will be inserted here -->
+        </div>
+    </div>
+  
+<div id="ChartBox">
+<h4>Investors Split</h4>
+<div id="piechart_3d" style="width: 400px; height: 300px;"></div>
+</div>
 
-        var data = google.visualization.arrayToDataTable([
-          ['Galaxy', 'Distance', 'Brightness'],
-          ['Canis Major Dwarf', 8000, 23.3],
-          ['Sagittarius Dwarf', 24000, 4.5],
-          ['Ursa Major II Dwarf', 30000, 14.3],
-          ['Lg. Magellanic Cloud', 50000, 0.9],
-          ['Bootes I', 60000, 13.1]
-        ]);
 
-        var materialOptions = {
-          width: 900,
-          chart: {
-            title: 'Nearby galaxies',
-            subtitle: 'distance on the left, brightness on the right'
-          },
-          series: {
-            0: { axis: 'distance' }, // Bind series 0 to an axis named 'distance'.
-            1: { axis: 'brightness' } // Bind series 1 to an axis named 'brightness'.
-          },
-          axes: {
-            y: {
-              distance: {label: 'parsecs'}, // Left y-axis.
-              brightness: {side: 'right', label: 'apparent magnitude'} // Right y-axis.
-            }
-          }
-        };
+<script>
+google.charts.load("current", { packages: ["corechart"] });
 
-        var classicOptions = {
-          width: 900,
-          series: {
-            0: {targetAxisIndex: 0},
-            1: {targetAxisIndex: 1}
-          },
-          title: 'Nearby galaxies - distance on the left, brightness on the right',
-          vAxes: {
-            // Adds titles to each axis.
-            0: {title: 'parsecs'},
-            1: {title: 'apparent magnitude'}
-          }
-        };
+// Fetch Investment Data
+async function fetchInvestmentData() {
+    try {
+        const response = await fetch('/getInvestmentData');
+        if (!response.ok) throw new Error('Failed to fetch investment data');
+        const data = await response.json();
 
-       
-
-        function drawClassicChart() {
-          var classicChart = new google.visualization.ColumnChart(chartDiv);
-          classicChart.draw(data, classicOptions);
-          button.innerText = 'Change to Material';
-          button.onclick = drawMaterialChart;
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error('No Investors Yet');
         }
 
-        drawClassicChart();
-    };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        const chartData = [['Investor Name', 'Investment Amount']];
+        for (const item of data) {
+            if (item.InvestorID && item.TotalInvestment) {
+                const investorName = await fetchInvestorName(item.InvestorID); 
+                chartData.push([investorName, item.TotalInvestment]);
+            }
+        }
+
+        if (chartData.length <= 1) {
+            throw new Error('No valid investment data to display');
+        }
+
+        drawChart(chartData);
+    } catch (error) {
+        console.error('Error fetching investment data:', error.message);
+        document.getElementById('piechart_3d').innerHTML = `
+            <p class="text-danger">Failed to load chart data: ${error.message}</p>
+        `;
+    }
+}
+
+async function fetchInvestorName(id) {
+    try {
+        const res = await fetch(`/InvestorDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
+        const investorDetails = await res.json();
+        return investorDetails.InvestorName;
+    } catch (err) {
+        console.error(err.message);
+        return id; // Fallback to ID if name can't be fetched
+    }
+}
+
+function drawChart(chartData) {
+    try {
+        if (!Array.isArray(chartData) || chartData.length <= 1) {
+            throw new Error('Invalid chart data');
+        }
+        
+        const data = google.visualization.arrayToDataTable(chartData);
+        const options = {
+            is3D: true,
+            width: 600,
+            height: 600,
+            pieSliceText: 'value', // Show investment amounts directly on slices
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+    } catch (error) {
+        console.error('Error drawing chart:', error.message);
+        document.getElementById('piechart_3d').innerHTML = `
+            <p class="text-danger">Error drawing chart: ${error.message}</p>
+        `;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchInvestmentData);
+
+// Fetch Data for Investors
+let originalData = []; // Store the fetched investor data here
+
+async function fetchData() {
+    try {
+        const response = await fetch('/InvestorsData');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        originalData = data; // Store the initial data to allow filtering
+
+        const container = document.getElementById('profile-cards-container');
+        container.innerHTML = ''; // Clear existing cards
+
+        if (data.length === 0) {
+            container.innerHTML = `<p class="text-center text-muted">No investors found.</p>`;
+            return;
+        }
+
+        data.forEach(investor => {
+            const profileCard = document.createElement('div');
+            profileCard.classList.add('col-md-4', 'mb-4');
+            const imageUrl = investor.Image || '../Images/DummyProfile.png'; // Use fallback if image not available
+
+            profileCard.innerHTML = `
+                <div class="profile-card border shadow p-3 rounded" onclick="investor(${investor.InvestorID})">
+                    <img src="${imageUrl}" alt="${investor.InvestorName}" class="profile-image img-fluid rounded-circle mb-3">
+                    <h2 class="text-primary">${investor.InvestorName}</h2>
+                    <p class="job-title text-muted">ID: ${investor.InvestorID}</p>
+                    <div class="profile-details mt-3">
+                        <div class="detail-row">
+                            <span><strong>Total Amount Invested:</strong></span>
+                            <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(investor.AmountInvested)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><strong>Phone Number:</strong></span>
+                            <span>${investor.PhoneNumber}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(profileCard);
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        const container = document.getElementById('profile-cards-container');
+        container.innerHTML = `<p class="text-center text-danger">Error loading investor data. Please try again later.</p>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchData);
+
+// Filtering Function
+function filterData(query) {
+    const container = document.getElementById('profile-cards-container');
+    container.innerHTML = ''; // Clear existing cards
+
+    const filteredData = originalData.filter(investment => {
+        return (
+            (investment.InvestorName && investment.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
+            (investment.AmountInvested && investment.AmountInvested.toString().includes(query)) ||
+            (investment.InvestorID && investment.InvestorID.toLowerCase().includes(query.toLowerCase())) ||
+            (investment.PhoneNumber && investment.PhoneNumber.toString().includes(query))
+        );
+    });
+
+    if (filteredData.length === 0) {
+        container.innerHTML = '<p class="text-center text-danger">No matching results found.</p>';
+        return;
+    }
+
+    // Display filtered data
+    filteredData.forEach(investor => {
+        const profileCard = document.createElement('div');
+        profileCard.classList.add('col-md-4', 'mb-4');
+        const imageUrl = investor.Image || '../Images/DummyProfile.png';
+
+        profileCard.innerHTML = `
+            <div class="profile-card border shadow p-3 rounded" onclick="investor(${investor.InvestorID})">
+                <img src="${imageUrl}" alt="${investor.InvestorName}" class="profile-image img-fluid rounded-circle mb-3">
+                <h2 class="text-primary">${investor.InvestorName}</h2>
+                <p class="job-title text-muted">ID: ${investor.InvestorID}</p>
+                <div class="profile-details mt-3">
+                    <div class="detail-row">
+                        <span><strong>Total Amount Invested:</strong></span>
+                        <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(investor.AmountInvested)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span><strong>Phone Number:</strong></span>
+                        <span>${investor.PhoneNumber}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(profileCard);
+    });
+}
+
+document.getElementById('searchBar').addEventListener('input', (e) => {
+    filterData(e.target.value);
+});
+
+function investor(ID) {
+    window.location.href = `/Investor/${encodeURIComponent(ID)}`;
+}
+</script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

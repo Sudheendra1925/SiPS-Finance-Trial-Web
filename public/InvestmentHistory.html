@@ -175,6 +175,7 @@
         let originalData = []; // Store fetched data for filtering
 
 async function fetchInvestmentHistory() {
+ 
     try {
         // Fetch investment history
         const response = await fetch('/InvestmentHistoryData');
@@ -217,6 +218,7 @@ async function fetchInvestorDetails(investments) {
 }
 
 function populateTable(data) {
+    let TotalInvestment=0;
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = ''; // Clear existing rows
 
@@ -231,8 +233,16 @@ function populateTable(data) {
             <td>${investment.InvestmentDate ? investment.InvestmentDate.split('T')[0] : 'N/A'}</td>
             <td>${investment.InterestRate || '0'}%</td>
         `;
+        TotalInvestment +=investment.Amount || 0;
         tbody.appendChild(tr);
     });
+    const totalRow = document.createElement('tr');
+                totalRow.innerHTML = `
+                    <td colspan="2" class="text-right font-weight-bold">Total Amount:</td>
+                    <td style="color:green;" >${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(TotalInvestment)}</td>
+                 
+                `;
+                tbody.appendChild(totalRow);
 }
 
 function filterData(query) {

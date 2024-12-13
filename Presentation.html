@@ -1,122 +1,207 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #0875e1; /* Deeper Blue for Trust */
-            --secondary-color: #f8faff; /* Soft Light Blue Background */
-            --success-color: #27ae60; /* Fresh Green */
-            --text-dark: #2a2a2a; /* Neutral Dark Gray */
-            --white: #ffffff;
-            --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
+google.charts.load("current", { packages: ["corechart"] });
+        
+async function fetchOrderData() {
+  try {
+    // Fetch data from server
+    const response = await fetch('/getOrderData');
+if (!response.ok) throw new Error('Failed to fetch order data');
+
+const data = await response.json();
+
+
+// Validate data format
+if (!Array.isArray(data) || data.length === 0) {
+throw new Error('No Clients Yet');
+}
+
+// Function to fetch client details by ID
+async function fetchClientName(id) {
+try {
+const res = await fetch(`/ClientDetails/${id}`);
+if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+const clientDetails = await res.json();
+return clientDetails.ClientName; // Assuming the API returns an object with a `name` property
+} catch (err) {
+console.error(err.message);
+return id; // Fallback to ID if the name cannot be fetched
+}
+}
+
+// Build chartData array
+const chartData = [['Client Name', 'Order Amount']];
+
+for (const item of data) {
+if (item.ClientID && item.TotalOrder) {
+const clientName = await fetchClientName(item.ClientID); // Fetch name by ID
+chartData.push([clientName, item.TotalOrder]);
+}
+}
+
+    // Ensure chartData has at least one row of data
+    if (chartData.length <= 1) {
+      throw new Error('No valid investment data to display');
+    }
+
+    // Draw chart
+    drawChart(chartData);
+  } catch (error) {
+    console.error('Error fetching investment data:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-danger">Failed to load chart data: ${error.message}</p>
+    `;
+  }
+}
+
+function drawChart(chartData) {
+  try {
+    // Validate chartData
+    if (!Array.isArray(chartData) || chartData.length <= 1) {
+      throw new Error('Invalid chart data');
+    }
+
+    const data = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+      is3D: true,
+      width: 600,
+      height: 600,
+      pieSliceText: 'value', // Show investment amounts directly on slices
+    };
+
+    const chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    chart.draw(data, options);
+  } catch (error) {
+    console.error('Error drawing chart:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-danger">Error drawing chart: ${error.message}</p>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchOrderData);
+
+</script>
+<script>
+async function fetchData() {
+    try {
+
+        const response = await fetch('/ClientsData');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-        body {
-            background: var(--secondary-color);
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+
+        const data = await response.json();
+    
+
+        const container = document.getElementById('profile-cards-container');
+        container.innerHTML = ''; // Clear existing cards
+
+        if (data.length === 0) {
+            container.innerHTML = `<p class="text-center text-muted">No Clients found.</p>`;
+            return;
         }
-        .thank-you-container {
-            text-align: center;
-            background: var(--white);
-            padding: 50px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px var(--shadow-color);
-            animation: fadeIn 1.5s ease-in-out;
-            max-width: 600px;
-            width: 90%;
-        }
-        .thank-you-container h1 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            font-weight: bold;
-            animation: textFadeIn 1.5s ease-in-out;
-        }
-        .thank-you-container p {
-            color: var(--text-dark);
-            font-size: 1.2rem;
-            margin-top: 10px;
-            animation: textFadeIn 1.8s ease-in-out;
-        }
-        .thank-you-container .checkmark {
-            font-size: 4rem;
-            color: var(--success-color);
-            margin: 20px 0;
-            animation: popIn 0.5s ease-out forwards;
-        }
-        .contact-info {
-            font-size: 1rem;
-            margin-top: 15px;
-            color: var(--primary-color);
-        }
-        .contact-info a {
-            color: var(--success-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .btn-home {
-            margin-top: 20px;
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            text-transform: uppercase;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .btn-home:hover {
-            background-color: var(--success-color);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes textFadeIn {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        @keyframes popIn {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="thank-you-container">
-        <div class="checkmark">✔</div>
-        <h1>Thank You!</h1>
-        <p>Your loan request has been submitted successfully.<br>We will get back to you shortly.</p>
-        <div class="contact-info">
-            <p>For any queries, call <a href="tel:+918074500348">+91 80745 00348</a></p>
+
+        data.forEach(client => {
+            const profileCard = document.createElement('div');
+            profileCard.classList.add('col-md-4', 'mb-4');
+
+            // Fallback to placeholder if no image is available
+            const imageUrl = client.Image ;
+
+            profileCard.innerHTML = `
+                <div class="profile-card border shadow p-3 rounded">
+                    <img src="../Images/DummyProfile.png" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
+                    <h2 class="text-primary">${client.ClientName}</h2>
+                    <p class="job-title text-muted">ID: ${client.ClientID}</p>
+                    <div class="profile-details mt-3">
+                        <div class="detail-row">
+                            <span><strong>Total Loan Amount :</strong></span>
+                            <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(client.TotalAmount)}</span>
+                        </div>
+                       
+                        <div class="detail-row">
+                            <span><strong>Phone Number:</strong></span>
+                            <span>${client.PhoneNumber}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+
+            profileCard.querySelector('.profile-card').addEventListener('click', () => {
+window.location.href = `/Client/${encodeURIComponent(client.ClientID)}`;
+});
+     
+            container.appendChild(profileCard);
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        const container = document.getElementById('profile-cards-container');
+        container.innerHTML = `<p class="text-center text-danger">Error loading investor data. Please try again later.</p>`;
+    }
+
+
+
+    function investor(ID) {
+window.location.href = `/Client/${encodeURIComponent(ID)}`;
+}
+}
+
+document.addEventListener('DOMContentLoaded', fetchData);
+</script>
+
+<script>
+
+
+function filterData(query) {
+const container = document.getElementById('profile-cards-container');
+container.innerHTML = ''; // Clear existing cards
+
+const filteredData = originalData.filter(investment => {
+return (
+    (investment.InvestorName && investment.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
+    (investment.AmountInvested && investment.AmountInvested.toString().includes(query)) ||
+    (investment.InvestorID && investment.InvestorID.toLowerCase().includes(query.toLowerCase())) ||
+    (investment.PhoneNumber && investment.PhoneNumber.toString().includes(query))
+);
+});
+
+if (filteredData.length === 0) {
+container.innerHTML = '<p class="text-center text-danger">No matching results found.</p>';
+return;
+}
+
+// Display filtered data
+filteredData.forEach(investor => {
+const profileCard = document.createElement('div');
+profileCard.classList.add('col-md-4', 'mb-4');
+const imageUrl = investor.Image || '../Images/DummyProfile.png';
+
+profileCard.innerHTML = `
+    <div class="profile-card border shadow p-3 rounded" onclick="investor(${investor.InvestorID})">
+        <img src="${imageUrl}" alt="${investor.InvestorName}" class="profile-image img-fluid rounded-circle mb-3">
+        <h2 class="text-primary">${investor.InvestorName}</h2>
+        <p class="job-title text-muted">ID: ${investor.InvestorID}</p>
+        <div class="profile-details mt-3">
+            <div class="detail-row">
+                <span><strong>Total Amount Invested:</strong></span>
+                <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(investor.AmountInvested)}</span>
+            </div>
+            <div class="detail-row">
+                <span><strong>Phone Number:</strong></span>
+                <span>${investor.PhoneNumber}</span>
+            </div>
         </div>
-        <button class="btn btn-home" onclick="window.location.href='/'">Go Back Home</button>
     </div>
-</body>
-</html>
+`;
+
+container.appendChild(profileCard);
+profileCard.querySelector('.profile-card').addEventListener('click', () => {
+    window.location.href = `/investor/${encodeURIComponent(investor.InvestorID)}`;})
+});
+
+}
+
+document.getElementById('searchBar').addEventListener('input', (e) => {
+filterData(e.target.value);
+});

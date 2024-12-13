@@ -227,6 +227,25 @@ align-items: center;
         padding:60px;
     }
 
+    #searchBar {
+    width: 100%; /* Make it responsive */
+    max-width: 600px; /* Optional: Limit the max width */
+    margin: 0 auto 20px; /* Center align with spacing below */
+    padding: 10px; /* Add some padding for better look */
+    margin-top: 2%;
+    font-size: 16px; /* Larger, readable text */
+    border: 1px solid var(--text-dark); /* Use your color palette for border */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px var(--shadow-color); /* Subtle shadow for a modern look */
+    transition: box-shadow var(--transition-speed); /* Smooth hover effect */
+
+}
+
+#searchBar:focus {
+    border-color: var(--primary-color); /* Highlight border on focus */
+    box-shadow: 0 4px 8px var(--shadow-color); /* Stronger shadow on focus */
+    outline: none; /* Remove default focus outline */
+}
     </style>
 </head>
 <body>
@@ -269,7 +288,7 @@ align-items: center;
         </div>
     </nav>
     <div class="mb-3">
-        <input type="text" id="searchBar" class="form-control" placeholder="Search by Investor Name, Investment ID, or Date">
+        <input type="text" id="searchBar" class="form-control" placeholder="Search Client ">
     </div>
     <div id="TwoButtons">
         <a href="/AddClient" class="btn btn-primary">Add New Client</a>
@@ -285,158 +304,211 @@ align-items: center;
      <h2>Order Split</h2>
     <div id="piechart_3d" style="width: 400px; height: 300px;"></div>
 </div>
+
+
+
     <script>
-        google.charts.load("current", { packages: ["corechart"] });
-        
-        async function fetchOrderData() {
-          try {
-            // Fetch data from server
-            const response = await fetch('/getOrderData');
-if (!response.ok) throw new Error('Failed to fetch order data');
+      originalData=[]
+       google.charts.load("current", { packages: ["corechart"] });
 
-const data = await response.json();
-
-
-// Validate data format
-if (!Array.isArray(data) || data.length === 0) {
-  throw new Error('No Clients Yet');
-}
-
-// Function to fetch client details by ID
-async function fetchClientName(id) {
+async function fetchOrderData() {
   try {
-    const res = await fetch(`/ClientDetails/${id}`);
-    if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
-    const clientDetails = await res.json();
-    return clientDetails.ClientName; // Assuming the API returns an object with a `name` property
-  } catch (err) {
-    console.error(err.message);
-    return id; // Fallback to ID if the name cannot be fetched
-  }
-}
+    // Fetch data from server
+    const response = await fetch('/getOrderData');
+    if (!response.ok) throw new Error('Failed to fetch order data');
 
-// Build chartData array
-const chartData = [['Client Name', 'Order Amount']];
+    const data = await response.json();
 
-for (const item of data) {
-  if (item.ClientID && item.TotalOrder) {
-    const clientName = await fetchClientName(item.ClientID); // Fetch name by ID
-    chartData.push([clientName, item.TotalOrder]);
-  }
-}
-        
-            // Ensure chartData has at least one row of data
-            if (chartData.length <= 1) {
-              throw new Error('No valid investment data to display');
-            }
-        
-            // Draw chart
-            drawChart(chartData);
-          } catch (error) {
-            console.error('Error fetching investment data:', error.message);
-            document.getElementById('piechart_3d').innerHTML = `
-              <p class="text-danger">Failed to load chart data: ${error.message}</p>
-            `;
-          }
-        }
-        
-        function drawChart(chartData) {
-          try {
-            // Validate chartData
-            if (!Array.isArray(chartData) || chartData.length <= 1) {
-              throw new Error('Invalid chart data');
-            }
-        
-            const data = google.visualization.arrayToDataTable(chartData);
-        
-            const options = {
-              is3D: true,
-              width: 600,
-              height: 600,
-              pieSliceText: 'value', // Show investment amounts directly on slices
-            };
-        
-            const chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-            chart.draw(data, options);
-          } catch (error) {
-            console.error('Error drawing chart:', error.message);
-            document.getElementById('piechart_3d').innerHTML = `
-              <p class="text-danger">Error drawing chart: ${error.message}</p>
-            `;
-          }
-        }
-        
-        document.addEventListener('DOMContentLoaded', fetchOrderData);
-        
-        </script>
-    <script>
-        async function fetchData() {
-            try {
-        
-                const response = await fetch('/ClientsData');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+    // Validate data format
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new Error('No Clients Yet');
+    }
 
-                const data = await response.json();
-            
+    // Function to fetch client details by ID
+    async function fetchClientName(id) {
+      try {
+        const res = await fetch(`/ClientDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+        const clientDetails = await res.json();
+        return clientDetails.ClientName; // Assuming the API returns an object with a `name` property
+      } catch (err) {
+        console.error(err.message);
+        return id; // Fallback to ID if the name cannot be fetched
+      }
+    }
 
-                const container = document.getElementById('profile-cards-container');
-                container.innerHTML = ''; // Clear existing cards
+    // Build chartData array
+    const chartData = [['Client Name', 'Order Amount']];
 
-                if (data.length === 0) {
-                    container.innerHTML = `<p class="text-center text-muted">No Clients found.</p>`;
-                    return;
-                }
+    const clientNamesPromises = data.map(item => fetchClientName(item.ClientID));
+    const clientNames = await Promise.all(clientNamesPromises);
 
-                data.forEach(client => {
-                    const profileCard = document.createElement('div');
-                    profileCard.classList.add('col-md-4', 'mb-4');
-
-                    // Fallback to placeholder if no image is available
-                    const imageUrl = client.Image ;
-
-                    profileCard.innerHTML = `
-                        <div class="profile-card border shadow p-3 rounded">
-                            <img src="../Images/DummyProfile.png" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
-                            <h2 class="text-primary">${client.ClientName}</h2>
-                            <p class="job-title text-muted">ID: ${client.ClientID}</p>
-                            <div class="profile-details mt-3">
-                                <div class="detail-row">
-                                    <span><strong>Total Loan Amount :</strong></span>
-                                    <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(client.TotalAmount)}</span>
-                                </div>
-                               
-                                <div class="detail-row">
-                                    <span><strong>Phone Number:</strong></span>
-                                    <span>${client.PhoneNumber}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-
-                    profileCard.querySelector('.profile-card').addEventListener('click', () => {
-        window.location.href = `/Client/${encodeURIComponent(client.ClientID)}`;
+    data.forEach((item, index) => {
+      if (item.ClientID && item.TotalOrder) {
+        chartData.push([clientNames[index], item.TotalOrder]);
+      }
     });
-             
-                    container.appendChild(profileCard);
-                });
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                const container = document.getElementById('profile-cards-container');
-                container.innerHTML = `<p class="text-center text-danger">Error loading investor data. Please try again later.</p>`;
-            }
 
+    // Ensure chartData has at least one row of data
+    if (chartData.length <= 1) {
+      throw new Error('No valid investment data to display');
+    }
 
-
-            function investor(ID) {
-    window.location.href = `/Client/${encodeURIComponent(ID)}`;
+    // Draw chart
+    drawChart(chartData);
+  } catch (error) {
+    console.error('Error fetching client data:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-danger">Failed to load chart data: ${error.message}</p>
+    `;
+  }
 }
-        }
 
-        document.addEventListener('DOMContentLoaded', fetchData);
-    </script>
+function drawChart(chartData) {
+  try {
+    // Validate chartData
+    if (!Array.isArray(chartData) || chartData.length <= 1) {
+      throw new Error('Invalid chart data');
+    }
+
+    const data = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+      is3D: true,
+      width: 600,
+      height: 600,
+      pieSliceText: 'value', // Show investment amounts directly on slices
+    };
+
+    const chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    chart.draw(data, options);
+  } catch (error) {
+    console.error('Error drawing chart:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-danger">Error drawing chart: ${error.message}</p>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchOrderData);
+
+async function fetchData() {
+  try {
+    const response = await fetch('/ClientsData');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+originalData=data;
+    const container = document.getElementById('profile-cards-container');
+    container.innerHTML = ''; // Clear existing cards
+
+    if (data.length === 0) {
+      container.innerHTML = `<p class="text-center text-muted">No Clients found.</p>`;
+      return;
+    }
+
+    data.forEach(client => {
+      const profileCard = document.createElement('div');
+      profileCard.classList.add('col-md-4', 'mb-4');
+
+      // Fallback to placeholder if no image is available
+      const imageUrl = '../Images/DummyProfile.png';
+
+      profileCard.innerHTML = `
+        <div class="profile-card border shadow p-3 rounded">
+          <img src="${imageUrl}" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
+          <h2 class="text-primary">${client.ClientName}</h2>
+          <p class="job-title text-muted">ID: ${client.ClientID}</p>
+          <div class="profile-details mt-3">
+            <div class="detail-row">
+              <span><strong>Total Loan Amount :</strong></span>
+              <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(client.TotalAmount)}</span>
+            </div>
+            <div class="detail-row">
+              <span><strong>Phone Number:</strong></span>
+              <span>${client.PhoneNumber}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      profileCard.querySelector('.profile-card').addEventListener('click', () => {
+        window.location.href = `/Client/${encodeURIComponent(client.ClientID)}`;
+      });
+
+      container.appendChild(profileCard);
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    const container = document.getElementById('profile-cards-container');
+    container.innerHTML = `<p class="text-center text-danger">Error loading client data. Please try again later.</p>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchData);
+
+function filterData(query) {
+  const container = document.getElementById('profile-cards-container');
+  container.innerHTML = ''; // Clear existing cards
+
+  if (!originalData || !Array.isArray(originalData)) {
+    console.error('No data available for filtering');
+    return;
+  }
+
+  const filteredData = originalData.filter(client => {
+    return (
+      (client.ClientName && client.ClientName.toLowerCase().includes(query.toLowerCase())) ||
+      (client.TotalAmount && client.TotalAmount.toString().includes(query)) ||
+      (client.ClientID && client.ClientID.toLowerCase().includes(query.toLowerCase())) ||
+      (client.PhoneNumber && client.PhoneNumber.toString().includes(query))
+    );
+  });
+
+  if (filteredData.length === 0) {
+    container.innerHTML = '<p class="text-center text-danger">No matching results found.</p>';
+    return;
+  }
+
+  // Display filtered data
+  filteredData.forEach(client => {
+    const profileCard = document.createElement('div');
+    profileCard.classList.add('col-md-4', 'mb-4');
+    const imageUrl = '../Images/DummyProfile.png';
+
+    profileCard.innerHTML = `
+      <div class="profile-card border shadow p-3 rounded" onclick="clientDetails(${client.ClientID})">
+        <img src="${imageUrl}" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
+        <h2 class="text-primary">${client.ClientName}</h2>
+        <p class="job-title text-muted">ID: ${client.ClientID}</p>
+        <div class="profile-details mt-3">
+          <div class="detail-row">
+            <span><strong>Total Amount Loaned:</strong></span>
+            <span>${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(client.TotalAmount)}</span>
+          </div>
+          <div class="detail-row">
+            <span><strong>Phone Number:</strong></span>
+            <span>${client.PhoneNumber}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(profileCard);
+    profileCard.querySelector('.profile-card').addEventListener('click', () => {
+      window.location.href = `/Client/${encodeURIComponent(client.ClientID)}`;
+    });
+  });
+}
+
+document.getElementById('searchBar').addEventListener('input', (e) => {
+  filterData(e.target.value);
+});
+
+
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ppE5V4F7k9vLAHQ4OdwLwD4EYMOJKH7PQcHI3Y0OV/2vO2QlR3SNi76qIr1z5nqg" crossorigin="anonymous"></script>
 </body>
 </html>

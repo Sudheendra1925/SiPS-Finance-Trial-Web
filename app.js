@@ -182,7 +182,7 @@ app.post('/NewInvestor', (req, res) => {
 
 
     const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber)
-                 VALUES (?, ?,curDate(),0,?)`;
+                 VALUES (?, ?, curdate() + interval 1 day,0,?)`;
 
     db.query(sql, [ InvestorID,InvestorName, PhoneNumber], (err, result) => {
         if (err) {
@@ -463,7 +463,7 @@ app.get("/TodayInvestor", (req, res) => {
     const query = `
 SELECT InvestmentID,InvestorID, ActiveAmount,PayableInterest
 FROM Investments 
-WHERE DAY(InvestmentDate) = DAY(CURDATE());
+WHERE DAY(InvestmentDate) = DAY( curdate() + interval 1 day);
     `;
    
     db.query(query, (err, results) => {
@@ -481,7 +481,7 @@ app.get("/TodayClient", (req, res) => {
     const query = `
 SELECT OrderID,ClientID, ActiveAmount, PayableInterest,StartDate
 FROM Orders
-WHERE DAY(StartDate) = DAY(CURDATE());
+WHERE DAY(StartDate) = DAY( curdate() + interval 1 day);
     `;
    
     db.query(query, (err, results) => {
@@ -572,8 +572,8 @@ SELECT
 FROM
     Orders
 WHERE 
-    MONTH(EndDate) = MONTH(CURDATE()) 
-    AND YEAR(EndDate) = YEAR(CURDATE());
+    MONTH(EndDate) = MONTH( curdate() + interval 1 day) 
+    AND YEAR(EndDate) = YEAR( curdate() + interval 1 day);
 
 `
    
@@ -816,7 +816,7 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
     const deleteQuery = `DELETE FROM Investments WHERE InvestmentID = ?`;
     const insertQuery = `
         INSERT INTO ClosedInvestments (InvestmentID, InvestorName, Amount, StartDate, ClosedDate)
-        VALUES (?, ?, ?, ?, CURDATE())
+        VALUES (?, ?, ?, ?,  curdate() + interval 1 day)
     `;
 
     // Start a transaction
@@ -877,7 +877,7 @@ app.get('/DeleteOrder/:OrderID', (req, res) => {
     const deleteQuery = `DELETE FROM Orders WHERE OrderID = ?`;
     const insertQuery = `
         INSERT INTO ClosedOrders (OrderID, ClientName, Amount, StartDate, ClosedDate)
-        VALUES (?, ?, ?, ?, CURDATE())
+        VALUES (?, ?, ?, ?,  curdate() + interval 1 day)
     `;
     const checkDuplicateQuery = `SELECT 1 FROM ClosedOrders WHERE OrderID = ?`;
 
@@ -958,7 +958,7 @@ const InvestorName=req.query.InvestorName
     // SQL query to insert data
     const query = `
         INSERT INTO InvestmentEMIHistory (InvestmentID,InvestorName, EMIDate, PaidEMI)
-        VALUES (?,?, CURDATE(), ?)
+        VALUES (?,?,  curdate() + interval 1 day, ?)
     `;
 
     // Execute query
@@ -980,7 +980,7 @@ app.post("/ClientEMIPayement", (req, res) => {
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
         INSERT INTO OrderEMIHistory (OrderID,ClientName,EMIDate,ActualEMI,PaidEMI)
-        VALUES (?,?,CURDATE(),?,?)
+        VALUES (?,?, curdate() + interval 1 day,?,?)
     `;
 
     db.query(query, [OrderID,ClientName, ActualEMI,PaidEMI], (err, result) => {
@@ -1148,7 +1148,7 @@ app.get("/AddDueEMI/:ID", (req, res) => {
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
         INSERT INTO DueEMI (OrderID,IssuedDate,ClientName,OrderAmount,EMIDate,EMIAmount,RemainingEMI)
-        VALUES (?,CURDate(),?,?,?,?,?)
+        VALUES (?, curdate() + interval 1 day,?,?,?,?,?)
     `;
 
     db.query(query, [OrderID,ClientName,ActiveAmount,EMIDate,EMIAmount,EMIAmount], (err, result) => {
@@ -1221,7 +1221,7 @@ const PaidEMI = EMIAmountFloat - RemainingEMIFloat;
 
 const Insertquery = `
     INSERT INTO OrderEMIHistory (OrderID, ClientName, EMIDate, ActualEMI, PaidEMI)
-    VALUES (?, ?, CURDATE(), ?, ?)
+    VALUES (?, ?,  curdate() + interval 1 day, ?, ?)
 `;
 
 db.query(Insertquery, [OrderID, ClientName, EMIAmountFloat, PaidEMI], (err, result) => {
@@ -1262,7 +1262,7 @@ try {
 app.post('/AddExtraExpenses', (req, res) => {
     const {Reason,Amount}=req.body;
     const sql = `INSERT INTO ExtraExpenses (Reason,Amount,Date)
-                 VALUES (?, ?,curDate())`;
+                 VALUES (?, ?, curdate() + interval 1 day)`;
 
     db.query(sql, [Reason,Amount], (err, result) => {
         if (err) {
@@ -1278,7 +1278,7 @@ app.post('/AddExtraExpenses', (req, res) => {
 app.post('/AddExtraIncomes', (req, res) => {
     const {Reason,Amount}=req.body;
     const sql = `INSERT INTO ExtraIncomes (Reason,Amount,Date)
-                 VALUES (?, ?,curDate())`;
+                 VALUES (?, ?, curdate() + interval 1 day)`;
 
     db.query(sql, [Reason,Amount], (err, result) => {
         if (err) {

@@ -249,9 +249,9 @@
 
                 const totalRow = document.createElement('tr');
                 totalRow.innerHTML = `
-                    <td colspan="2" class="text-right font-weight-bold">Total Amount:</td>
-                    <td>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(totalAmount)}</td>
-                    <td colspan="4"></td>
+                    <td colspan="3" class="text-right font-weight-bold">Total Amount:</td>
+                    <td style="color:green;" >${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(totalAmount)}</td>
+                 
                 `;
                 tbody.appendChild(totalRow);
             }
