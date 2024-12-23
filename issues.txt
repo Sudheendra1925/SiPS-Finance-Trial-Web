@@ -1,1 +1,12 @@
-1.Date;
+1.image and document for orders                   -         DONE
+2.Error handling (no investors yet)               -         DONE
+3.Toggle                                          -         DONE
+4.Sesson creation                                 -         DONE
+5>Alert in js                                      -        DONE
+
+6 Forget Password                                 -   
+
+
+
+
+

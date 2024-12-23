@@ -6,19 +6,86 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 const crypto = require('crypto');
+const multer = require('multer');
+const fs = require('fs');
 const cors = require('cors');
 const bcrypt = require('bcrypt'); 
-
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 /////////////////////////////Use////
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser( "4c8e9e8fb6e93f6456f3dc5f91794f27ba87ac63e09456119b8a792d4b172b5f"
+));
+
+//////////////////////////////////////////////////////////////////////
+app.use(
+    session({
+      secret: "4c8e9e8fb6e93f6456f3dc5f91794f27ba87ac63e09456119b8a792d4b172b5f", 
+      resave: false,
+      saveUninitialized: true,
+    })
+  );
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+      return next();
+    } else {
+      return res.send(`
+        <script>
+          alert("Please log in to access this page!");
+          window.location.href = "/";
+        </script>
+      `);
+    }
+  }
+/////////////////////////////////////////////////////////////////////////////////////////////////
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let folder = 'public/uploads/others'; // Default folder
+        if (file.fieldname === 'AadharCard') {
+            folder = 'public/uploads/aadhar';
+        } 
+        else if (file.fieldname === 'PanCard') {
+            folder = 'public/uploads/pancard';
+        } 
+        else if (file.fieldname === 'Image') {
+            folder = 'public/uploads/images';
+        }
+        else if (file.fieldname === 'Collaterals') {
+            folder = 'public/uploads/collaterals';
+        }
+        cb(null, folder);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
+    },
+});
+
+//////////////////////////////////////////////////////////////////////////
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|pdf/;
+        const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimeType = allowedTypes.test(file.mimetype);
+
+        if (extName && mimeType) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only JPEG, PNG, and PDF are allowed.'));
+        }
+    },
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB file size limit
+});
+
 
 
 //////generate ID function ////////////////
 const generateSmallId = (prefix) => {
-    const id = crypto.randomBytes(3).toString('hex'); // Generates a 6-character hex string
+    const id = crypto.randomBytes(3).toString('hex'); 
     return `${prefix}-${id}`;
   };
 
@@ -38,189 +105,275 @@ db.connect((err) => {
     console.log('MySQL Connected...');
 });
 ////////////// PAGE DECLARATIONS////////////////////////////////////
+
+app.get('/check', async (req, res) => {
+    const { username, password } = req.query;
+  
+    try {
+      // Query the database for the user
+      db.query('SELECT * FROM users WHERE UserName = ?', [username], async (err, result) => {
+        if (err) {
+          console.error('Error querying the database:', err);
+          return res.status(500).send('Database error');
+        }
+  
+        const user = result[0];
+  
+        if (!user) {
+          // Invalid username
+          return res.send(`
+            <script>
+              alert("Invalid username or password!");
+              window.location.href = "/";
+            </script>
+          `);
+        }
+  
+        // Compare the provided password with the hashed password
+        const isMatch = await bcrypt.compare(password, user.Password);
+  
+        if (isMatch) {
+          // Set session for user
+          req.session.user = username;
+  
+          // Redirect to home
+          return res.redirect("/Home");
+        } else {
+          // Invalid password
+          return res.send(`
+            <script>
+              alert("Invalid username or password!");
+              window.location.href = "/";
+            </script>
+          `);
+        }
+      });
+    } catch (err) {
+      console.error('Error during user authentication:', err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+  
+
+/////////////////////////////////////////////////////////////////////
 app.get('/', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+          return res.send('Error logging out');
+        }});
     res.sendFile(path.join(__dirname, 'public/Login.html'));
 });
 
-app.get('/Home', (req, res) => {
+app.get('/Home', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Home.html'));
 });
 
-app.get('/Investors', (req, res) => {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.get('/Investors',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Investors.html'));
 });
 
-app.get('/Clients', (req, res) => {
+app.get('/Clients',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Clients.html'));
 });
 
-app.get('/Queue', (req, res) => {
+app.get('/Queue',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Queue.html'));
 });
 
 
-app.get('/AddInvestor', (req, res) => {
+app.get('/AddInvestor',isAuthenticated, (req, res) => {
     
     res.sendFile(path.join(__dirname, 'public/AddInvestor.html'));
 });
 
-app.get('/AddClient', (req, res) => {
+app.get('/AddClient',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddClient.html'));
 });
 
-app.get('/AddClientLead', (req, res) => {
+app.get('/AddClientLead',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddClientLead.html'));
 });
 
-app.get('/AddInvestorLead', (req, res) => {
+app.get('/AddInvestorLead',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddInvestorLead.html'));
 });
-app.get('/AddInvestment', (req, res) => {
+app.get('/AddInvestment',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddInvestment.html'));
 });
 
-app.get('/AddOrder', (req, res) => {
+app.get('/AddOrder',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddOrder.html'));
 });
 
-app.get('/Investor/:ID', (req, res) => {
+app.get('/Investor/:ID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Investor.html'));
 });
 
-app.get('/Client/:ID', (req, res) => {
+app.get('/Client/:ID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Client.html'));
 });
 
 
-app.get('/InvestmentHistory', (req, res) => {
+app.get('/InvestmentHistory',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/InvestmentHistory.html'));
 });
 
-app.get('/OrderHistory', (req, res) => {
+app.get('/OrderHistory',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/OrderHistory.html'));
 });
 
-app.get('/UpdateInvestorPage/:ID', (req, res) => {
+app.get('/UpdateInvestorPage/:ID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/UpdateInvestor.html'));
 });
-app.get('/UpdateClientPage/:ID', (req, res) => {
+app.get('/UpdateClientPage/:ID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/UpdateClient.html'));
 });
 
-app.get('/UpdateInvestmentPage/:ID', (req, res) => {
+app.get('/UpdateInvestmentPage/:ID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/UpdateInvestment.html'));
 });
-app.get('/UpdateOrderPage/:ID', (req, res) => {
+app.get('/UpdateOrderPage/:ID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/UpdateOrder.html'));
 });
 
-app.get('/Company', (req, res) => {
+app.get('/Company',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/Company.html'));
 });
 
-app.get('/ClientEMIPage/:OrderID', (req, res) => {
+app.get('/ClientEMIPage/:OrderID',isAuthenticated, (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/ClientEMIPage.html'));
 });
-app.get('/InvestmentEMIHistoryPage/:InvestmentID', (req, res) => {
+app.get('/InvestmentEMIHistoryPage/:InvestmentID',isAuthenticated, (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/InvestmentEMIHistoryPage.html'));
 });
-app.get('/OrderEMIHistoryPage/:OrderID', (req, res) => {
+app.get('/OrderEMIHistoryPage/:OrderID',isAuthenticated, (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/OrderEMIHistoryPage.html'));
 });
 
-app.get('/TotalInvestmentEMIHistoryPage', (req, res) => {
+app.get('/TotalInvestmentEMIHistoryPage',isAuthenticated,(req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/TotalInvestmentEMIHistoryPage.html'));
 });
-app.get('/TotalOrderEMIHistoryPage', (req, res) => {
+app.get('/TotalOrderEMIHistoryPage',isAuthenticated, (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/TotalOrderEMIHistoryPage.html'));
 });
 
-app.get('/DueEMIPage', (req, res) => {
+app.get('/DueEMIPage',isAuthenticated, (req, res) => {
     // Serve the HTML file
     res.sendFile(path.join(__dirname, 'public/DueEMIPage.html'));
 });
-app.get('/ChangeDueEMI/:OrderID', (req, res) => {
+app.get('/ChangeDueEMI/:OrderID',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ChangeDueEMI.html'));
 });
-app.get('/AddExtraExpensesPage', (req, res) => {
+app.get('/AddExtraExpensesPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddExtraExpensesPage.html'));
 });
-app.get('/AddExtraIncomesPage', (req, res) => {
+app.get('/AddExtraIncomesPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/AddExtraIncomesPage.html'));
 });
-app.get('/ExtraExpensesHistoryPage', (req, res) => {
+app.get('/ExtraExpensesHistoryPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ExtraExpensesHistoryPage.html'));
 });
-app.get('/ExtraIncomesHistoryPage', (req, res) => {
+app.get('/ExtraIncomesHistoryPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ExtraIncomesHistoryPage.html'));
 });
-app.get('/ClosedInvestmentsPage', (req, res) => {
+app.get('/ClosedInvestmentsPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ClosedInvestmentsPage.html'));
 });
-app.get('/ClosedOrdersPage', (req, res) => {
+app.get('/ClosedOrdersPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ClosedOrdersPage.html'));
 });
-app.get('/ForgetPasswordPage', (req, res) => {
+app.get('/ForgetPasswordPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ForgetPasswordPage.html'));
 });
 
-app.get('/LoanRequestPage', (req, res) => {
+app.get('/LoanRequestPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/LoanRequestPage.html'));
 });
 
 ///////////////////////////////  ADDING INVESTOR CLIENTS LEADS 
 
-app.post('/NewInvestor', (req, res) => {
+
+
+
+
+
+
+
+app.post('/NewInvestor', upload.fields([
+    { name: 'Image', maxCount: 1 },
+]), (req, res) => {
 
     const InvestorID = generateSmallId('INV');
     const { InvestorName,PhoneNumber} = req.body;
+    const ImageFile = req.files?.Image ? req.files.Image[0].filename : null;
+console.log(ImageFile)
+    const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber,Image)
+                 VALUES (?, ?, curdate() + interval 1 day,0,?,?)`;
 
-
-    const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber)
-                 VALUES (?, ?, curdate() + interval 1 day,0,?)`;
-
-    db.query(sql, [ InvestorID,InvestorName, PhoneNumber], (err, result) => {
+    db.query(sql, [ InvestorID,InvestorName, PhoneNumber,ImageFile], (err, result) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
             return;
         }
         console.log('Record inserted');
-        res.redirect('/AddInvestment')
+        res.send(`
+            <script>
+              alert("Investor Added Succesfully!");
+              window.location.href = "/AddInvestment";
+            </script>
+          `);
+
     });
 })
 
 
 
-/////////////////////////////// CLIENT CODES 
-
-///////////////////////////////
-
-app.post('/NewClient', (req, res) => {
+//////////////////////////////////////////////////////////////////////////////////
+app.post('/NewClient', upload.fields([
+    { name: 'AadharCard', maxCount: 1 },
+    { name: 'PanCard', maxCount: 1 },
+    { name: 'Image', maxCount: 1 },
+]), (req, res) => {
     const ClientID = generateSmallId('CLI');
-    const { ClientName,AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments} = req.body;
+    try {
+        const { ClientName,AddressAndOccupation,PhoneNumber,Aadhar,Pan,Comments} = req.body;
 
+        // Handle uploaded files
+        const AadharCardFile = req.files?.AadharCard ? req.files.AadharCard[0].filename : null;
+        const PanCardFile = req.files?.PanCard ? req.files.PanCard[0].filename : null;
+        const ImageFile = req.files?.Image ? req.files.Image[0].filename : null;
 
-    const sql = `INSERT INTO Clients (
-   ClientID, ClientName, TotalAmount, AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments)
-                 VALUES (?, ?,0, ?, ?, ?, ?, ?, ?,?,?)`;
+        const sql = `INSERT INTO Clients (ClientID, ClientName, TotalAmount, AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments)
+                     VALUES (?,?,0, ?, ?, ?, ?, ?,?,?,?)`;
 
-
-    // Execute the query, passing values from the request body
-    db.query(sql, [ ClientID, ClientName,AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments], (err, result) => {
-        if (err) {
-            console.error('Error inserting record:', err);
-            res.status(500).send('Error inserting record');
-            return;
-        }
-        console.log('Record inserted');
-        res.redirect('/AddOrder')})
-    });
+        // Execute the query with form data and uploaded file names
+        db.query(sql, [ClientID,ClientName,AddressAndOccupation,PhoneNumber,Aadhar,AadharCardFile,Pan,PanCardFile,ImageFile,Comments], (err, result) => {
+            if (err) {
+                console.error('Error inserting record:', err);
+                res.status(500).send('Error inserting record');
+                return;
+            }
+            console.log('Record inserted');
+            res.send(`
+                <script>
+                  alert("Client Added Succesfully!");
+                  window.location.href = "/AddOrder";
+                </script>
+              `);
+        });
+    } catch (error) {
+        console.error('Error handling request:', error.message);
+        res.status(500).send('An error occurred while processing the request');
+    }
+});
 
 app.post("/NewClientLead",(req,res)=>{
 
@@ -239,7 +392,13 @@ app.post("/NewClientLead",(req,res)=>{
             return;
         }
         console.log('Record inserted');
-        res.redirect('/Queue');
+        res.send(`
+            <script>
+              alert("Client Lead Succesfully!");
+              window.location.href = "/Queue";
+            </script>
+          `);
+        
     });
 })
 app.post("/NewInvestorLead",(req,res)=>{
@@ -258,7 +417,12 @@ app.post("/NewInvestorLead",(req,res)=>{
             return;
         }
         console.log('Record inserted');
-        res.redirect('/Queue');
+        res.send(`
+            <script>
+              alert("Investor Lead Succesfully!");
+              window.location.href = "/Queue";
+            </script>
+          `);
     });
 })
 
@@ -267,9 +431,7 @@ app.post("/NewInvestment", (req, res) => {
     const InvestmentID = generateSmallId('INVE');
     const { Investor, Amount, InvestmentDate,PayableInterest, InterestRate} = req.body;
 
-    // Calculate duration in days
 
-    // Update Investor's total investment first
     const updateInvestorSql = `UPDATE Investors SET AmountInvested = AmountInvested + ? WHERE InvestorID = ?`;
 
     db.query(updateInvestorSql, [Amount, Investor], (updateErr, updateResult) => {
@@ -294,16 +456,22 @@ app.post("/NewInvestment", (req, res) => {
             }
 
             console.log('New Investment record inserted');
+            res.send(`
+                <script>
+                  alert("Investment Added Succesfully!");
+                  window.location.href = "/Home";
+                </script>
+              `);
 
-            res.redirect('/Home');
         });
     });
 });
 
-app.post("/NewOrder", (req, res) => {
-    const OrderID = generateSmallId('ORD');
-    const { Client, Amount, PayableInterest, Years = 0, Months = 0, Days = 0, RateOfInterest, StartDate, Documents } = req.body;
+app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (req, res) => {
 
+    const OrderID = generateSmallId('ORD');
+    const { Client, Amount, PayableInterest, Years = 0, Months = 0, Days = 0, RateOfInterest, StartDate } = req.body;
+    const CollateralsFile = req.files?.Collaterals ? req.files.Collaterals[0].filename : null;
     const Duration = parseInt(Years * 365) + parseInt(Months * 30) + parseInt(Days);
     // Calculate the EndDate
     const startDateObj = new Date(StartDate).toISOString().split('T')[0]; // Ensure StartDate is a valid date string or format
@@ -311,6 +479,9 @@ app.post("/NewOrder", (req, res) => {
     endDateObj.setDate(endDateObj.getDate() + Duration); // Add duration in days
     const EndDate = endDateObj.toISOString().split('T')[0]; // Format as 'YYYY-MM-DD'
     // Update Investor's total investment first
+
+
+
     const updateInvestorSql = `UPDATE Clients SET TotalAmount = TotalAmount + ? WHERE ClientID = ?`;
 
     db.query(updateInvestorSql, [Amount, Client], (updateErr, updateResult) => {
@@ -323,11 +494,11 @@ app.post("/NewOrder", (req, res) => {
         console.log('Client Total Debt updated');
 
         const insertOrderSql = `
-            INSERT INTO Orders (OrderID, ClientID, Amount,ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Documents)
+            INSERT INTO Orders (OrderID, ClientID, Amount,ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Collaterals)
             VALUES (?, ?, ?,?, ?, ?, ?,?, ?)
         `;
 
-        db.query(insertOrderSql, [OrderID, Client, Amount,Amount, PayableInterest, RateOfInterest, StartDate,EndDate, Documents], (insertErr, insertResult) => {
+        db.query(insertOrderSql, [OrderID, Client, Amount,Amount, PayableInterest, RateOfInterest, StartDate,EndDate, CollateralsFile], (insertErr, insertResult) => {
             if (insertErr) {
                 console.error('Error inserting Order:', insertErr);
                 res.status(500).send('Error inserting Order');
@@ -335,7 +506,13 @@ app.post("/NewOrder", (req, res) => {
             }
 
             console.log('New Order record inserted');
-            res.redirect('/Home');
+            res.send(`
+                <script>
+                  alert("Order Added Succesfully!");
+                  window.location.href = "/Home";
+                </script>
+              `);
+            
         });
     });
 });
@@ -352,7 +529,6 @@ app.get("/InvestorsData", (req, res) => {
         res.json(results);
     });
 });
-
 
 
 app.get("/ClientsData",(req,res)=>{
@@ -587,53 +763,113 @@ WHERE
     });
 });
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.post('/UpdateInvestor', (req, res) => {
-    const { InvestorID,InvestorName, AmountInvested, PhoneNumber } = req.body;
-    console.log(InvestorID,InvestorName, AmountInvested, PhoneNumber);
-    
+app.post('/UpdateInvestor', upload.single('Image'), (req, res) => {
+    const { InvestorID, InvestorName, AmountInvested, PhoneNumber } = req.body;
+    const oldImagePath = req.body.oldImagePath;  // Get the old image path from the form if available
+    let newImageFile = null;
+
+    // If a new image is uploaded, store its path
+    if (req.file) {
+        newImageFile = req.file.filename;
+    }
+
+    // If there's a new image and the old image exists, delete the old image
+    if (newImageFile && oldImagePath) {
+        fs.unlink(path.join(__dirname, 'uploads/images', oldImagePath), (err) => {
+            if (err) console.error('Error deleting old image:', err);
+        });
+    }
+
+    // Update the investor details in the database, including the new image path if uploaded
     const updateQuery = `
         UPDATE Investors SET
             InvestorName = ?,
             AmountInvested = ?,
-            PhoneNumber = ?
+            PhoneNumber = ?,
+            Image = ?
         WHERE InvestorID = ?
     `;
 
-    db.query(updateQuery, [InvestorName, AmountInvested, PhoneNumber, InvestorID], (err, result) => {
+    const updatedImagePath = newImageFile || oldImagePath;  // Use the new image or the old image path if no new image is uploaded
+
+    db.query(updateQuery, [InvestorName, AmountInvested, PhoneNumber, updatedImagePath, InvestorID], (err, result) => {
         if (err) {
-            console.error(err);
+            console.error('Error updating investor details:', err);
             return res.status(500).send('Error updating investor details');
         }
-        res.redirect('/Investors');
+        console.log('Investor updated successfully');
+        res.send(`
+            <script>
+              alert("Investor updated Succesfully!");
+              window.location.href = "/Investors";
+            </script>
+          `);
     });
 });
 
 
 
-app.post('/UpdateClient', (req, res) => {
-    const { ClientID,ClientName, TotalAmount, PhoneNumber,Comments} = req.body;
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const query = `
-        UPDATE Clients 
-        SET ClientName = ?, TotalAmount = ?, PhoneNumber = ?,Comments=?
-        WHERE ClientID = ?`;
+app.post('/UpdateClient', upload.fields([{ name: 'AadharCard' }, { name: 'PanCard' }, { name: 'Image' }]), (req, res) => {
+    const { ClientID, ClientName, TotalAmount, PhoneNumber,Aadhar,Pan, Comments, oldAadharPath, oldPanPath, oldImagePath } = req.body;
+    // Extract file paths from multer
+    const panFile = req.files['PanCard'] ? req.files['PanCard'][0].filename : null;
+    const aadharFile = req.files['AadharCard'] ? req.files['AadharCard'][0].filename : null;
+    const imageFile = req.files['Image'] ? req.files['Image'][0].filename : null;
 
-    db.query(
-        query,
-        [ClientName,  TotalAmount, PhoneNumber,Comments, ClientID],
-        (err, results) => {
-            if(err){
-                console.log(err)
-                res.send("GONE WRONG");
-            }
-           else{
-            res.redirect('/Clients');
-            }
+
+    // Handle new Aadhar card update
+    if (aadharFile && oldAadharPath) {
+        fs.unlink(path.join(__dirname, oldAadharPath), (err) => {
+            if (err) console.error('Error deleting old Aadhar card file:', err);
+        });
+    }
+    if (panFile && oldPanPath) {
+        fs.unlink(path.join(__dirname, oldPanPath), (err) => {
+            if (err) console.error('Error deleting old PAN card file:', err);
+        });
+    }
+    if (imageFile && oldImagePath) {
+        fs.unlink(path.join(__dirname, oldImagePath), (err) => {
+            if (err) console.error('Error deleting old image file:', err);
+        });
+    }
+
+
+    const updateQuery = `
+        UPDATE Clients SET
+            ClientName = ?,
+            PhoneNumber = ?,
+            Aadhar=?,
+            AadharCard=?,
+            Pan=?,
+            PanCard=?,
+            Image=?,
+            Comments = ?
+        WHERE ClientID = ?
+    `;
+    const updatedAadharPath = aadharFile ?aadharFile : oldAadharPath;
+    const updatedPanPath = panFile ? panFile : oldPanPath;
+    const updatedImagePath = imageFile ? imageFile : oldImagePath;
+
+    db.query(updateQuery, [ClientName,PhoneNumber,Aadhar,updatedAadharPath,Pan,updatedPanPath, updatedImagePath, Comments, ClientID], (err, result) => {
+        if (err) {
+            console.error('Error updating client details:', err);
+            return res.status(500).send('Error updating client details');
         }
-    );
+        console.log('Client updated successfully');
+        res.send(`
+            <script>
+              alert("Client updated Succesfully!");
+              window.location.href = "/Clients";
+            </script>
+          `);
+    });
 });
-
+/////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -655,7 +891,13 @@ app.post('/UpdateInvestment', (req, res) => {
                     res.send("GONE WRONG");
                 }
                else{
-                res.redirect('/Investors');
+                res.send(`
+                    <script>
+                      alert("Investment updated Succesfully!");
+                      window.location.href = "/Investors";
+                    </script>
+                  `);
+                
                 }
             }
         );
@@ -700,16 +942,30 @@ app.post('/UpdateInvestment', (req, res) => {
     });
     
     
-    app.post('/UpdateOrder', (req, res) => {
-        const {OrderID,ActiveAmount,PayableInterest,RateOfInterest } = req.body;
+    app.post('/UpdateOrder',upload.single('Collaterals'), (req, res) => {
+        const {OrderID,ActiveAmount,PayableInterest,RateOfInterest,oldCollateralsPath } = req.body;
         
+        let newCollateralsPath = null;
+
+        // If a new image is uploaded, store its path
+        if (req.file) {
+            newCollateralsPath = req.file.filename;
+        }
+    
+        // If there's a new image and the old image exists, delete the old image
+        if (newCollateralsPath && oldCollateralsPath) {
+            fs.unlink(path.join(__dirname, 'uploads/images', oldCollateralsPath), (err) => {
+                if (err) console.error('Error deleting old image:', err);
+            });
+        }
+
         const query = `
             UPDATE Orders
-            SET ActiveAmount = ?,PayableInterest=?, RateOfInterest = ?
+            SET ActiveAmount = ?,PayableInterest=?, RateOfInterest = ?,Collaterals=?
             WHERE OrderID = ?
         `;
-    
-        db.query(query, [ActiveAmount,PayableInterest,RateOfInterest, OrderID], (err, results) => {
+        const updatedCollateralsPath = newCollateralsPath ?newCollateralsPath : oldCollateralsPath;
+        db.query(query, [ActiveAmount,PayableInterest,RateOfInterest,updatedCollateralsPath, OrderID], (err, results) => {
             if (err) {
                 console.error('Error updating order:', err);
                 return res.status(500).json({ message: 'Error updating order' });
@@ -719,7 +975,12 @@ app.post('/UpdateInvestment', (req, res) => {
                 return res.status(404).json({ message: 'Order not found' });
             }
     
-            res.redirect('/Clients');
+            res.send(`
+                <script>
+                  alert("Order updated Succesfully!");
+                  window.location.href = "/Clients";
+                </script>
+              `);
         });
     });
     
@@ -728,7 +989,7 @@ app.get ('/RejectClientLead/:ClientName',(req,res)=>{
     
 const ClientName = req.params.ClientName;
 const {Amount}=req.query;
-console.log(ClientName,Amount)
+
     const query = `
     DELETE FROM ClientLead WHERE ClientName = ? AND Amount = ?;
 `;
@@ -1003,7 +1264,7 @@ app.get('/getInvestmentData', (req, res) => {
         if (err) {
             return res.status(500).json({ error: 'Failed to fetch investment data' });
         }
-console.log(results)
+
         res.status(200).json(results);
     });
 });
@@ -1017,7 +1278,7 @@ app.get('/getOrderData', (req, res) => {
         if (err) {
             return res.status(500).json({ error: 'Failed to fetch investment data' });
         }
-console.log(results)
+
         res.status(200).json(results);
     });
 });
@@ -1032,7 +1293,7 @@ const id=req.params.ID;
         if (err) {
             return res.status(500).json({ error: 'Failed to fetch investment data' });
         }
-console.log(results)
+
         res.status(200).json(results);
     });
 
@@ -1047,7 +1308,7 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
             if (err) {
                 return res.status(500).json({ error: 'Failed to fetch investment data' });
             }
-    console.log(results)
+  
             res.status(200).json(results);
         });
     
@@ -1061,7 +1322,7 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
                 if (err) {
                     return res.status(500).json({ error: 'Failed to fetch investment data' });
                 }
-        console.log(results)
+       
                 res.status(200).json(results);
             });
         
@@ -1110,8 +1371,7 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
           const totalInvestorEmi = parseInt(investorEmiSum[0].total) || 0;
             const totalExtraExpenses=parseInt(ExtraExpensesSum[0].total) || 0;
             const totalExtraIncomes=parseInt(ExtraIncomesSum[0].total) || 0;
-            console.log(totalExtraIncomes)
-            console.log(totalExtraExpenses)
+           
           // Perform Calculation
           const totalSum = (totalInvestments + totalClientEmi+totalExtraIncomes) - (totalOrders + totalInvestorEmi+totalExtraExpenses);
       
@@ -1157,7 +1417,13 @@ app.get("/AddDueEMI/:ID", (req, res) => {
             res.status(500).send("We Have Already Added It in Pending");
         } else {
             console.log("EMI payment recorded successfully:", result);
-            res.redirect('/Clients')
+            res.send(`
+                <script>
+                  alert("Added In Due Succesfully!");
+                  window.location.href = "/Clients";
+                </script>
+              `);
+           
         }
     });
 });
@@ -1370,26 +1636,27 @@ app.get('/signup',(req,res)=>{
 
 
     const {UserName,PhoneNumber,Password}=req.query;
-    const sql = `INSERT INTO Users (UserName,Password,PhoneNumber,Access)
-                 VALUES (?, ?,?,1)`;
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(Password, salt, function(err, hash) {
+            const sql = `INSERT INTO Users (UserName,Password,PhoneNumber,Access)
+            VALUES (?, ?,?,1)`;
 
-    db.query(sql, [UserName,Password,PhoneNumber,], (err, result) => {
-        if (err) {
-            console.error('Error inserting record:', err);
-            res.status(500).send('Error inserting record');
-            return;
-        }
+db.query(sql, [UserName,hash,PhoneNumber,], (err, result) => {
+   if (err) {
+       console.error('Error inserting record:', err);
+       res.status(500).send('Error inserting record');
+       return;
+   } 
+        });
+    });
+
         console.log('Record inserted');
         res.redirect('/')
     });
 })
   
 
-app.get('/login',(req,res)=>{
 
-res.redirect('/home')
-
-})
 
 app.get('/ForgetPassword',(req,res)=>{
 
@@ -1427,8 +1694,4 @@ app.listen(2001,()=>{
 
     console.log("SUCCESFUL")
 })
-
-
-
-
 

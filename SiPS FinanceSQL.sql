@@ -1,13 +1,13 @@
 CREATE TABLE Investors (
     InvestorID VARCHAR(15) PRIMARY KEY,
-    InvestorName VARCHAR(30) NOT NULL UNIQUE,
+    InvestorName VARCHAR(30) NOT NULL ,
     StartDate DATE,
     AmountInvested BIGINT NOT NULL,
     PhoneNumber CHAR(10),
-    Image Blob
+    Image varchar(225)
 );
-
-select * from dueemi
+select * from investors
+drop table investors
 CREATE TABLE Investments (
     InvestmentID VARCHAR(15) PRIMARY KEY,
     InvestorID VARCHAR(15) NOT NULL,
@@ -18,21 +18,20 @@ CREATE TABLE Investments (
     InterestRate DECIMAL(5, 2),
     FOREIGN KEY (InvestorID) REFERENCES Investors(InvestorID) ON DELETE CASCADE
 );
-
+drop table investments
 CREATE TABLE Clients (
     ClientID VARCHAR(20) PRIMARY KEY,
-    ClientName VARCHAR(30) NOT NULL UNIQUE,
+    ClientName VARCHAR(30) NOT NULL,
     TotalAmount BIGINT NOT NULL,
     AddressAndOccupation VARCHAR(100),
     PhoneNumber CHAR(10),
     Aadhar VARCHAR(12),
-    AadharCard BLOB,
+    AadharCard varchar(225),
     Pan VARCHAR(10),
-    PanCard BLOB,
-    Image BLOB,
+    PanCard varchar(225),
+    Image varchar(225),
     Comments VARCHAR(100)
-);
-
+);select * from clients
 CREATE TABLE Orders (
     OrderID VARCHAR(15) PRIMARY KEY,
     ClientID VARCHAR(20),
@@ -42,9 +41,10 @@ CREATE TABLE Orders (
     RateOfInterest DECIMAL(5, 2),
     StartDate DATE,
     EndDate Date,
-    Documents LONGBLOB,
+    Documents varchar(225),
     FOREIGN KEY (ClientID) REFERENCES Clients(ClientID) ON DELETE CASCADE
 );
+drop table orders
 CREATE TABLE ClientLead (
     ClientName VARCHAR(30),
     Amount BIGINT,  
@@ -106,8 +106,10 @@ CREATE TABLE DueEMI (
     OrderAmount BIGINT ,
     EMIDate DATE ,
     EMIAmount BIGINT ,
+    RemainingEMI BigINT,
     PRIMARY KEY (OrderID, EMIDate,IssuedDate)
 );
+drop table DueEMI
 select * from DUEemi
 create table ExtraExpenses(
 reason varchar(100),
@@ -130,20 +132,10 @@ Access int
 )
 select * from Users
 
+SELECT @@global.time_zone;
+SELECT @@session.time_zone;
 
+ALTER TABLE clients
+MODIFY column_name new_data_type;
 
-SELECT
-            orderid,
-            clientID,
-            amount,
-            ActiveAmount,
-            PayableInterest,
-            Startdate,
-            EndDate
-        FROM
-            Orders
-        WHERE 
-            MONTH(EndDate) = MONTH(CURDATE()) 
-            AND YEAR(EndDate) = YEAR(CURDATE());
-    `;
-select * from orders
+SELECT @@global.time_zone, @@session.time_zone;

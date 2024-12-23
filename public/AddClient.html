@@ -24,7 +24,7 @@
 
 /* Global Styles */
 body {
-    font-family: 'Poppins', sans-serif; /* Clean, modern font */
+    
     background-color: var(--secondary-color); /* Soft background */
     color: #333; /* Dark text for readability */
     margin: 0;
@@ -145,7 +145,7 @@ input[type="number"]::-webkit-outer-spin-button,
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="/Home">
-                <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
+                <img src="../Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
                 <div>
                     <span style="display: block;">Sips Finance</span>
                 </div>
@@ -174,14 +174,14 @@ input[type="number"]::-webkit-outer-spin-button,
                     </li>
                 </ul>
                 <div class="d-flex align-items-center ms-3 " >
-                    <a href="./Login.html" class="sign-out btn btn-danger">Sign Out</a>
+                    <a href="/" class="sign-out btn btn-danger">Sign Out</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <div id="main">
-        <form action="/NewClient" method="post" onsubmit="alert('Client has been added successfully')">
+        <form action="/NewClient" method="post"  enctype="multipart/form-data">
             <div>
                 <label for="ClientName">Client Name *</label>
                 <input type="text" id="ClientName"  inputmode="text" title="Only letters are allowed" name="ClientName" required>
@@ -199,10 +199,10 @@ input[type="number"]::-webkit-outer-spin-button,
                 <label for="Aadhar">Aadhar Card *</label>
                 <input type="tel"  placeholder="Enter valid Aadhar number"  minlength="12" maxlength="12" id="Aadhar" name="Aadhar" required>
             </div>
-
+          
                 <div>
                 <label for="AadharCard">Upload Aadhar Card *</label>
-                <input type="file" id="AadharCard" name="AadharCard" placeholder="Upload if required">
+                <input type="file" id="AadharCard" name="AadharCard" placeholder="Upload if required" >
             </div>
 
             <div>
@@ -212,12 +212,12 @@ input[type="number"]::-webkit-outer-spin-button,
              
             <div>
                 <label for="PanCard">Upload Pan Card *</label>
-                <input type="file" id="PanCard" name="PanCard">
+                <input type="file" id="PanCard" name="PanCard" >
             </div>
             
             <div>
                 <label for="Image">Upload Image [if required]</label>
-                <input type="file" id="Image" name="Image" placeholder="Upload if required">
+                <input type="file" id="Image" name="Image" placeholder="Upload if required" >
             </div>
             <div>
                 <label for="Comments">Comments</label>
@@ -242,8 +242,7 @@ document.getElementById('Aadhar').addEventListener('input', function (e) {
     }
 });
 </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+ws9y5p4p6wPflb4EL1pLf0PdCgSm" crossorigin="anonymous"></script>
-0
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

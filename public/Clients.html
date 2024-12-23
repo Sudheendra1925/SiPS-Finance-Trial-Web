@@ -11,31 +11,32 @@
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
 *{
     font-family: 'Merriweather';
+    
 }
-       :root {
-    --primary-color: #0875e1; /* Rich Blue */
-    --secondary-color: #f7f9fc; /* Light Background */
-    --accent-color: #0875e1; /* Lighter Accent */
-    --text-dark: #222; /* Rich Dark */
-    --text-light: #555; /* Muted Text */
+:root {
+    --primary-color: #0875e1; /* Deeper Blue for Trust */
+    --secondary-color: #f8faff; /* Soft Light Blue Background */
+    --accent-color: #0875e1; /* Darker Blue for Emphasis */
+    --text-dark: #2a2a2a; /* Neutral Dark Gray */
+    --text-light: #5f6f81; /* Muted Gray-Blue Text */
     --white: #ffffff;
-    --success-color: #28a745; /* Success Green */
-    --warning-color: #ffc107; /* Warning Yellow */
-    --danger-color: #dc3545; /* Danger Red */
-    --highlight-color: #ffc107; /* Premium Gold */
-    --table-bg: #ffffff; /* White Table Background */
-    --table-border: #e0e0e0; /* Subtle Gray Borders */
-    --card-bg: #ffffff; /* Clean White Cards */
-    --shadow-color: rgba(0, 0, 0, 0.1); /* Soft Shadow */
+    --success-color: #27ae60; /* Fresh Green */
+    --warning-color: #f39c12; /* Warm Amber */
+    --danger-color: #e74c3c; /* Vibrant Red */
+    --highlight-color: #f1c40f; /* Warm Gold for Highlights */
+    --table-bg: #ffffff; /* Clean White Table */
+    --table-border: #dcdcdc; /* Softer Gray Borders */
+    --card-bg: #f9f9f9; /* Subtle Gray-White for Cards */
+    --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
     --transition-speed: 0.3s; /* Smooth Transitions */
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: white;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    background-color:var(--secondary-color);
     color: var(--text-dark);
+    line-height: 1.6;
 }
 
 .navbar {
@@ -63,6 +64,11 @@ body {
     color: var(--highlight-color);
     font-weight: bold;
 }
+
+.sign-out:hover {
+    color: var(--white);
+}
+
 
 /* Profile Card Styling */
 .profile-card {
@@ -187,29 +193,7 @@ body {
 }
 
 /* Container Styling */
-.container-fluid {
-    background-color: var(--primary-color);
-    padding: 20px;
-    color: var(--white);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px var(--shadow-color);
-}
 
-.container-fluid h1,
-.container-fluid p {
-    text-align: center;
-    margin: 0;
-}
-
-.container-fluid h1 {
-    font-size: 2.4em;
-    font-weight: bold;
-}
-
-.container-fluid p {
-    margin-top: 10px;
-    font-size: 1.2em;
-}
 
 #ChartBox{
 
@@ -249,44 +233,45 @@ align-items: center;
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="/home">
-                <img src="../Images/Sips Finance Logo.jpg" alt="Logo" width="60" height="60" class="me-2">
-                <div>
-                    <span style="display: block;">Sips Finance</span>
-                </div>
-            </a>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="/Home">
+            <img src="./Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
+            <div>
+                <span style="display: block;">Sips Finance</span>
+            </div>
+        </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="navbarToggler">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link " href="/Home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Investors">Investors</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/Clients">Clients</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Queue">Queues</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Company">Company</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center ms-3 ">
-                    <a href="/" class="sign-out ms-3 btn btn-danger">Sign Out</a>
-                </div>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Investors">Investors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/Clients">Clients</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Queue">Queue</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Company">Company</a>
+                </li>
+                
+            </ul>
+            <div class="d-flex align-items-center ms-3 " >
+                <a href="/" class="sign-out btn btn-danger">Sign Out</a>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
+
     <div class="mb-3">
         <input type="text" id="searchBar" class="form-control" placeholder="Search Client ">
     </div>
@@ -301,12 +286,12 @@ align-items: center;
     </div>
  
    <div id="ChartBox">
-     <h2>Order Split</h2>
+     <h1>Order Split</h1>
     <div id="piechart_3d" style="width: 400px; height: 300px;"></div>
 </div>
 
 
-
+   
     <script>
       originalData=[]
        google.charts.load("current", { packages: ["corechart"] });
@@ -321,7 +306,7 @@ async function fetchOrderData() {
 
     // Validate data format
     if (!Array.isArray(data) || data.length === 0) {
-      throw new Error('No Clients Yet');
+      throw new Error('No Orders Yet');
     }
 
     // Function to fetch client details by ID
@@ -351,7 +336,7 @@ async function fetchOrderData() {
 
     // Ensure chartData has at least one row of data
     if (chartData.length <= 1) {
-      throw new Error('No valid investment data to display');
+      throw new Error('No valid order data to display');
     }
 
     // Draw chart
@@ -359,7 +344,7 @@ async function fetchOrderData() {
   } catch (error) {
     console.error('Error fetching client data:', error.message);
     document.getElementById('piechart_3d').innerHTML = `
-      <p class="text-danger">Failed to load chart data: ${error.message}</p>
+      <h6 class="text-muted text-center"> ${error.message}</h6>
     `;
   }
 }
@@ -385,7 +370,7 @@ function drawChart(chartData) {
   } catch (error) {
     console.error('Error drawing chart:', error.message);
     document.getElementById('piechart_3d').innerHTML = `
-      <p class="text-danger">Error drawing chart: ${error.message}</p>
+      <p class="text-muted text-center">Error drawing chart: ${error.message}</p>
     `;
   }
 }
@@ -405,17 +390,15 @@ originalData=data;
     container.innerHTML = ''; // Clear existing cards
 
     if (data.length === 0) {
-      container.innerHTML = `<p class="text-center text-muted">No Clients found.</p>`;
+      container.innerHTML = `<h1 class="text-center text-muted">No Clients found.</h1>`;
       return;
     }
-
+console.log(data)
     data.forEach(client => {
       const profileCard = document.createElement('div');
       profileCard.classList.add('col-md-4', 'mb-4');
 
-      // Fallback to placeholder if no image is available
-      const imageUrl = '../Images/DummyProfile.png';
-
+      const imageUrl = client.Image ? `../uploads/images/${client.Image}`: '../Images/DummyProfile.png';
       profileCard.innerHTML = `
         <div class="profile-card border shadow p-3 rounded">
           <img src="${imageUrl}" alt="${client.ClientName}" class="profile-image img-fluid rounded-circle mb-3">
@@ -443,7 +426,7 @@ originalData=data;
   } catch (error) {
     console.error('Error fetching data:', error);
     const container = document.getElementById('profile-cards-container');
-    container.innerHTML = `<p class="text-center text-danger">Error loading client data. Please try again later.</p>`;
+    container.innerHTML = `<p class="text-center text-muted">Error loading client data. Please try again later.</p>`;
   }
 }
 
@@ -468,7 +451,7 @@ function filterData(query) {
   });
 
   if (filteredData.length === 0) {
-    container.innerHTML = '<p class="text-center text-danger">No matching results found.</p>';
+    container.innerHTML = '<p class="text-center text-muted">No matching results found.</p>';
     return;
   }
 
@@ -476,7 +459,7 @@ function filterData(query) {
   filteredData.forEach(client => {
     const profileCard = document.createElement('div');
     profileCard.classList.add('col-md-4', 'mb-4');
-    const imageUrl = '../Images/DummyProfile.png';
+    const imageUrl = client.Image ? `../uploads/images/${client.Image}` : '../Images/DummyProfile.png';
 
     profileCard.innerHTML = `
       <div class="profile-card border shadow p-3 rounded" onclick="clientDetails(${client.ClientID})">
@@ -509,6 +492,6 @@ document.getElementById('searchBar').addEventListener('input', (e) => {
 
 
 </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ppE5V4F7k9vLAHQ4OdwLwD4EYMOJKH7PQcHI3Y0OV/2vO2QlR3SNi76qIr1z5nqg" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
