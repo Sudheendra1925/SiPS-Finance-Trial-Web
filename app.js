@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 //Declarations  
 const express = require('express');
 const mysql = require('mysql2');
@@ -12,6 +12,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt'); 
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const nodemailer = require('nodemailer');
 /////////////////////////////Use////
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
@@ -63,6 +64,10 @@ const storage = multer.diskStorage({
         cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
     },
 });
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// Create a transporter object using the default SMTP transport
+
 
 //////////////////////////////////////////////////////////////////////////
 const upload = multer({
@@ -88,6 +93,7 @@ const generateSmallId = (prefix) => {
     const id = crypto.randomBytes(3).toString('hex'); 
     return `${prefix}-${id}`;
   };
+///////////////////////////////////////////////////////////////////
 
 
  /////////DB connections///////////////////////////////
@@ -154,6 +160,80 @@ app.get('/check', async (req, res) => {
     }
   });
   
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Send OTP endpoint
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+      auth: {
+        user: 'chatrapathi12052005@gmail.com', // your email
+        pass: 'ikrj obvn cxjr qmyb' // your app password
+    }
+});
+  app.post("/sendOtp", (req, res) => {
+    const { Email,Otp } = req.query;  // Email passed in request body
+  
+    if (!Email) {
+      return res.status(400).send("Email is required");
+    }
+  
+    // Setup email data
+    const mailOptions = {
+      from: "sips",  // sender address
+      to: Email,                             // recipient's email
+      subject: "Your OTP Code For Sips",              // Subject line
+      text: `Your OTP code is: ${Otp}`,      // OTP in text body
+    };
+  
+    // Send the OTP via email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send('Error sending email');
+      }
+      console.log('Message sent: %s', info.messageId);
+      res.status(200).json({ status: "success", message: "OTP sent successfully" });
+
+    });
+  });
+
+
+
+app.get('/ResetPassword', async (req, res) => {
+    const { Email, Password } = req.query;
+
+    if (!Email || !Password) {
+        return res.status(400).json({ message: 'Email and new password are required' });
+    }
+
+    try {
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(Password, 10);
+
+        // Update the password in the database
+        const query = 'UPDATE users SET Password = ? WHERE Email = ?';
+        db.query(query, [hashedPassword, Email], (err, result) => {
+            if (err) {
+                console.error('Error updating password:', err);
+                return res.status(500).json({ message: 'Internal server error' });
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+           res.redirect("/");
+        });
+    } catch (error) {
+        console.error('Error hashing password:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+
+})
+
+
 
 /////////////////////////////////////////////////////////////////////
 app.get('/', (req, res) => {
@@ -289,7 +369,7 @@ app.get('/ClosedInvestmentsPage',isAuthenticated, (req, res) => {
 app.get('/ClosedOrdersPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ClosedOrdersPage.html'));
 });
-app.get('/ForgetPasswordPage',isAuthenticated, (req, res) => {
+app.get('/ForgetPasswordPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ForgetPasswordPage.html'));
 });
 
@@ -1635,13 +1715,13 @@ app.get('/UserData', async (req, res) => {
 app.get('/signup',(req,res)=>{
 
 
-    const {UserName,PhoneNumber,Password}=req.query;
+    const {UserName,Password,Email}=req.query;
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(Password, salt, function(err, hash) {
-            const sql = `INSERT INTO Users (UserName,Password,PhoneNumber,Access)
+            const sql = `INSERT INTO Users (UserName,Password,Email,Access)
             VALUES (?, ?,?,1)`;
 
-db.query(sql, [UserName,hash,PhoneNumber,], (err, result) => {
+db.query(sql, [UserName,hash,Email], (err, result) => {
    if (err) {
        console.error('Error inserting record:', err);
        res.status(500).send('Error inserting record');
@@ -1688,9 +1768,9 @@ app.post("/SubmitLoanRequest",(req,res)=>{
 
 
 })
-  
-
-app.listen(2001,()=>{
+ 
+const PORT=process.env.PORT||2001;
+app.listen(PORT,()=>{
 
     console.log("SUCCESFUL")
 })

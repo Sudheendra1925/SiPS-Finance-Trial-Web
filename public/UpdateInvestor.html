@@ -7,9 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
-*{
-    font-family: 'Merriweather';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+  *{  /* font-family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"; */
+    font-family: 'Montserrat';
 }
       :root {
             --primary-color: #0875e1; /* Rich Blue */
@@ -214,6 +214,7 @@
             </div>
             <input type="hidden" id="oldImagePath" name="oldImagePath" readonly>
             <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a class="btn btn-primary" id="Cancel">Cancel</a>
         </form>
     </div>
 
@@ -234,7 +235,7 @@
                 document.getElementById('PhoneNumber').value = data.PhoneNumber;
                 document.getElementById('imgpreview').src =`../uploads/images/${data.Image}`
                 document.getElementById('oldImagePath').value =`${data.Image} `
-                
+                document.getElementById('Cancel').href = `/investor/${data.InvestorID}`;
                 // Display image preview if availabl
             } catch (error) {
                 console.error('Error fetching investor details:', error);

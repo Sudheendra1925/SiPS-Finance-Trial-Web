@@ -10,7 +10,8 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
   *{  /* font-family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"; */
-    font-family: 'Montserrat';
+    /* font-family: 'Montserrat';; */
+    font-family:sans-serif;
 }
 :root {
     --primary-color: #0875e1; /* Deeper Blue for Trust */
@@ -33,13 +34,13 @@
 body {
     margin: 0;
     padding: 0;
-    background-color:var(--secondary-color);
+    background-color:#c3cfe2;
     color: var(--text-dark);
     line-height: 1.6;
 }
 
 .navbar {
-    background: var(--primary-color);
+    background: #f1f7fa;
     padding: 10px 20px;
     box-shadow: 0 4px 8px var(--shadow-color);
 }
@@ -52,14 +53,14 @@ body {
     letter-spacing: 1px;
 }
 
-.navbar-nav .nav-link {
-    color: var(--white);
+.navbar-nav .nav-linkh {
     margin: 0 10px;
     transition: color var(--transition-speed);
+    font-weight: bold;
 }
 
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
+
+.navbar-nav .nav-linkh.active {
     color: var(--highlight-color);
     font-weight: bold;
 }
@@ -74,7 +75,7 @@ body {
     margin: auto;
 }
 
-h5 {
+h4 {
     color: var(--accent-color);
     text-transform: uppercase;
     margin-bottom: 20px;
@@ -111,6 +112,10 @@ h5 {
     cursor: pointer;
 }
 
+#orderButton {
+    background-color: var(--success-color);
+}
+
 #TotalInvestments, #TotalLendings {
     display: inline-block;
     margin: 20px;
@@ -132,7 +137,7 @@ h5 {
 }
 
 button {
-    background-color: var(--primary-color);
+    font-weight: bold;
     color: var(--white);
     border: none;
     padding: 10px 15px;
@@ -143,7 +148,7 @@ button {
 }
 
 button:hover {
-    background-color: #004bb7; /* Slightly Darker Blue */
+  
     transform: scale(1.05);
 }
 
@@ -168,14 +173,15 @@ button:active {
     }
 }
 
-.Add {
-    background-color: var(--primary-color);
-    color: #f7f9fc;
+.table-responsive{
+    border-radius: 10px;
+    border: 2px solid  white ;
+    margin: 2vh;
+    padding: 2vw;
+    background-color: white;
 }
 
-.Add:hover {
-    background-color: var(--success-color); /* Success Green */
-}
+
 
 
 </style>
@@ -187,7 +193,7 @@ button:active {
             <a class="navbar-brand d-flex align-items-center" href="/Home">
                 <img src="../Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
                 <div>
-                    <span style="display: block;">Sips Finance</span>
+                    <span style="display: block;color: #004bb7;">Sips Finance</span>
                 </div>
             </a>
 
@@ -198,19 +204,19 @@ button:active {
             <div class="collapse navbar-collapse" id="navbarToggler">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/Home">Home</a>
+                        <a class="nav-linkh active btn btn-primary" href="/Home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Investors">Investors</a>
+                        <a class="btn btn-success nav-linkh " href="/Investors">Investors</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Clients">Clients</a>
+                        <a class="nav-linkh btn btn-primary" href="/Clients">Clients</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Queue">Queue</a>
+                        <a class="nav-linkh btn btn-primary" href="/Queue">Queue</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Company">Company</a>
+                        <a class="nav-linkh btn btn-primary" href="/Company">Company</a>
                     </li>
                     
                 </ul>
@@ -224,19 +230,30 @@ button:active {
     <!-- Content -->
     <div class="content">
         <!-- Buttons -->
-        <div class="add-buttons d-flex justify-content-between mb-4">
-            <div style="background-color: whitesnow;">
-            <a href="/AddInvestment" class="btn Add">Add Investment</a>
+        <div class=" add-buttons d-flex justify-content-between mb-4">
+            <div>
+            <a href="/AddInvestment" class="btn btn-primary Add">  
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Investment</a>
         </div>
-        <div id="chart_div" style="width: 600px; height: 400px;"></div>
+        <!--GRAPH POSITIO 1-->
         <div style="background-color: whitesnow;">
-            <a href="/AddOrder" class="btn Add">Add Order</a>
+            <a href="/AddOrder" class="btn btn-success Add" id="orderButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="13" x2="12" y2="17"></line>
+                    <line x1="9" y1="16" x2="15" y2="16"></line>
+                </svg>Add Order</a>
         </div>
         </div>
 
         <!-- Clients Paying Interest Today -->
-        <div class="table-responsive">
-            <h5>Receivable EMI</h5>
+        <div class="table-responsive" >
+            <h4><center>Receivable EMI</center></h4>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -256,7 +273,7 @@ button:active {
 
         <!-- Investors to Pay Today -->
         <div class="table-responsive">
-            <h5>Payable Interest</h5>
+            <h4><center>Payable Interest</center></h4>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -278,7 +295,7 @@ button:active {
 
 
         <div class="table-responsive">
-            <h5>Clients Whose TERM is Over </h5>
+            <h4><center>Clients Whose TERM is Over </center></h4>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -298,7 +315,7 @@ button:active {
                 </tbody>
             </table>
         </div>
-
+        <center><div id="chart_div" style="width:70vw;height:20vh;padding:0px;"></div></center>
     </div>
 
 <script>
@@ -524,7 +541,8 @@ async function drawChart() {
                         color: 'red', // Color of the annotations
                         auraColor: 'none'
                     }
-                }
+                },
+                backgroundColor: '#f8faff'
             };
 
             // Draw the chart

@@ -7,6 +7,11 @@
   <title>SiPS Finance Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Poppins:wght@100..900&display=swap');
+    * {
+      font-family: 'Montserrat', sans-serif;
+    }
+
     :root {
       --primary-color: #0875e1;
       --secondary-color: #f8faff;
@@ -19,7 +24,7 @@
     }
 
     body {
-      background-color: var(--primary-color);
+      background-color: var(--accent-color);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -78,43 +83,37 @@
       color: var(--text-light);
     }
 
-
     .btn-eye {
-  position: absolute;
-  right: 10px;
-  top: 70%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2em;
-}
-.btn-eye:focus {
-  outline: none;
-}
-input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
+      position: absolute;
+      right: 10px;
+      top: 70%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2em;
+    }
 
-        /* For Firefox */
-        input[type="number"] {
-          -moz-appearance: textfield;
-        }
+    .btn-eye:focus {
+      outline: none;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
   </style>
 </head>
 
 <body>
   <section class="forms-section">
-    <h1 class="section-title">SiPS Finance Login</h1>
-    <div class="d-flex justify-content-around mb-4">
-      <button class="switcher switcher-login is-active" data-target="login">Login</button>
-      <button class="switcher switcher-signup" data-target="signup">Sign Up</button>
-    </div>
-  
-    <!-- Login Form -->
     <div class="form-wrapper is-active" id="login-form">
+      <h1 class="section-title">SiPS Finance Login</h1>
       <form id="login-form" onsubmit="confirmAction('login', event)">
         <div class="input-block">
           <label for="login-username">Username</label>
@@ -129,146 +128,298 @@ input[type="number"]::-webkit-outer-spin-button,
         </div>
         <button type="submit" class="btn btn-success w-100">Login</button>
       </form>
+      <div class="text-center mt-3">
+        <p class="mb-0">New account? 
+          <button class="btn btn-link p-0 switcher switcher-login" data-target="signup">SignUp here</button>
+        </p>
+      </div>
       <div class="text-end mb-3">
         <a href="/ForgetPasswordPage" class="text-decoration-none" style="color: var(--danger-color);">Forgot Password?</a>
       </div>
     </div>
-  
-    <!-- Sign-Up Form -->
+
     <div class="form-wrapper" id="signup-form">
+      <h1 class="section-title">SiPS Finance SignUp</h1>
       <form id="signup-form" onsubmit="confirmAction('signup', event)">
         <div class="input-block">
           <label for="signup-username">Username</label>
           <input id="signup-username" type="text" name="SUserName" class="form-control" placeholder="Enter your username" required>
+          <p id="Name" style="color:#e63946;font-size:2vh;padding-top: 0.5vh;"></p>
         </div>
         <div class="input-block">
-          <label for="signup-phoneNumber">Phone Number</label>
-          <input id="signup-phoneNumber" type="tel" name="SPhoneNumber" class="form-control"  minlength="10" maxlength="10" placeholder="Enter your Phone Number" required>
+          <label for="signup-email">Email</label>
+          <input id="signup-email" type="email" name="Email" class="form-control" placeholder="Enter your email" required>
+          <p id="email-error" style="color:#e63946"></p>
+          <button type="button" class="btn btn-primary mt-2" onclick="sendOtp()">Send OTP</button>
+          <p id="email-otp-status" style="color:#e63946;font-size:2vh;padding-top: 0.5vh;"></p>
+        </div>
+        <div class="input-block" id="otp-section" style="display: none;">
+          <label for="signup-email-otp">Enter OTP</label>
+          <input id="signup-email-otp" type="text" class="form-control" placeholder="Enter OTP" required>
+          <button type="button" class="btn btn-success mt-2" onclick="verifyOtp()">Verify OTP</button>
+          <p id="otp-status" style="color:#e63946;font-size:2vh;padding-top: 0.5vh;"></p>
         </div>
         <div class="input-block position-relative">
           <label for="signup-password">Password</label>
           <input id="signup-password" type="password" name="SPassword" class="form-control" placeholder="Enter your password" required>
-          <button type="button" class="btn-eye" onclick="togglePasswordVisibility('signup-password')">
-            👁
-          </button>
+          <button type="button" class="btn-eye" onclick="togglePasswordVisibility('signup-password')">👁</button>
         </div>
         <div class="input-block position-relative">
           <label for="signup-password-confirm">Confirm Password</label>
-          <input id="signup-password-confirm" type="password" name="SConfirmPassword" class="form-control" placeholder="Confirm your password" required>
-          <button type="button" class="btn-eye" onclick="togglePasswordVisibility('signup-password-confirm')">
-            👁
-          </button>
-        </div>
-        <button type="submit" class="btn btn-success w-100">Sign Up</button>
+          <input id="signup-password-confirm" type="password" class="form-control" placeholder="Confirm your password" required>
+          <button type="button" class="btn-eye" onclick="togglePasswordVisibility('signup-password-confirm')">👁</button>
+
+          <div class="input-block" id="Accessotp-section">
+            <button type="button" class="btn btn-primary mt-2" onclick="sendAccessOtp()">Send Access OTP</button>
+            <p id="email-Accessotp-status" style="color:#e63946; font-size:2vh; padding-top: 0.5vh;"></p>
+          
+            <div id="otp-input-section" style="display: none;">
+              <label for="signup-email-Accessotp">Enter Access OTP</label>
+              <input id="signup-email-Accessotp" type="text" class="form-control" placeholder="Enter OTP" required>
+              <button type="button" class="btn btn-success mt-2" onclick="verifyAccessOtp()">Verify OTP</button>
+              <p id="Accessotp-status" style="color:#e63946; font-size:2vh; padding-top: 0.5vh;"></p>
+            </div>
+          
+            <button id="signup-button" class="btn btn-success w-100" disabled>Sign Up</button>
+          </div>
       </form>
+      <div class="text-center mt-3">
+        <p class="mb-0">Already have an account? 
+          <button class="btn btn-link p-0 switcher switcher-login" data-target="login">Login here</button>
+        </p>
+      </div>
     </div>
   </section>
-  
 
   <script>
-    const switchers = document.querySelectorAll('.switcher');
-    const forms = document.querySelectorAll('.form-wrapper');
+let Otp=0;
+    async function sendOtp() {
+       Otp = Math.floor(100000 + Math.random() * 900000);
+      const email = document.getElementById('signup-email').value;
+      if (!email) {
+        document.getElementById('email-otp-status').innerText = 'Please enter a valid email.';
+        return;
+      }
 
-    switchers.forEach(switcher => {
-      switcher.addEventListener('click', () => {
-        switchers.forEach(sw => sw.classList.remove('is-active'));
-        forms.forEach(form => form.classList.remove('is-active'));
+      try {
+        const response = await fetch(`/sendOtp?Email=${email}&Otp=${Otp}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email })
+        });
 
-        const target = switcher.getAttribute('data-target');
-        switcher.classList.add('is-active');
-        document.getElementById(`${target}-form`).classList.add('is-active');
-      });
+        if (response.ok) {
+          document.getElementById('email-otp-status').innerHTML = '<p style="color:green">OTP sent to your email.</p';
+          document.getElementById('otp-section').style.display = 'block';
+        } else {
+          document.getElementById('email-otp-status').innerText = 'Failed to send OTP. Please try again.';
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById('email-otp-status').innerText = 'Error sending OTP.';
+      }
+    }
+
+    function verifyOtp() {
+      const enteredOtp = document.getElementById('signup-email-otp').value;
+      if (enteredOtp == Otp) {
+        document.getElementById('otp-status').innerText = 'Email verified successfully!';
+        document.getElementById('otp-status').style.color = 'green';
+      } else {
+        document.getElementById('otp-status').innerText = 'Invalid OTP. Please try again.';
+        document.getElementById('otp-status').style.color = 'red';
+      }
+    }
+  </script>
+<script>
+  const switchers = document.querySelectorAll('.switcher');
+  const forms = document.querySelectorAll('.form-wrapper');
+
+  switchers.forEach(switcher => {
+    switcher.addEventListener('click', () => {
+      switchers.forEach(sw => sw.classList.remove('is-active'));
+      forms.forEach(form => form.classList.remove('is-active'));
+
+      const target = switcher.getAttribute('data-target');
+      switcher.classList.add('is-active');
+      document.getElementById(`${target}-form`).classList.add('is-active');
     });
+  });
 
-    async function confirmAction(action, event) {
-  event.preventDefault(); // Prevent form submission
+  async function confirmAction(action, event) {
+    event.preventDefault(); // Prevent form submission
+
+    try {
+      // Fetch user data
+      const response = await fetch('/UserData');
+      if (!response.ok) throw new Error('Failed to fetch user data');
+      const users = await response.json();
+
+      if (action === 'signup') {
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-password-confirm').value;
+        const username = document.getElementById('signup-username').value;
+        const email = document.getElementById('signup-email').value;
+
+        // Check if username already exists
+        if (users.some(user => user.UserName === username)) {
+          alert('Username already exists. Please choose a different name.');
+          return;
+        }
+        // Check if passwords match
+        if (password !== confirmPassword) {
+          alert('Passwords do not match. Please try again.');
+          return;
+        }
+
+        // Redirect with query parameters
+        window.location.href = `/signup?Password=${encodeURIComponent(password)}&UserName=${encodeURIComponent(username)}&Email=${encodeURIComponent(email)}`;
+        alert("Thank you for Signing up! You can now Log In with your credentials");
+      }
+
+      if (action === 'login') {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        window.location.href = `/check/?username=${username}&password=${password}`;
+        
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+      alert('An error occurred. Please try again later.');
+    }
+  }
+
+  document.getElementById('signup-phoneNumber').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (!/^\d{0,10}$/.test(value)) {
+      e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+  });
+
+  function togglePasswordVisibility(inputId) {
+    const inputField = document.getElementById(inputId);
+    const eyeButton = inputField.nextElementSibling; // Assuming the button is the next sibling
+    if (inputField.type === "password") {
+      inputField.type = "text";
+      eyeButton.textContent = "🙈"; // Change icon to hide
+    } else {
+      inputField.type = "password";
+      eyeButton.textContent = "👁"; // Change icon to show
+    }
+  }
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+let allApplicants = [];
+
+async function fetchAllApplicants() {
 
   try {
-    // Fetch user data
     const response = await fetch('/UserData');
-    if (!response.ok) throw new Error('Failed to fetch user data');
-    const users = await response.json();
-
-    if (action === 'signup') {
-      const password = document.getElementById('signup-password').value;
-      const confirmPassword = document.getElementById('signup-password-confirm').value;
-      const username = document.getElementById('signup-username').value;
-      const phoneNumber = document.getElementById('signup-phoneNumber').value;
-
-      // Check if username already exists
-      if (users.some(user => user.UserName === username)) {
-        alert("The entered username already exists. Please try another one.");
-        return;
-      }
-
-      // Check if passwords match
-      if (password !== confirmPassword) {
-        alert('Passwords do not match. Please try again.');
-        return;
-      }
-
-      // Redirect with query parameters
-      window.location.href = `/signup?Password=${encodeURIComponent(password)}&UserName=${encodeURIComponent(username)}&PhoneNumber=${encodeURIComponent(phoneNumber)}`;
-      alert("Thank you for Signing up ! You can now Log In with your credentials");
-    }
-
-    if (action === 'login') {
-      const username = document.getElementById('login-username').value;
-      const password = document.getElementById('login-password').value;
-      // // Validate login credentials
-      // const user = users.find(user => user.UserName === username && user.Password === password);
-    
-      // if (!user) {
-      //   alert('Invalid username or password. Please try again.');
-      //   return;
-      // }
-      window.location.href = `/check/?username=${username}&password=${password}`;
-      
-    }
+    if (!response.ok) throw new Error('Failed to fetch applicants');
+    allApplicants = await response.json();
   } catch (error) {
-    console.error('Error:', error.message);
-    alert('An error occurred. Please try again later.');
+    console.error('Error fetching applicants:', error);
   }
 }
 
-    
-  </script>
-  <script>
-
-
-    document.getElementById('PhoneNumber').addEventListener('input', function (e) {
-        const value = e.target.value;
-        if (!/^\d{0,10}$/.test(value)) {
-            e.target.value = value.slice(0, -1); // Restrict input to 10 digits
-        }
-    });
-    function togglePasswordVisibility(inputId) {
-  const inputField = document.getElementById(inputId);
-  if (inputField.type === "password") {
-    inputField.type = "text";
-  } else {
-    inputField.type = "password";
+async function checkApplicantName() {
+  const applicantNameInput = document.getElementById('signup-username');
+  const applicantName = applicantNameInput.value;
+  if (applicantName) {
+    const exists = allApplicants.some(applicant => applicant.UserName === applicantName);
+  
+    if (exists) {
+      document.getElementById('Name').innerHTML = "UserName already exists. Please choose a different name.";
+      applicantNameInput.setCustomValidity('Applicant Name already exists.');
+   
+    } else {
+      applicantNameInput.setCustomValidity('');
+      document.getElementById('Name').innerHTML = "";
+    }
   }
 }
 
-    </script>
-
-<script>
-
-function togglePasswordVisibility(inputId) {
-  const inputField = document.getElementById(inputId);
-  const eyeButton = inputField.nextElementSibling; // Assuming the button is the next sibling
-  if (inputField.type === "password") {
-    inputField.type = "text";
-    eyeButton.textContent = "🙈"; // Change icon to hide
-  } else {
-    inputField.type = "password";
-    eyeButton.textContent = "👁"; // Change icon to show
+async function checkApplicantEmail() {
+  const applicantEmailInput = document.getElementById('signup-email');
+  const applicantEmail = applicantEmailInput.value;
+  if (applicantEmail) {
+    const exists = allApplicants.some(applicant => applicant.Email === applicantEmail);
+  
+    if (exists) {
+      document.getElementById('email-error').innerHTML = "Email ID already exists. Please choose a different name.";
+      applicantEmailInput.setCustomValidity('Applicant Name already exists.');
+   
+    } else {
+      applicantEmailInput.setCustomValidity('');
+      document.getElementById('email-error').innerHTML = "";
+    }
   }
 }
+
+window.addEventListener("load", fetchAllApplicants);
+document.getElementById('signup-username').addEventListener('input', checkApplicantName);
+document.getElementById('signup-email').addEventListener('input', checkApplicantEmail);
+});
+
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let AccessOtp = 0; // Variable to store the generated OTP
+  const signupButton = document.getElementById('signup-button');
+
+  async function sendAccessOtp() {
+    // Generate a random 6-digit OTP
+    AccessOtp = Math.floor(100000 + Math.random() * 900000);
+
+    const email = "susheeltokala15@gmail.com"; // Replace with your email logic
+    if (!email) {
+      document.getElementById('email-Accessotp-status').innerText = 'Please enter a valid email.';
+      return;
+    }
+
+    try {
+      const response = await fetch(`/sendOtp?Email=${email}&Otp=${AccessOtp}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (response.ok) {
+        document.getElementById('email-Accessotp-status').innerHTML =
+          '<p style="color:green">OTP sent to Susheel Kumar\'s email.</p>';
+        document.getElementById('otp-input-section').style.display = 'block';
+      } else {
+        document.getElementById('email-Accessotp-status').innerText = 'Failed to send OTP. Please try again.';
+      }
+    } catch (error) {
+      console.error(error);
+      document.getElementById('email-Accessotp-status').innerText = 'Error sending OTP.';
+    }
+  }
+
+  function verifyAccessOtp() {
+    const enteredOtp = document.getElementById('signup-email-Accessotp').value;
+    if (enteredOtp == AccessOtp) {
+      document.getElementById('Accessotp-status').innerText = 'Access given successfully!';
+      document.getElementById('Accessotp-status').style.color = 'green';
+
+      // Enable the signup button
+      signupButton.disabled = false;
+      signupButton.classList.remove('btn-secondary');
+      signupButton.classList.add('btn-primary');
+    } else {
+      document.getElementById('Accessotp-status').innerText = 'Invalid OTP. Please try again.';
+      document.getElementById('Accessotp-status').style.color = 'red';
+    }
+  }
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

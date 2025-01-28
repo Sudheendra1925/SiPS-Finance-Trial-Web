@@ -31,7 +31,9 @@ CREATE TABLE Clients (
     PanCard varchar(225),
     Image varchar(225),
     Comments VARCHAR(100)
-);select * from clients
+);
+
+select * from clients
 CREATE TABLE Orders (
     OrderID VARCHAR(15) PRIMARY KEY,
     ClientID VARCHAR(20),
@@ -41,7 +43,7 @@ CREATE TABLE Orders (
     RateOfInterest DECIMAL(5, 2),
     StartDate DATE,
     EndDate Date,
-    Documents varchar(225),
+    Collateral varchar(225),
     FOREIGN KEY (ClientID) REFERENCES Clients(ClientID) ON DELETE CASCADE
 );
 drop table orders
@@ -126,16 +128,80 @@ SELECT SUM(CAST(Amount AS DECIMAL(20, 0))) AS total FROM ExtraExpenses
 
 create table Users(
 UserName varchar(20) Primary Key,
-Password varchar(20),
+Password varchar(220),
+Email varchar(50),
 PhoneNumber varchar(20),
 Access int
 )
 select * from Users
 
-SELECT @@global.time_zone;
-SELECT @@session.time_zone;
 
-ALTER TABLE clients
-MODIFY column_name new_data_type;
+DELIMITER $$
 
-SELECT @@global.time_zone, @@session.time_zone;
+CREATE TRIGGER Orders_Audit_Trigger_Insert
+AFTER INSERT ON Orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO Orders_Audit (
+        ActionType, OrderID, ClientID, Amount, ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Documents, ChangedBy
+    )
+    VALUES (
+        'INSERT',
+        NEW.OrderID,
+        NEW.ClientID,
+        NEW.Amount,
+        NEW.ActiveAmount,
+        NEW.PayableInterest,
+        NEW.RateOfInterest,
+        NEW.StartDate,
+        NEW.EndDate,
+        NEW.Collaterals,
+        @UserID
+    );
+END$$
+
+CREATE TRIGGER Orders_Audit_Trigger_Update
+AFTER UPDATE ON Orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO Orders_Audit (
+        ActionType, OrderID, ClientID, Amount, ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Documents, ChangedBy
+    )
+    VALUES (
+        'UPDATE',
+        NEW.OrderID,
+        NEW.ClientID,
+        NEW.Amount,
+        NEW.ActiveAmount,
+        NEW.PayableInterest,
+        NEW.RateOfInterest,
+        NEW.StartDate,
+        NEW.EndDate,
+        NEW.Collaterals,
+        @UserID
+    );
+END$$
+
+CREATE TRIGGER Orders_Audit_Trigger_Delete
+AFTER DELETE ON Orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO Orders_Audit (
+        ActionType, OrderID, ClientID, Amount, ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Documents, ChangedBy
+    )
+    VALUES (
+        'DELETE',
+        OLD.OrderID,
+        OLD.ClientID,
+        OLD.Amount,
+        OLD.ActiveAmount,
+        OLD.PayableInterest,
+        OLD.RateOfInterest,
+        OLD.StartDate,
+        OLD.EndDate,
+        OLD.Collaterals,
+        @UserID
+    );
+END$$
+
+DELIMITER ;
