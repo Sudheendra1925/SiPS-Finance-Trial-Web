@@ -13,6 +13,7 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
+const ExcelJS = require('exceljs');
 /////////////////////////////Use////
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
@@ -42,21 +43,29 @@ function isAuthenticated(req, res, next) {
     }
   }
 /////////////////////////////////////////////////////////////////////////////////////////////////
+const ensureFolderExists = (folder) => {
+    if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder, { recursive: true }); // Create folder if it doesn't exist
+    }
+};
+
+// Storage Configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let folder = 'public/uploads/others'; // Default folder
+        
         if (file.fieldname === 'AadharCard') {
             folder = 'public/uploads/aadhar';
-        } 
-        else if (file.fieldname === 'PanCard') {
+        } else if (file.fieldname === 'PanCard') {
             folder = 'public/uploads/pancard';
-        } 
-        else if (file.fieldname === 'Image') {
+        } else if (file.fieldname === 'Image') {
             folder = 'public/uploads/images';
-        }
-        else if (file.fieldname === 'Collaterals') {
+        } else if (file.fieldname === 'Collaterals') {
             folder = 'public/uploads/collaterals';
         }
+
+        ensureFolderExists(folder); // Check and create folder if missing
+
         cb(null, folder);
     },
     filename: (req, file, cb) => {
@@ -64,23 +73,27 @@ const storage = multer.diskStorage({
         cb(null, `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`);
     },
 });
-//////////////////////////////////////////////////////////////////////////////////////////////
 
-// Create a transporter object using the default SMTP transport
-
-
-//////////////////////////////////////////////////////////////////////////
+// Allowed File Types (Including Excel)
 const upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
-        const allowedTypes = /jpeg|jpg|png|pdf/;
-        const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimeType = allowedTypes.test(file.mimetype);
+        const allowedExtensions = /\.(jpeg|jpg|png|pdf|xls|xlsx)$/i; // Regular Expression for extensions
+        const allowedMimeTypes = [
+            "image/jpeg",
+            "image/png",
+            "application/pdf",
+            "application/vnd.ms-excel", // .xls
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" // .xlsx
+        ];
+
+        const extName = allowedExtensions.test(file.originalname.toLowerCase());
+        const mimeType = allowedMimeTypes.includes(file.mimetype);
 
         if (extName && mimeType) {
             cb(null, true);
         } else {
-            cb(new Error('Invalid file type. Only JPEG, PNG, and PDF are allowed.'));
+            cb(new Error('Invalid file type. Only JPEG, PNG, PDF, and Excel files (.xls, .xlsx) are allowed.'));
         }
     },
     limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB file size limit
@@ -373,19 +386,18 @@ app.get('/ForgetPasswordPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/ForgetPasswordPage.html'));
 });
 
-app.get('/LoanRequestPage',isAuthenticated, (req, res) => {
+app.get('/LoanRequestPage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/LoanRequestPage.html'));
 });
-
-///////////////////////////////  ADDING INVESTOR CLIENTS LEADS 
-
-
-
-
-
-
+app.get('/ExcelExportPage',isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ExcelExportPage.html'));
+});
+app.get('/ExcelImportPage',isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/ExcelImportPage.html'));
+});
 
 
+///////////////////////////////  ADDING INVESTOR CLIENTS LEADS //////////////////////////////////////////
 app.post('/NewInvestor', upload.fields([
     { name: 'Image', maxCount: 1 },
 ]), (req, res) => {
@@ -395,7 +407,7 @@ app.post('/NewInvestor', upload.fields([
     const ImageFile = req.files?.Image ? req.files.Image[0].filename : null;
 console.log(ImageFile)
     const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber,Image)
-                 VALUES (?, ?, curdate() + interval 1 day,0,?,?)`;
+                 VALUES (?, ?, curdate(),0,?,?)`;
 
     db.query(sql, [ InvestorID,InvestorName, PhoneNumber,ImageFile], (err, result) => {
         if (err) {
@@ -575,7 +587,7 @@ app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (re
 
         const insertOrderSql = `
             INSERT INTO Orders (OrderID, ClientID, Amount,ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Collaterals)
-            VALUES (?, ?, ?,?, ?, ?, ?,?, ?)
+            VALUES (?, ?, ?,?, ?, ?, ?+interval 1 day,?+interval 1 day, ?)
         `;
 
         db.query(insertOrderSql, [OrderID, Client, Amount,Amount, PayableInterest, RateOfInterest, StartDate,EndDate, CollateralsFile], (insertErr, insertResult) => {
@@ -719,7 +731,7 @@ app.get("/TodayInvestor", (req, res) => {
     const query = `
 SELECT InvestmentID,InvestorID, ActiveAmount,PayableInterest
 FROM Investments 
-WHERE DAY(InvestmentDate) = DAY( curdate() + interval 1 day);
+WHERE DAY(InvestmentDate) = DAY( curdate());
     `;
    
     db.query(query, (err, results) => {
@@ -737,7 +749,7 @@ app.get("/TodayClient", (req, res) => {
     const query = `
 SELECT OrderID,ClientID, ActiveAmount, PayableInterest,StartDate
 FROM Orders
-WHERE DAY(StartDate) = DAY( curdate() + interval 1 day);
+WHERE DAY(StartDate) = DAY( curdate()+ interval 1 day );
     `;
    
     db.query(query, (err, results) => {
@@ -818,18 +830,12 @@ app.get("/ClosingClients", (req, res) => {
     
     const query = `
 SELECT
-    orderid,
-    clientID,
-    amount,
-    ActiveAmount,
-    PayableInterest,
-    Startdate,
-    EndDate
+  *
 FROM
     Orders
 WHERE 
     MONTH(EndDate) = MONTH( curdate() + interval 1 day) 
-    AND YEAR(EndDate) = YEAR( curdate() + interval 1 day);
+    AND YEAR(EndDate) = YEAR( curdate() );
 
 `
    
@@ -1157,7 +1163,7 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
     const deleteQuery = `DELETE FROM Investments WHERE InvestmentID = ?`;
     const insertQuery = `
         INSERT INTO ClosedInvestments (InvestmentID, InvestorName, Amount, StartDate, ClosedDate)
-        VALUES (?, ?, ?, ?,  curdate() + interval 1 day)
+        VALUES (?, ?, ?, ?,  curdate() )
     `;
 
     // Start a transaction
@@ -1218,7 +1224,7 @@ app.get('/DeleteOrder/:OrderID', (req, res) => {
     const deleteQuery = `DELETE FROM Orders WHERE OrderID = ?`;
     const insertQuery = `
         INSERT INTO ClosedOrders (OrderID, ClientName, Amount, StartDate, ClosedDate)
-        VALUES (?, ?, ?, ?,  curdate() + interval 1 day)
+        VALUES (?, ?, ?, ?,  curdate() )
     `;
     const checkDuplicateQuery = `SELECT 1 FROM ClosedOrders WHERE OrderID = ?`;
 
@@ -1299,7 +1305,7 @@ const InvestorName=req.query.InvestorName
     // SQL query to insert data
     const query = `
         INSERT INTO InvestmentEMIHistory (InvestmentID,InvestorName, EMIDate, PaidEMI)
-        VALUES (?,?,  curdate() + interval 1 day, ?)
+        VALUES (?,?,  curdate() , ?)
     `;
 
     // Execute query
@@ -1321,7 +1327,7 @@ app.post("/ClientEMIPayement", (req, res) => {
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
         INSERT INTO OrderEMIHistory (OrderID,ClientName,EMIDate,ActualEMI,PaidEMI)
-        VALUES (?,?, curdate() + interval 1 day,?,?)
+        VALUES (?,?, curdate() ,?,?)
     `;
 
     db.query(query, [OrderID,ClientName, ActualEMI,PaidEMI], (err, result) => {
@@ -1488,13 +1494,19 @@ app.get("/AddDueEMI/:ID", (req, res) => {
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
         INSERT INTO DueEMI (OrderID,IssuedDate,ClientName,OrderAmount,EMIDate,EMIAmount,RemainingEMI)
-        VALUES (?, curdate() + interval 1 day,?,?,?,?,?)
+        VALUES (?, curdate() ,?,?,?,?,?)
     `;
 
     db.query(query, [OrderID,ClientName,ActiveAmount,EMIDate,EMIAmount,EMIAmount], (err, result) => {
         if (err) {
             console.error("Error inserting data into InvestorEMIHistory:", err);
-            res.status(500).send("We Have Already Added It in Pending");
+            res.send(`
+                <script>
+                  alert("Added In Due Succesfully!");
+                  window.location.href = "/Clients";
+                </script>
+              `);
+           
         } else {
             console.log("EMI payment recorded successfully:", result);
             res.send(`
@@ -1567,7 +1579,7 @@ const PaidEMI = EMIAmountFloat - RemainingEMIFloat;
 
 const Insertquery = `
     INSERT INTO OrderEMIHistory (OrderID, ClientName, EMIDate, ActualEMI, PaidEMI)
-    VALUES (?, ?,  curdate() + interval 1 day, ?, ?)
+    VALUES (?, ?,  curdate() , ?, ?)
 `;
 
 db.query(Insertquery, [OrderID, ClientName, EMIAmountFloat, PaidEMI], (err, result) => {
@@ -1608,7 +1620,7 @@ try {
 app.post('/AddExtraExpenses', (req, res) => {
     const {Reason,Amount}=req.body;
     const sql = `INSERT INTO ExtraExpenses (Reason,Amount,Date)
-                 VALUES (?, ?, curdate() + interval 1 day)`;
+                 VALUES (?, ?, curdate() )`;
 
     db.query(sql, [Reason,Amount], (err, result) => {
         if (err) {
@@ -1624,7 +1636,7 @@ app.post('/AddExtraExpenses', (req, res) => {
 app.post('/AddExtraIncomes', (req, res) => {
     const {Reason,Amount}=req.body;
     const sql = `INSERT INTO ExtraIncomes (Reason,Amount,Date)
-                 VALUES (?, ?, curdate() + interval 1 day)`;
+                 VALUES (?, ?, curdate() )`;
 
     db.query(sql, [Reason,Amount], (err, result) => {
         if (err) {
@@ -1768,7 +1780,155 @@ app.post("/SubmitLoanRequest",(req,res)=>{
 
 
 })
- 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.get("/getTables",(req,res)=>{
+
+    db.query("SHOW TABLES", (err, results) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+        } else {
+            const tables = results.map(row => Object.values(row)[0]);
+            res.json(tables);
+        }
+    });
+
+})
+
+
+// Route to export data to Excel
+
+    app.get('/ExportExcel', async (req, res) => {
+        const tableName = req.query.table;
+        if (!tableName) {
+            return res.status(400).send("Table name is required");
+        }
+    
+        db.query(`SELECT * FROM \`${tableName}\``, async (err, results) => {
+            if (err) {
+                return res.status(500).send("Error retrieving data");
+            }
+    
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet(tableName);
+    
+            if (results.length > 0) {
+                worksheet.columns = Object.keys(results[0]).map(col => ({
+                    header: col,
+                    key: col,
+                    width: 20
+                }));
+    
+                results.forEach(row => {
+                    worksheet.addRow(row);
+                });
+            }
+    
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename="${tableName}.xlsx"`
+            );
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+    
+            await workbook.xlsx.write(res);
+            res.end();
+        });
+    });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+
+
+// API to get columns of a specific table
+app.get('/columns/:table', async (req, res) => {
+    const tableName = req.params.table;
+    try {
+        const [columns] = await db.promise().query(`SHOW COLUMNS FROM \`${tableName}\``);
+        const columnNames = columns.map(col => col.Field);
+        res.json(columnNames);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error fetching columns" });
+    }
+});
+
+// API to upload and import Excel file into an existing table
+app.post('/ImportExcel', upload.single('file'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "Please upload a file" });
+    }
+
+    const filePath = req.file.path;
+    const workbook = new ExcelJS.Workbook();
+    const tableName = req.body.tableName;
+
+    if (!tableName) {
+        return res.status(400).json({ error: "Table name is required" });
+    }
+
+    try {
+        await workbook.xlsx.readFile(filePath);
+        const worksheet = workbook.worksheets[0]; // Read first sheet
+        let columns = [];
+        let rows = [];
+
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) {
+                columns = row.values.slice(1); // First row is column names
+            } else {
+                rows.push(row.values.slice(1)); // Extract data rows
+            }
+        });
+
+        if (columns.length === 0 || rows.length === 0) {
+            return res.status(400).json({ error: "Excel file is empty or invalid" });
+        }
+
+        // Validate if columns exist in the table
+        const [tableColumns] = await db.promise().query(`SHOW COLUMNS FROM \`${tableName}\``);
+        const validColumns = tableColumns.map(col => col.Field);
+        const matchingColumns = columns.filter(col => validColumns.includes(col));
+
+        if (matchingColumns.length !== columns.length) {
+            return res.status(400).json({ error: "Excel columns do not match table columns" });
+        }
+
+        // Insert Data
+        const placeholders = matchingColumns.map(() => '?').join(',');
+        const insertSQL = `INSERT INTO \`${tableName}\` (${matchingColumns.map(col => `\`${col}\``).join(', ')}) VALUES (${placeholders})`;
+
+        for (const row of rows) {
+            await db.promise().query(insertSQL, row);
+        }
+
+        fs.unlinkSync(filePath); // Remove uploaded file
+        res.json({ message: "Data imported successfully!" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error processing the file" });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 const PORT=process.env.PORT||2001;
 app.listen(PORT,()=>{
 

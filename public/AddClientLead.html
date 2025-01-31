@@ -1,255 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Queue</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-  *{  /* font-family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"; */
-    font-family: 'Montserrat';
-}
-        :root {
-    --primary-color: #0875e1;  /* Deep blue */
-    --secondary-color: #f7f9fc;  /* Light background */
-    --accent-color: #0875e1;  /* Accent blue */
-    --highlight-color: #ffc107;  /* Gold highlight */
-    --danger-color: #dc3545;  /* Red for error/warnings */
-    --white: #ffffff;  /* White */
-    --shadow: rgba(0, 0, 0, 0.1);  /* Subtle shadow */
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Queue</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <style>
+    *{  
+      font-family:sans-serif;
+    }
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary-color: #f5f2f2;
+      --success-color: #22c55e;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --white: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --font-dark: #1e293b;
+      --font-light: #64748b;
+      --border-color: #e2e8f0;
+    }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: var(--secondary-color);  /* Light background */
-    color: #333;  /* Dark text for readability */
-    margin: 0;
-    padding: 0;
-}
+    * {
+      font-family:  sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* Navbar styling */
-.navbar {
-    background: var(--primary-color);
-    padding: 10px 20px;
-    box-shadow: 0 4px 8px var(--shadow-color);
-}
+    body {
+      background-color: var(--secondary-color);
+      color: var(--font-dark);
+      line-height: 1.6;
+    }
 
-.navbar-brand {
-    color: var(--white);
-    font-size: 1.8em;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+    .navbar {
+      background: var(--white);
+      padding: 1rem 2rem;
+      box-shadow: 0 1px 3px var(--shadow-color);
+    }
 
-.navbar-nav .nav-link {
-    color: var(--white);
-    margin: 0 10px;
-    transition: color var(--transition-speed);
-}
+    .sign-out:hover {
+      color: var(--white);
+    }
 
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-    color: var(--highlight-color);
-    font-weight: bold;
-}
+    .sign-out:hover {
+      background-color: var(--danger-color);
+    }
+    .btn{
+      margin:0.2vw;
+    }
+    /* Main Form Container */
+    #main {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 30px;
+      background-color: var(--white);  /* White background */
+      border-radius: 10px;
+      box-shadow: 0 4px 15px var(--shadow);  /* Soft shadow */
+    }
 
- 
+    /* Input Fields */
+    form div {
+      margin-bottom: 20px;
+    }
 
-.sign-out:hover {
-    color: var(--white);
-}
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #555;  /* Darker label text */
+    }
 
+    input[type="text"], input[type="date"], input[type="file"],input[type="number"],input[type="tel"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
 
-/* Main Form Container */
-#main {
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 30px;
-    background-color: var(--white);  /* White background */
-    border-radius: 10px;
-    box-shadow: 0 4px 15px var(--shadow);  /* Soft shadow */
-}
+    input:focus {
+      border-color: var(--accent-color);  /* Blue border on focus */
+      box-shadow: 0 0 5px var(--accent-color);  /* Blue glow */
+    }
 
-/* Input Fields */
-form div {
-    margin-bottom: 20px;
-}
+    /* Submit Button */
+    #Submit {
+      width: 100%;
+      padding: 12px;
+      font-size: 1.1em;
+      color: var(--white);
+      background-color: var(--primary-color);  /* Blue button */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;  /* Darker label text */
-}
+    #Submit:hover {
+      background-color: var(--success-color);  /* Accent blue on hover */
+    }
 
-input[type="text"], input[type="date"], input[type="file"],input[type="number"],input[type="tel"] {
-    width: 100%;
-    padding: 12px;
-    font-size: 1em;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+    /* Back Button */
+    .back-button {
+      font-size: 1em;
+      color: var(--danger-color);  /* Red color for back button */
+      text-decoration: none;
+      margin-top: 15px;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
 
-input:focus {
-    border-color: var(--accent-color);  /* Blue border on focus */
-    box-shadow: 0 0 5px var(--accent-color);  /* Blue glow */
-}
+    .back-button:hover {
+      color: #c82333;  /* Darker red on hover */
+    }
 
-/* Submit Button */
-#Submit {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1em;
-    color: var(--white);
-    background-color: var(--primary-color);  /* Blue button */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#Submit:hover {
-    background-color: var(--accent-color);  /* Accent blue on hover */
-}
-
-/* Back Button */
-.back-button {
-    font-size: 1em;
-    color: var(--danger-color);  /* Red color for back button */
-    text-decoration: none;
-    margin-top: 15px;
-    display: inline-block;
-    transition: color 0.3s ease;
-}
-
-.back-button:hover {
-    color: #c82333;  /* Darker red on hover */
-}
-.container-fluid{
-    background-color: var(--primary-color);
-}
-input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-/* For Fire FOX*/
-        input[type="number"] {
-          -moz-appearance: textfield;
-        }
-    </style>
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    /* For Fire FOX*/
+    input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+  </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="/Home">
-                <img src="../Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
-                <div>
-                    <span style="display: block;">Sips Finance</span>
-                </div>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarToggler">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/Home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Investors">Investors</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Clients">Clients</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Queue">Queues</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Company">Company</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center ms-3 " >
-                    <a href="/" class="sign-out btn btn-danger">Sign Out</a>
-                </div>
-            </div>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="/Home">
+        <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">  
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarToggler">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="btn  btn-warning" href="/Home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-info" href="/Investors" style="background-color:rgb(255, 85, 0);"> Investors</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn"  style="background-color:#27ae60;"  href="/Clients">Clients</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-info" href="/Queue">Queue</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center ms-3">
+          <a href="/" class="sign-out btn btn-danger">Sign Out</a>
         </div>
-    </nav>
-    <div id="main">
-        <form action="/NewClientLead" method="post" >
-            <div>
-                <label for="ClientName">Client Name *</label>
-                <input type="text" id="ClientName" name="ClientName" required>
-            </div>
-
-            <div>
-                <label for="Amount">Amount *</label>
-                <input type="number" id="Amount" name="Amount" >
-            </div>
-            <div style="margin-bottom: 20px;">
-                <label for="Duration" style="font-weight: bold;">Duration</label><br>
-                <div style="margin-top: 10px;">
-                    <label for="Years">Years</label>
-                    <input type="number" id="Years" name="Years" placeholder="No of Years" min="0" step="1"  value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
-                    
-                    <label for="Months">Months</label>
-                    <input type="number" id="Months" name="Months" placeholder="No of Months" min="0" max="11" step="1"  value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
-            
-                    <label for="Days">Days</label>
-                    <input type="number" id="Days" name="Days" placeholder="No of Days" min="0" max="30" step="1" value="0" style="padding: 5px; width: 80px;">
-                </div>
-            </div>
-
-            <div>
-                <label for="PhoneNumber"> Phone Number*</label>
-                <input type="tel" minlength="10" maxlength="10" placeholder="Enter valid Phone number" id="PhoneNumber" name="PhoneNumber" required>
-            </div>
-            <div>
-                <label for="Collateral">Collateral *</label>
-                <input type="text" id="Collateral" name="Collateral" >
-            </div>
-            <button id="Submit" type="submit">Submit</button>
-            </div>
-            
-           
-        </form>
+      </div>
     </div>
+  </nav>
+  <div id="main">
+    <form action="/NewClientLead" method="post" >
+      <div>
+        <label for="ClientName">Client Name *</label>
+        <input type="text" id="ClientName" name="ClientName" required>
+      </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+ws9y5p4p6wPflb4EL1pLf0PdCgSm" crossorigin="anonymous"></script>
+      <div>
+        <label for="Amount">Amount *</label>
+        <input type="number" id="Amount" name="Amount" >
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label for="Duration" style="font-weight: bold;">Duration</label><br>
+        <div style="margin-top: 10px;">
+          <label for="Years">Years</label>
+          <input type="number" id="Years" name="Years" placeholder="No of Years" min="0" step="1"  value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
+          
+          <label for="Months">Months</label>
+          <input type="number" id="Months" name="Months" placeholder="No of Months" min="0" max="11" step="1"  value="0" style="margin-right: 10px; padding: 5px; width: 80px;">
+      
+          <label for="Days">Days</label>
+          <input type="number" id="Days" name="Days" placeholder="No of Days" min="0" max="30" step="1" value="0" style="padding: 5px; width: 80px;">
+        </div>
+      </div>
 
+      <div>
+        <label for="PhoneNumber"> Phone Number*</label>
+        <input type="tel" minlength="10" maxlength="10" placeholder="Enter valid Phone number" id="PhoneNumber" name="PhoneNumber" required>
+      </div>
+      <div>
+        <label for="Collateral">Collateral *</label>
+        <input type="text" id="Collateral" name="Collateral" >
+      </div>
+      <button id="Submit" type="submit">Submit</button>
+    </form>
+  </div>
 
-    <script>
-        document.getElementById('InvestedAmount').addEventListener('input', function (e) 
-        {
-            this.value = this.value.replace(/\D/g, ''); // Only allows numeric input
-        });
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>
 
-        function roundInput(input) 
-        {
-input.value = Math.round(input.value); // Rounds to the nearest integer
-// For specific decimal places (e.g., 1 decimal): 
-// input.value = Math.round(input.value * 10) / 10;
-        }
-      </script> 
-
-
-<script>
-
-
-    document.getElementById('PhoneNumber').addEventListener('input', function (e) {
-        const value = e.target.value;
-        if (!/^\d{0,10}$/.test(value)) {
-            e.target.value = value.slice(0, -1); // Restrict input to 10 digits
-        }
+  <script>
+    document.getElementById('InvestedAmount').addEventListener('input', function (e) {
+      this.value = this.value.replace(/\D/g, ''); // Only allows numeric input
     });
-    
-    </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    function roundInput(input) {
+      input.value = Math.round(input.value); // Rounds to the nearest integer
+      // For specific decimal places (e.g., 1 decimal): 
+      // input.value = Math.round(input.value * 10) / 10;
+    }
+  </script> 
+
+  <script>
+    document.getElementById('PhoneNumber').addEventListener('input', function (e) {
+      const value = e.target.value;
+      if (!/^\d{0,10}$/.test(value)) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+      }
+    });
+  </script>
 </body>
 </html>
-
-

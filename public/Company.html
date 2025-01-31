@@ -1,105 +1,284 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Company Account Summary</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Sips Finance Dashboard</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-  *{  /* font-family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"; */
-    font-family: 'Montserrat';
+   
+*{  
+    font-family:sans-serif;
+     
 }
-
-    :root {
-      --primary-color: #0875e1;
-      --secondary-color: #f8faff;
-      --success-color: #27ae60;
-      --danger-color: #e74c3c;
+:root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary-color: #f5f2f2;
+      --success-color: #22c55e;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
       --white: #ffffff;
-      --shadow-color: rgba(0, 0, 0, 0.1);
-      --font-dark: #2a2a2a;
-      --highlight-color: #f1c40f;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --font-dark: #1e293b;
+      --font-light: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      font-family:  sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
       background-color: var(--secondary-color);
-      margin: 0;
-      padding: 0;
       color: var(--font-dark);
+      line-height: 1.6;
     }
 
     .navbar {
-      background: var(--primary-color);
-      padding: 10px 20px;
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
-
-    .navbar-brand {
-      color: var(--white);
-      font-size: 1.8em;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .navbar-nav .nav-link {
-      color: var(--white);
-      margin: 0 10px;
-      font-size: large;
-      transition: color 0.3s;
-    }
-
-    .navbar-nav .nav-link:hover,
-    .navbar-nav .nav-link.active {
-      color: var(--highlight-color);
-      font-weight: bold;
-    }
-
-    .sign-out {
-      background: var(--danger-color);
-      color: var(--white);
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      text-transform: uppercase;
-    }
-
-    .sign-out:hover {
-      background: #c0392b;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
       background: var(--white);
-      border-radius: 10px;
-      box-shadow: 0 4px 12px var(--shadow-color);
+      padding: 1rem 2rem;
+      box-shadow: 0 1px 3px var(--shadow-color);
+    }
+
+.sign-out:hover {
+    color: var(--white);
+}
+
+.sign-out:hover {
+    background-color: var(--danger-color);
+}
+.btn{
+    margin:0.2vw;
+}
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1rem;
     }
 
     .summary-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--white);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px var(--shadow-color);
-      margin-bottom: 20px;
+      background:white;
+      color: black;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin-bottom: 2rem;
       text-align: center;
     }
 
     .summary-box p {
-      margin: 0;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
     }
 
     .summary-box span {
-      font-size: 2rem;
-      font-weight: bold;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -1px;
     }
 
-    .profit {
+    .details-toggle {
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.2s ease;
+    }
+
+    .details-toggle:hover {
+      background: var(--primary-hover);
+    }
+
+    .details-content {
+      display: none;
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px var(--shadow-color);
+      margin-bottom: 2rem;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-button {
+      background: var(--white);
+      color: var(--primary-color);
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .action-button:hover {
+      background: var(--primary-color);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: var(--white);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      position: relative;
+    }
+
+    .chart-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--font-dark);
+    }
+
+    .distribution-summary {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--secondary-color);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--font-dark);
+    }
+
+    .distribution-summary strong {
+      color: var(--primary-color);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .chart-card {
+        min-height: 400px;
+      }
+    }
+
+
+    .distribution-summary {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--secondary-color);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--font-dark);
+        }
+
+        .distribution-summary strong {
+            color: var(--primary-color);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card {
+                min-height: 400px;
+            }
+        }
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--font-dark);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100%;
+            width: 250px;
+            background-color: var(--white);
+            box-shadow: 2px 0 5px var(--shadow-color);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            padding-top: 80px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--font-dark);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+        .profit {
       color: var(--success-color);
     }
 
@@ -107,117 +286,143 @@
       color: var(--danger-color);
     }
 
-    .details-toggle {
-      display: block;
-      width: 100%;
-      text-align: center;
-      margin: 10px 0;
-      background: none;
-      border: none;
-      font-size: 16px;
-      color: var(--primary-color);
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-    .details-content {
-      display: none;
-      padding: 10px;
-      background: var(--secondary-color);
-      border-radius: 10px;
-      box-shadow: 0 2px 6px var(--shadow-color);
-    }
-
-    .details-content p {
-      margin: 10px 0;
-      font-size: 1rem;
-    }
-    #ThreeButtons{
-      display: flex;
-      justify-content: space-evenly;
-      align-items:start;
-      padding:5%;
-    }
-    .TopButton{
-      margin:5px;
-    }
-  
   </style>
 </head>
 <body>
-  
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
+      <div class="hamburger-menu" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <a class="navbar-brand d-flex align-items-center" href="/Home">
-        <img src="./Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
-        <div>
-          <span style="display: block;">Sips Finance</span>
-        </div>
+        <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
+        
       </a>
-
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
-
+    </button>
       <div class="collapse navbar-collapse" id="navbarToggler">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link " href="/Home">Home</a>
+            <a class="btn  btn-warning" href="/Home">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/Investors">Investors</a>
+            <a class="btn btn-info" href="/Investors" style="background-color:rgb(255, 85, 0);"> Investors</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/Clients">Clients</a>
+            <a class="btn"  style="background-color:#27ae60;"  href="/Clients">Clients</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/Queue">Queue</a>
+            <a class="btn btn-info" href="/Queue">Queue</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="/Company">Company</a>
+            <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
           </li>
         </ul>
         <div class="d-flex align-items-center ms-3">
-          <a href="/" class="sign-out btn">Sign Out</a>
+          <a href="/" class="sign-out btn btn-danger">Sign Out</a>
         </div>
       </div>
     </div>
   </nav>
-  <div class="container">
-  
+  <div class="overlay"></div>
+  <div class="sidebar">
+      <a href="/TotalInvestmentEMIHistoryPage" class="sidebar-link">Investor EmI History</a>
+      <a href="/TotalOrderEMIHistoryPage" class="sidebar-link">Client EMI History</a>
+      <a href="/DueEMIPage" class="sidebar-link">Due EMI</a>
+      <a href="/ClosedInvestmentsPage" class="sidebar-link">Closed Investments</a>
+      <a href="/ClosedOrdersPage" class="sidebar-link">Closed Orders</a>
+      <a href="/ExcelExportPage" class="sidebar-link">Export To Excel</a>
+      <a href="/ExcelImportPage" class="sidebar-link">Import From Excel</a>
+  </div>
+
+  <div class="dashboard-container">
     <div id="summaryBox" class="summary-box">
       <p>A/c balance:</p>
       <span id="totalSum" class="profit">Loading...</span>
     </div>
-
-
+   
     <button class="details-toggle" onclick="toggleDetails()">Show Details</button>
-
-  <a class="btn btn-primary" href="/AddExtraExpensesPage">Add Extra Expenses</a>
-  
     <div class="details-content" id="detailsContent">
       <p>Active Investments: <span id="totalInvestments" style="color:green">Loading...</span></p>
       <p>Total Client EMI: <span id="totalClientEmi" style="color:green">Loading...</span></p>
       <p>Active Orders: <span id="totalOrders" style="color:red">Loading...</span></p>
       <p>Total Investor EMI: <span id="totalInvestorEmi" style="color:red">Loading...</span></p>
-      <a href="/ExtraExpensesHistoryPage" style="color:black"><p> Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
-      <a href="/ExtraIncomesHistoryPage" style="color:black"><p> Total Extra Incomes: <span id="ExtraIncomes" style="color:red">Loading...</span></p></a>
-   
+      <a href="/ExtraExpensesHistoryPage" style="color:black"><p>Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
+      <a href="/ExtraIncomesHistoryPage" style="color:black"><p>Total Extra Incomes: <span id="ExtraIncomes" style="color:red">Loading...</span></p></a>
     </div>
-    <a class="btn btn-primary" href="/AddExtraIncomesPage">Add Extra Incomess</a>
+
+    <div class="quick-actions">
+      <button class="action-button" onclick="location.href='/AddExtraExpensesPage'">Add Extra Expenses</button>
+      <button class="action-button" onclick="location.href='/AddExtraIncomesPage'">Add Extra Income</button>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3 class="chart-title">Investor Distribution</h3>
+        <div class="chart-container">
+          <div id="investor_chart" style="width: 400px; height: 300px;"></div>
+        </div>
+      </div>
+    
+      
+      <div class="chart-card">
+        <h3 class="chart-title">Client Distribution</h3>
+        <div class="chart-container">
+          <div id="client_chart" style="width: 400px; height: 300px;"></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="chart-title">Investments vs Orders</h3>
+        <div class="chart-container">
+          <div id="chart_div" ></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-<div id="ThreeButtons">
-  <a class="btn btn-primary TopButton" href="/TotalInvestmentEMIHistoryPage">Total Investor EMI History</a>
-    <a class="btn btn-primary TopButton" href="/TotalOrderEMIHistoryPage">Total Client EMI History</a>
-    <a class="btn btn-primary TopButton" href="/DueEMIPage">Due EMI</a>
-    <a class="btn btn-primary TopButton" href="/ClosedInvestmentsPage">Closed Investments</a>
-    <a class="btn btn-primary TopButton" href="/ClosedOrdersPage">Closed Orders</a>
-</div>
-
- 
   <script>
-    // Toggle Details Visibility
+    // Fetch and update data
+    async function fetchDashboardData() {
+      try {
+        const response = await fetch("/TotalCompanyAccount");
+        const data = await response.json();
+
+        // Update Total Sum and Breakdown
+        const totalSumElement = document.getElementById("totalSum");
+        totalSumElement.textContent = data.totalSum.toLocaleString();
+
+        // Apply Profit/Loss Styling
+        if (data.totalSum >= 0) {
+          totalSumElement.classList.add("profit");
+          totalSumElement.classList.remove("loss");
+        } else {
+          totalSumElement.classList.add("loss");
+          totalSumElement.classList.remove("profit");
+        }
+        
+        // Update Breakdown
+        document.getElementById("totalInvestments").textContent = data.breakdown.totalInvestments.toLocaleString();
+        document.getElementById("totalClientEmi").textContent = data.breakdown.totalClientEmi.toLocaleString();
+        document.getElementById("totalOrders").textContent = data.breakdown.totalOrders.toLocaleString();
+        document.getElementById("totalInvestorEmi").textContent = data.breakdown.totalInvestorEmi.toLocaleString();
+        document.getElementById("ExtraExpenses").textContent = data.breakdown.totalExtraExpenses.toLocaleString();
+        document.getElementById("ExtraIncomes").textContent = data.breakdown.totalExtraIncomes.toLocaleString();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        document.getElementById("totalSum").textContent = "Error loading data";
+      }
+    }
+
+    // Initialize everything when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchDashboardData();
+    });
+
     function toggleDetails() {
       const detailsContent = document.getElementById("detailsContent");
       detailsContent.style.display =
@@ -226,7 +431,6 @@
           : "none";
     }
 
-    // Fetch Data from Backend and Update UI
     async function fetchData() {
       try {
         const response = await fetch("/TotalCompanyAccount");
@@ -257,10 +461,238 @@
         document.getElementById("totalSum").textContent = "Error loading data";
       }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
 
-    // Fetch Data on Page Load
-    fetchData();
+            hamburgerMenu.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.overlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }})
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+  <script>
+    
+  ///////////////////////////////////////////////////////////////////////INVESTOR vs ORDERS CHART////////////////////////////////////////////////
+   google.charts.load('current', { packages: ['corechart'] });
+google.charts.setOnLoadCallback(drawChart);
+
+async function drawChart() {
+    try {
+        // Fetch total data from the API
+        const response = await fetch('/TotalCompanyAccount');
+        const result = await response.json();
+
+        if (result.status === "success") {
+            // Extract total investments and total orders
+            const totalInvestments = result.breakdown.totalInvestments;
+            const totalOrders = result.breakdown.totalOrders;
+
+            // Prepare data for Google Charts with annotations
+            const data = google.visualization.arrayToDataTable([
+                ['Category', 'Amount', { role: 'style' }, { role: 'annotation' }],
+                ['Investments', totalInvestments, '#4CAF50', totalInvestments], // Total investments with annotation
+                ['Orders', totalOrders, '#1565C0', totalOrders]          // Total orders with annotation
+            ]);
+
+            // Chart options with annotations to show values at the side
+            const options = {
+                title: 'Active Investments vs Orders',
+                bar: { groupWidth: '40%' },
+                legend: { position: 'none' },
+                annotations: {
+                    alwaysOutside: true, // Display annotations outside the bar
+                    textStyle: {
+                        fontSize: 20,
+                        color: 'red', // Color of the annotations
+                        auraColor: 'none'
+                    }
+                },
+                backgroundColor: 'none'
+            };
+
+            // Draw the chart
+            const chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        } else {
+            console.error("Error fetching data:", result.message);
+        }
+    } catch (error) {
+        console.error("Error in drawing chart:", error);
+    }
+}
+
+
+  </script>
+  
+
+
+  <script>
+
+google.charts.load("current", { packages: ["corechart"] });
+
+/////////////////////////////////////////// INVESTOR CHART ///////////////////////////////////////////
+async function fetchInvestmentData() {
+    try {
+        const response = await fetch('/getInvestmentData');
+        if (!response.ok) throw new Error('Failed to fetch investment data');
+        const data = await response.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error('No Investments Yet');
+        }
+
+        const chartData = [['Investor Name', 'Investment Amount']];
+        const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
+        const investorNames = await Promise.all(investorNamesPromises);
+
+        data.forEach((item, index) => {
+            if (item.InvestorID && item.TotalInvestment) {
+                chartData.push([investorNames[index], item.TotalInvestment]);
+            }
+        });
+
+        if (chartData.length <= 1) {
+            throw new Error('No valid investment data to display');
+        }
+
+        drawInvestorChart(chartData);
+    } catch (error) {
+        console.error('Error fetching investment data:', error.message);
+        document.getElementById('investor_chart').innerHTML = `
+            <h6 class="text-muted text-center">${error.message}</h6>
+        `;
+    }
+}
+
+function drawInvestorChart(chartData) {
+    try {
+        if (!Array.isArray(chartData) || chartData.length <= 1) {
+            throw new Error('Invalid chart data');
+        }
+
+        const data = google.visualization.arrayToDataTable(chartData);
+        const options = {
+            is3D: true,
+            pieSliceText: 'value',
+            backgroundColor: 'transparent',
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('investor_chart'));
+        chart.draw(data, options);
+    } catch (error) {
+        console.error('Error drawing chart:', error.message);
+        document.getElementById('investor_chart').innerHTML = `
+            <p class="text-danger">Error drawing chart: ${error.message}</p>
+        `;
+    }
+}
+
+async function fetchInvestorName(id) {
+    try {
+        const res = await fetch(`/InvestorDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
+        const investorDetails = await res.json();
+        return investorDetails.InvestorName;
+    } catch (err) {
+        console.error(err.message);
+        return id; // Fallback to ID if name can't be fetched
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchInvestmentData);
+
+/////////////////////////////////////////// CLIENTS CHART ///////////////////////////////////////////
+async function fetchOrderData() {
+    try {
+        const response = await fetch('/getOrderData');
+        if (!response.ok) throw new Error('Failed to fetch order data');
+
+        const dataClient = await response.json();
+        if (!Array.isArray(dataClient) || dataClient.length === 0) {
+            throw new Error('No Orders Yet');
+        }
+
+        const ClientchartData = [['Client Name', 'Order Amount']];
+        const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
+        const clientNames = await Promise.all(clientNamesPromises);
+
+        dataClient.forEach((item, index) => {
+            if (item.ClientID && item.TotalOrder) {
+                ClientchartData.push([clientNames[index], item.TotalOrder]);
+            }
+        });
+
+        if (ClientchartData.length <= 1) {
+            throw new Error('No valid order data to display');
+        }
+
+        drawClientChart(ClientchartData);
+    } catch (error) {
+        console.error('Error fetching client data:', error.message);
+        document.getElementById('client_chart').innerHTML = `
+            <h6 class="text-muted text-center">${error.message}</h6>
+        `;
+    }
+}
+
+function drawClientChart(ClientchartData) {
+    try {
+        if (!Array.isArray(ClientchartData) || ClientchartData.length <= 1) {
+            throw new Error('Invalid chart data');
+        }
+
+        const dataClient = google.visualization.arrayToDataTable(ClientchartData);
+        const Clientoptions = {
+            is3D: true,
+            pieSliceText: 'value',
+            backgroundColor: 'transparent',
+        };
+
+        const Clientchart = new google.visualization.PieChart(document.getElementById('client_chart'));
+        Clientchart.draw(dataClient, Clientoptions);
+    } catch (error) {
+        console.error('Error drawing chart:', error.message);
+        document.getElementById('client_chart').innerHTML = `
+            <p class="text-danger">Error drawing chart: ${error.message}</p>
+        `;
+    }
+}
+
+async function fetchClientName(id) {
+    try {
+        const res = await fetch(`/ClientDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+        const clientDetails = await res.json();
+        return clientDetails.ClientName;
+    } catch (err) {
+        console.error(err.message);
+        return id; // Fallback to ID if name can't be fetched
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchOrderData);
+
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
 </body>
 </html>

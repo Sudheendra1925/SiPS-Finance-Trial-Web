@@ -160,7 +160,7 @@ BEGIN
     );
 END$$
 
-CREATE TRIGGER Orders_Audit_Trigger_Update
+CREATE TRIGGER Orders_Audit_Trigger_Update Orders_Audit_Trigger_Insert
 AFTER UPDATE ON Orders
 FOR EACH ROW
 BEGIN
@@ -182,7 +182,7 @@ BEGIN
     );
 END$$
 
-CREATE TRIGGER Orders_Audit_Trigger_Delete
+CREATE TRIGGER Orders_Audit_Trigger_Delete Orders_Audit_Trigger_Update Orders_Audit_Trigger_Insert
 AFTER DELETE ON Orders
 FOR EACH ROW
 BEGIN

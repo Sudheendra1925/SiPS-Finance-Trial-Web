@@ -1,0 +1,81 @@
+google.charts.load("current", { packages: ["corechart"] });
+
+async function fetchOrderData() {
+  try {
+    const responseClient = await fetch('/getOrderData');
+    if (!responseClient.ok) throw new Error('Failed to fetch order data');
+
+    const dataClient = await response.json();
+
+    // Validate data format
+    if (!Array.isArray(dataClient) || dataClient.length === 0) {
+      throw new Error('No Orders Yet');
+    }
+
+    // Function to fetch client details by ID
+    async function fetchClientName(id) {
+      try {
+        const res = await fetch(`/ClientDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+        const clientDetails = await res.json();
+        return clientDetails.ClientName; // Assuming the API returns an object with a `name` property
+      } catch (err) {
+        console.error(err.message);
+        return id; // Fallback to ID if the name cannot be fetched
+      }
+    }
+
+    // Build chartData array
+    const ClientchartData = [['Client Name', 'Order Amount']];
+
+    const clientNamesPromises = data.map(item => fetchClientName(item.ClientID));
+    const clientNames = await Promise.all(clientNamesPromises);
+
+    data.forEach((item, index) => {
+      if (item.ClientID && item.TotalOrder) {
+        ClientchartData.push([clientNames[index], item.TotalOrder]);
+      }
+    });
+
+    // Ensure chartData has at least one row of data
+    if (ClientchartData.length <= 1) {
+      throw new Error('No valid order data to display');
+    }
+
+    // Draw chart
+    drawChart(ClientchartData);
+  } catch (error) {
+    console.error('Error fetching client data:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <h6 class="text-muted text-center"> ${error.message}</h6>
+    `;
+  }
+}
+
+function drawChart(ClientchartData) {
+  try {
+    // Validate chartData
+    if (!Array.isArray(ClientchartData) || ClientchartData.length <= 1) {
+      throw new Error('Invalid chart data');
+    }
+
+    const data = google.visualization.arrayToDataTable(ClientchartData);
+
+    const Clientoptions = {
+      is3D: true,
+   
+      pieSliceText: 'value',
+      backgroundColor: '#none', // Show investment amounts directly on slices
+    };
+
+    const Clientchart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    Clientchart.draw(dataClient, Clientoptions);
+  } catch (error) {
+    console.error('Error drawing chart:', error.message);
+    document.getElementById('piechart_3d').innerHTML = `
+      <p class="text-muted text-center">Error drawing chart: ${error.message}</p>
+    `;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchOrderData);
