@@ -304,15 +304,7 @@ button:active {
             <a class="navbar-brand d-flex align-items-center" href="/Home">
                 <img src="../Images/Sips Finance Logo.png" alt="Logo" width="80" height="80" class="me-2">  
             </a>
-      <div class="search-container">
-               <input type="text" class="search-bar" placeholder="Search investments, orders, clients...">
-                <button class="search-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button>
-            </div>
+  
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -422,6 +414,7 @@ button:active {
                         <th>Amount</th>
                         <th>Payable Interest</th>
                         <th>Phone Number</th>
+                        <th>BankDetails</th>
                         <th>Message</th>
                         
                     </tr>
@@ -498,7 +491,7 @@ console.log(clients);
                                 Send Message
                             </button>
                             <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}&ClientName=${clientDetails.ClientName}" class="btn btn-primary btn-sm received-emi-btn" onclick="changeButtonColor(this)">Received EMI</a>
-                            <a href="/AddDueEMI/${client.OrderID}?ClientName=${clientDetails.ClientName}&ActiveAmount=${client.ActiveAmount}&EMIDate=${client.StartDate.split('T')[0]}&EMIAmount=${client.PayableInterest}" class="btn btn-sm btn-warning">Due</a>
+                            <a href="/AddDueEMI/${client.OrderID}?ClientName=${clientDetails.ClientName}&ActiveAmount=${client.ActiveAmount}&EMIDate=${new Date(client.StartDate).toLocaleDateString('en-IN')}&EMIAmount=${client.PayableInterest}" class="btn btn-sm btn-warning">Due</a>
                         </td>
                     </tr>
                 `;
@@ -511,11 +504,7 @@ console.log(clients);
     }
 });
 
-function changeButtonColor(button) {
-    button.style.backgroundColor = 'green';
-    button.style.color = 'white';
-    button.innerText = 'EMI Received';
-}
+
 </script>
 
 
@@ -539,15 +528,15 @@ console.log(InvestorDetails);
                         <td>${InvestorDetails.InvestorName || 'N/A'}</td>
                         <td>${Investor.ActiveAmount || 'N/A'}</td>
                         <td>${Investor.PayableInterest.toLocaleString()}</td>
-                        <td>${InvestorDetails.PhoneNumber || 'N/A'}</td>            
+                        <td>${InvestorDetails.PhoneNumber || 'N/A'}</td>    
+                        <td><details>${InvestorDetails.BankDetails || 'N/A'}</details></td>          
                         <td>
                             <button 
                                 class="btn btn-sm btn-success" 
                                 onclick="InvestorWhatsappMessage('${InvestorDetails.PhoneNumber}','${InvestorDetails.InvestorName}','${Investor.PayableInterest}')">
                                 Send Message
                             </button>
-                            <a href="/InvestorEMIPage/${Investor.OrderID}?PayableInterest=${Investor.PayableInterest}&InvestorName=${InvestorDetails.InvestorName}" class="btn btn-primary btn-sm received-emi-btn" onclick="changeButtonColor(this)">Received EMI</a>
-                           
+                           <a class="btn btn-primary btn-sm received-emi-btn" onclick="confirmEMI('${Investor.InvestmentID}', '${Investor.PayableInterest}', '${InvestorDetails.InvestorName}')">Received EMI</a>
                         </td>
                     </tr>
                 `;
@@ -586,15 +575,15 @@ console.log(InvestorDetails);
                             <td>${ClosingClient.ActiveAmount || 'N/A'}</td>
                             <td>${ClosingClientDetails.PhoneNumber || 'N/A'}</td>
                             <td>${ClosingClient.PayableInterest.toLocaleString()}</td>
-                            <td>${ClosingClient.StartDate.split('T')[0] || 'N/A'}</td>
-                            <td>${ClosingClient.EndDate.split('T')[0] || 'N/A'}</td>
+                            <td> ${ClosingClient.StartDate ? new Date(ClosingClient.StartDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                           <td> ${ClosingClient.EndDate ? new Date(ClosingClient.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                             <td>
                                 <button 
                                     class="btn btn-sm btn-success" 
                                     onclick="ClosingClientWhatsappMessage('${ClosingClientDetails.PhoneNumber}','${ClosingClientDetails.ClientName}','${ClosingClient.PayableInterest}')">
                                     Send Message
                                 </button>
-                                <a onclick="CloseOrder('${ClosingClient.OrderID}','${ClosingClientDetails.ClientName}','${ClosingClient.Amount}','${ClosingClient.StartDate}')" class="btn btn-danger btn-sm received-emi-btn" >Close Order</a>
+                                <a onclick="CloseOrder('${ClosingClient.OrderID}','${ClosingClientDetails.ClientName}','${ClosingClient.Amount}','${new Date(ClosingClient.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger btn-sm received-emi-btn" >Close Order</a>
                             </td>
                         </tr>
                     `;
@@ -607,11 +596,7 @@ console.log(InvestorDetails);
         }
     });
 
-    function changeButtonColor(button) {
-        button.style.backgroundColor = 'green';
-        button.style.color = 'white';
-        button.innerText = 'EMI Received';
-    }
+
 </script>
 <script>
     function ClosingClientWhatsappMessage(phoneNumber, clientName, payableInterest) {
@@ -626,7 +611,7 @@ console.log(InvestorDetails);
                
                 StartDate=StartDate.split('T')[0]
                 window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&Amount=${Amount}&StartDate=${StartDate}`;
-                alert("Deletion Done.");
+               
             } else {
                 // Action if user cancels
                 alert("Deletion canceled.");
@@ -635,15 +620,29 @@ console.log(InvestorDetails);
 
 
       function  InvestorWhatsappMessage(PhoneNumber,InvestorName,PayableInterest){
-        const message = `Hello ${InvestorName}, we have successfully paid your interest of ${PayableInterest}. Thank you for your investment and trust in us!`;
+        const message = `Hello ${InvestorName}, we have successfully paid your interest of ${PayableInterest}. Thank you for your investment and trust in SiPS!`;
         const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
         window.location.href=whatsappUrl;
       }
      function  ClientWhatsappMessage(PhoneNumber,ClientName,PayableInterest){
-        const message = `Hello ${ClientName}, your payable interest is ${PayableInterest}. Please make the payment at your earliest convenience.Thank you!`;
+        const message = `Hello ${ClientName}, your payable interest of ${PayableInterest} is due. Please make the payment to avoid late fee. Thank you!`;
         const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
         window.location.href=whatsappUrl;
       }
+
+</script>
+
+<script>
+
+
+
+function confirmEMI(InvestmentID,PayableInterest,InvestorName){
+    if (confirm(`Are you sure you want to pay the interest of ${PayableInterest} to ${InvestorName}?`)) {
+        window.location.href=`/InvestorEMIPay/${InvestmentID}?PayableInterest=${PayableInterest}&InvestorName=${InvestorName}`;
+    } else {
+        alert("Payment canceled.");
+    }
+}
 
 </script>
 </body>

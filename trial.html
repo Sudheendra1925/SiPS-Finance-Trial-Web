@@ -3,649 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <title>Thank You</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-  *{  
+  
+*{  
     font-family:sans-serif;
      
 }
 :root {
-    --primary-color: #0875e1; /* Deeper Blue for Trust */
-    --secondary-color: #f8faff; /* Soft Light Blue Background */
-    --accent-color: #0875e1; /* Darker Blue for Emphasis */
-    --text-dark: #2a2a2a; /* Neutral Dark Gray */
-    --text-light: #5f6f81; /* Muted Gray-Blue Text */
-    --white: #ffffff;
-    --success-color: #27ae60; /* Fresh Green */
-    --warning-color: #f39c12; /* Warm Amber */
-    --danger-color: #e74c3c; /* Vibrant Red */
-    --highlight-color: #f1c40f; /* Warm Gold for Highlights */
-    --table-bg: #ffffff; /* Clean White Table */
-    --table-border: #dcdcdc; /* Softer Gray Borders */
-    --card-bg: #f9f9f9; /* Subtle Gray-White for Cards */
-    --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
-    --transition-speed: 0.3s; /* Smooth Transitions */
-}
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary-color: #f5f2f2;
+      --success-color: #22c55e;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --white: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --font-dark: #1e293b;
+      --font-light: #64748b;
+      --border-color: #e2e8f0;
+    }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color:#e8ecf4;
-    color: var(--text-dark);
-    line-height: 1.6;
- 
-}
+    * {
+      font-family:  sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.navbar {
-    background: #f1f7fa;
-    padding: 10px 20px;
-    box-shadow: 0 4px 8px var(--shadow-color);
-    margin: 5vh;
-}
-
-.navbar-brand {
-    color: var(--white);
-    font-size: 1.8em;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.navbar-nav .nav-linkh {
-    margin: 0 10px;
-    transition: color var(--transition-speed);
-    font-weight: bold;
-}
+    body {
+      background-color: var(--secondary-color);
+      color: var(--font-dark);
+      line-height: 1.6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
 
-.navbar-nav .nav-linkh.active {
-    color: var(--highlight-color);
-    font-weight: bold;
-}
-.search-container {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    max-width: 600px;
-    margin: 0 30px;
-}
-
-.search-bar {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-right: none;
-    border-radius: 25px 0 0 25px;
-    font-size: 1rem;
-    outline: none;
-}
-
-.search-btn {
-    padding: 12px 15px;
-    background-color: var(--primary-color);
-    color: white;
-    border: 2px solid var(--primary-color);
-    border-radius: 0 25px 25px 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.sign-out:hover {
-    color: var(--white);
-}
-
-.content {
-    padding: 30px;
-
-    margin: auto;
+        .thank-you-container {
+            text-align: center;
+            background: var(--white);
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            animation: fadeIn 1.5s ease-in-out;
+            width: 90%;
    
-}
-
-h4 {
-    color: var(--accent-color);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: var(--table-bg);
-    color: var(--text-dark);
-    box-shadow: 0 4px 8px var(--shadow-color);
-    border-radius: 8px;
-    overflow: hidden;
-    font-size: small;
-}
-
-.table thead {
-    background: var(--primary-color);
-    color: var(--white);
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.table th,
-.table td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--table-border);
-}
-
-.table tr:hover {
-    background-color: var(--secondary-color);
-    cursor: pointer;
-}
-
-#orderButton {
-    background-color: var(--success-color);
-}
-
-#TotalInvestments, #TotalLendings {
-    display: inline-block;
-    margin: 20px;
-    border: 2px solid var(--accent-color);
-    background: linear-gradient(135deg, #4a69bd, #78e08f); /* Cool Blue to Fresh Green */
-    color: #ffffff; /* White */
-    font-size: 40px;
-    font-weight: bold;
-    text-align: center;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 6px 12px var(--shadow-color);
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-}
-
-#TotalInvestments:hover, #TotalLendings:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px var(--shadow-color);
-}
-
-button {
-    font-weight: bold;
-    color: var(--white);
-    border: none;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color var(--transition-speed), transform var(--transition-speed);
-}
-
-button:hover {
-  
-    transform: scale(1.05);
-}
-
-button:active {
-    transform: scale(0.95);
-}
-
-
-
-.table-responsive{
-    border-radius: 10px;
-    border: 2px solid  white ;
-    margin: 2vh;
-    padding: 2vw;
-    background-color: white;
-}
-/* /////////////////////////////////////////////////////////////////////*/
-
-.section-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-}
-
-.section-box {
-    background-color: white;
-    border-radius: 15px;
-    padding: 25px;
-    text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-.section-box:hover {
-    transform: translateY(-10px);
-    border-color: var(--primary-color);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-}
-
-.section-box h3 {
-    margin-bottom: 15px;
-    color: var(--primary-color);
-    font-size: 1.3em;
-}
-
-
-
-.section-stats span {
-    background-color: #f3f4f6;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.9em;
-    margin-top: 2vh;
-}
-
-
-.dashboard-footer {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    padding: 20px 30px;
-    background-color: rgba(255, 252, 252, 0.9);
-    border-top: 1px solid #e5e7eb;
-    margin: 10px;;
-    width: 100%;
-}
-
-.copyright {
-    font-weight: 500;
-}
-
-.contact-details {
-    display: flex;
-    gap: 20px;
-}
-.add-buttons {
-        display: flex;
-        align-items: center;
-        gap:10vw;
-     
-    }
-    .highlight {
-    background-color: yellow;
-    color: black;
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    .dashboard-footer {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .contact-details {
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 10px;
-    }}
-    .table-responsive {
-        margin-bottom: 20px;
-    }
-
-  
-    #TotalInvestments, #TotalLendings {
-        font-size: 15px;
-        padding: 15px 20px;
-    }
-    .section-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    grid-auto-flow: row;
-}
-/* /////////////////////////////////////////////////////////////////////*/
-
-</style>
+        }
+        .thank-you-container h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: bold;
+            animation: textFadeIn 1.5s ease-in-out;
+        }
+        .thank-you-container p {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            margin-top: 10px;
+            animation: textFadeIn 1.8s ease-in-out;
+        }
+        .thank-you-container .checkmark {
+            font-size: 4rem;
+            color: var(--success-color);
+            margin: 20px 0;
+            animation: popIn 0.5s ease-out forwards;
+        }
+        .contact-info {
+            font-size: 1rem;
+            margin-top: 15px;
+            color: var(--primary-color);
+        }
+        .contact-info a {
+            color: var(--success-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-home {
+            margin-top: 20px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-home:hover {
+            background-color: var(--success-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes textFadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="/Home">
-                <img src="../Images/Sips Finance Logo.png" alt="Logo" width="80" height="80" class="me-2">  
-            </a>
-      <div class="search-container">
-               <input type="text" class="search-bar" placeholder="Search investments, orders, clients...">
-                <button class="search-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button>
-            </div>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarToggler">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-linkh active btn btn-warning" style="color:#2a2a2a" href="/Home">Home</a>
-                    </li>
-                 
-                    
-                </ul>
-                <div class="d-flex align-items-center ms-3 " >
-                    <a href="/" class="sign-out btn btn-danger">Sign Out</a>
-                </div>
-            </div>
+    <div class="thank-you-container">
+        <div class="checkmark">
+            <video id="successVideo" autoplay loop muted playsinline height="250px">
+              <source src="./Images/Successful (2).mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        <h1>Thank You!</h1>
+        <p>Your loan request has been submitted successfully.<br>We will get back to you shortly.</p>
+        <div class="contact-info">
+            <p>For any queries, call <a href="tel:+916074500348">+91 9966061602</a></p>
         </div>
-    </nav>
-    
-    <!-- Content -->
-    <div class="content" id="content">
-        <!-- Buttons -->
-        <div class=" add-buttons d-flex justify-content-center mb-4">
-            <div>
-            <a href="/AddInvestment" class="btn Add" style="background-color: rgb(255, 85, 0);">  
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Add Investment</a>
-        </div>
-        <!--GRAPH POSITIO 1-->
-        <div style="background-color: whitesnow;">
-            <a href="/AddOrder" class="btn btn-success Add" id="orderButton">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="12" y1="13" x2="12" y2="17"></line>
-                    <line x1="9" y1="16" x2="15" y2="16"></line>
-                </svg>Add Order</a>
-        </div>
-        </div>
-        <!-- ----------------------------------------------------------------------------------------------------->
-        <div class="section-grid">
-            <div class="section-box" data-page="investors" onclick="window.location.href='/Investors'">
-                <h3>Investors</h3>
-                <div class="section-stats">
-                    <img src="/Images/InvestorImage.jpg" style="height:130px;width:130px;" alt="Investor">
-                    
-                </div>
-            </div>
-            <div class="section-box" data-page="clients" onclick="window.location.href='/Clients'">
-                <h3>Clients</h3>
-                <div class="section-stats">
-                    
-                    <img src="/Images/ClientImage.gif" style="height:100px;width:100px;" alt="Client">
-                </div>
-            </div>
-            <div class="section-box" data-page="queue" onclick="window.location.href='/Queue'">
-                <h3>Queue</h3>
-                <div class="section-stats">
-                    <img src="/Images/QueueImage.gif" style="height:100px;width:100px;" alt="Client">
-                </div>
-            </div>
-            <div class="section-box" data-page="company" onclick="window.location.href='/Company'">
-                <h3>Company</h3>
-                <div class="section-stats">
-                    <img src="/Images/MetricImage.gif" style="height:100px;width:100px;" alt="Company">
-                </div>
-            </div>
-            <div class="section-box" data-page="history">
-                <h3>History</h3>
-                <div class="section-stats">
-                 <img src="/Images/WorkInProgess.gif" style="height:100px;width:100px;" alt="Work In Progress">
-                </div>
-            </div>
-        </div>
-       <!----------------------------------------------------------------------------------------------------------->
-        <!-- Clients Paying Interest Today -->
-        <div class="table-responsive" >
-            <h4><center>Receivable EMI</center></h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Client Name</th>
-                        <th>Total Loan</th>
-                        <th>Payable Interests</th>
-                        <th>Phone Number</th>
-                        <th>Send Message</th>
-                       
-                    </tr>
-                </thead>
-                <tbody id="clientsTable">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Investors to Pay Today -->
-        <div class="table-responsive">
-            <h4><center>Payable Interest</center></h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Investor Name</th>
-                        <th>Amount</th>
-                        <th>Payable Interest</th>
-                        <th>Phone Number</th>
-                        <th>Message</th>
-                        
-                    </tr>
-                </thead>
-                <tbody id="investorsTable">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-        </div>
-
-
-
-
-        <div class="table-responsive">
-            <h4><center>Clients Whose TERM is Over </center></h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Client Name</th>
-                        <th>Loan Amount</th>
-                        <th>Remaining Amount</th>
-                        <th>Phone Number</th>
-                        <th>Payable Interest</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Message</th>
-                    </tr>
-                </thead>
-                <tbody id="ClosingClientsTable">
-                    <!-- Populated dynamically -->
-                </tbody>
-            </table>
-        </div>
-
-    <div id="chart_div"  ></div>
-
-        <footer class="dashboard-footer" id="fotter">
-            <div class="copyright">
-                © 2025 Sips Finance. All Rights Reserved.
-            </div>
-            <div class="contact-details">
-                <span>Contact:+91 9966061602</span>
-                <span>Email: chinnasusheel15@gmail.com</span>
-            </div>
-</footer>
+        <script>
+            // Select the video element
+            const video = document.getElementById("successVideo");
+          
+            // Set playback speed (e.g., 0.5 for half speed, 2 for double speed)
+            video.playbackRate =1.5; // 1.5x speed
+          </script>
     </div>
-  
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            // Fetch today's interest payments (clients)
-            const clientResponse = await fetch('/TodayClient');
-        const clients = await clientResponse.json();
-console.log(clients);
-        const clientsTable = document.getElementById('clientsTable');
-        for (const client of clients) {
-            try {
-                // Fetch additional details for the client
-                const clientDetailsResponse = await fetch(`/ClientDetails/${client.ClientID}`);
-                const clientDetails = await clientDetailsResponse.json();
-
-                // Populate table with client details
-                clientsTable.innerHTML += `
-                    <tr>
-                        <td>${clientDetails.ClientName || 'N/A'}</td>
-                        <td>${client.ActiveAmount || 'N/A'}</td>
-                        <td>${client.PayableInterest.toLocaleString()}</td>
-                        <td>${clientDetails.PhoneNumber || 'N/A'}</td>            
-                        <td>
-                            <button 
-                                class="btn btn-sm btn-success" 
-                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}','${clientDetails.ClientName}','${client.PayableInterest}')">
-                                Send Message
-                            </button>
-                            <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}&ClientName=${clientDetails.ClientName}" class="btn btn-primary btn-sm received-emi-btn" onclick="changeButtonColor(this)">Received EMI</a>
-                            <a href="/AddDueEMI/${client.OrderID}?ClientName=${clientDetails.ClientName}&ActiveAmount=${client.ActiveAmount}&EMIDate=${client.StartDate.split('T')[0]}&EMIAmount=${client.PayableInterest}" class="btn btn-sm btn-warning">Due</a>
-                        </td>
-                    </tr>
-                `;
-            } catch (clientError) {
-                console.error(`Error fetching details for client ${client.ClientID}:`, clientError);
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-});
-
-function changeButtonColor(button) {
-    button.style.backgroundColor = 'green';
-    button.style.color = 'white';
-    button.innerText = 'EMI Received';
-}
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            // Fetch today's interest payments (Investors)
-            const InvestorResponse = await fetch('/TodayInvestor');
-        const Investors = await InvestorResponse.json();
-console.log(Investors);
-        const InvestorsTable = document.getElementById('InvestorsTable');
-        for (const Investor of Investors) {
-            try {
-                // Fetch additional details for the Investor
-                const InvestorDetailsResponse = await fetch(`/InvestorDetails/${Investor.InvestorID}`);
-                const InvestorDetails = await InvestorDetailsResponse.json();
-console.log(InvestorDetails);
-                // Populate table with Investor details
-                investorsTable.innerHTML += `
-                    <tr>
-                        <td>${InvestorDetails.InvestorName || 'N/A'}</td>
-                        <td>${Investor.ActiveAmount || 'N/A'}</td>
-                        <td>${Investor.PayableInterest.toLocaleString()}</td>
-                        <td>${InvestorDetails.PhoneNumber || 'N/A'}</td>            
-                        <td>
-                            <button 
-                                class="btn btn-sm btn-success" 
-                                onclick="InvestorWhatsappMessage('${InvestorDetails.PhoneNumber}','${InvestorDetails.InvestorName}','${Investor.PayableInterest}')">
-                                Send Message
-                            </button>
-                            <a href="/InvestorEMIPage/${Investor.OrderID}?PayableInterest=${Investor.PayableInterest}&InvestorName=${InvestorDetails.InvestorName}" class="btn btn-primary btn-sm received-emi-btn" onclick="changeButtonColor(this)">Received EMI</a>
-                           
-                        </td>
-                    </tr>
-                `;
-            } catch (InvestorError) {
-                console.error(`Error fetching details for Investor ${Investor.InvestorID}:`, InvestorError);
-            }
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-});
-
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            // Fetch today's interest payments (ClosingClients)
-            const ClosingClientResponse = await fetch('/ClosingClients');
-            const ClosingClients = await ClosingClientResponse.json();
-            console.log(ClosingClients);
-            const ClosingClientsTable = document.getElementById('ClosingClientsTable');
-            for (const ClosingClient of ClosingClients) {
-                try {
-                    // Fetch additional details for the ClosingClient
-                    const ClosingClientDetailsResponse = await fetch(`/ClientDetails/${ClosingClient.ClientID}`);
-                    const ClosingClientDetails = await ClosingClientDetailsResponse.json();
-                    console.log(ClosingClientDetails);
-                    // Populate table with ClosingClient details
-                    ClosingClientsTable.innerHTML += `
-                        <tr>
-                            <td>${ClosingClient.OrderID || 'N/A'}</td>
-                            <td>${ClosingClientDetails.ClientName || 'N/A'}</td>
-                            <td>${ClosingClient.Amount || 'N/A'}</td>
-                            <td>${ClosingClient.ActiveAmount || 'N/A'}</td>
-                            <td>${ClosingClientDetails.PhoneNumber || 'N/A'}</td>
-                            <td>${ClosingClient.PayableInterest.toLocaleString()}</td>
-                            <td>${ClosingClient.StartDate.split('T')[0] || 'N/A'}</td>
-                            <td>${ClosingClient.EndDate.split('T')[0] || 'N/A'}</td>
-                            <td>
-                                <button 
-                                    class="btn btn-sm btn-success" 
-                                    onclick="ClosingClientWhatsappMessage('${ClosingClientDetails.PhoneNumber}','${ClosingClientDetails.ClientName}','${ClosingClient.PayableInterest}')">
-                                    Send Message
-                                </button>
-                                <a onclick="CloseOrder('${ClosingClient.OrderID}','${ClosingClientDetails.ClientName}','${ClosingClient.Amount}','${ClosingClient.StartDate}')" class="btn btn-danger btn-sm received-emi-btn" >Close Order</a>
-                            </td>
-                        </tr>
-                    `;
-                } catch (ClosingClientError) {
-                    console.error(`Error fetching details for ClosingClient ${ClosingClient.ClientID}:`, ClosingClientError);
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    });
-
-    function changeButtonColor(button) {
-        button.style.backgroundColor = 'green';
-        button.style.color = 'white';
-        button.innerText = 'EMI Received';
-    }
-</script>
-<script>
-    function ClosingClientWhatsappMessage(phoneNumber, clientName, payableInterest) {
-        const message = `Hello ${clientName}, your payable interest is ${payableInterest}. Please make the payment at your earliest convenience.`;
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-    }
-    function CloseOrder(OrderID,ClientName,Amount,StartDate) {
-            // Show confirmation alert
-            if (confirm("Are you sure you want to Close this Order?")) {
-                // Action if user confirms
-               
-                StartDate=StartDate.split('T')[0]
-                window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&Amount=${Amount}&StartDate=${StartDate}`;
-                alert("Deletion Done.");
-            } else {
-                // Action if user cancels
-                alert("Deletion canceled.");
-            }
-        }
-
-
-      function  InvestorWhatsappMessage(PhoneNumber,InvestorName,PayableInterest){
-        const message = `Hello ${InvestorName}, we have successfully paid your interest of ${PayableInterest}. Thank you for your investment and trust in us!`;
-        const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
-        window.location.href=whatsappUrl;
-      }
-     function  ClientWhatsappMessage(PhoneNumber,ClientName,PayableInterest){
-        const message = `Hello ${ClientName}, your payable interest is ${PayableInterest}. Please make the payment at your earliest convenience.Thank you!`;
-        const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
-        window.location.href=whatsappUrl;
-      }
-
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

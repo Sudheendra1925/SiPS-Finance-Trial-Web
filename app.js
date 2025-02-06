@@ -14,15 +14,13 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
 const ExcelJS = require('exceljs');
-/////////////////////////////Use////
+/////////////////////////////Use/////////////////////////////////////////////////////////////////////////
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser( "4c8e9e8fb6e93f6456f3dc5f91794f27ba87ac63e09456119b8a792d4b172b5f"
 ));
-
-//////////////////////////////////////////////////////////////////////
 app.use(
     session({
       secret: "4c8e9e8fb6e93f6456f3dc5f91794f27ba87ac63e09456119b8a792d4b172b5f", 
@@ -30,6 +28,8 @@ app.use(
       saveUninitialized: true,
     })
   );
+//////////////////////////////////////////////////////////////////////
+
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
       return next();
@@ -96,7 +96,7 @@ const upload = multer({
             cb(new Error('Invalid file type. Only JPEG, PNG, PDF, and Excel files (.xls, .xlsx) are allowed.'));
         }
     },
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB file size limit
+    limits: { fileSize: 20 * 1024 * 1024 }, // 5 MB file size limit
 });
 
 
@@ -403,16 +403,22 @@ app.post('/NewInvestor', upload.fields([
 ]), (req, res) => {
 
     const InvestorID = generateSmallId('INV');
-    const { InvestorName,PhoneNumber} = req.body;
+    const { InvestorName,PhoneNumber,BankDetails} = req.body;
     const ImageFile = req.files?.Image ? req.files.Image[0].filename : null;
 console.log(ImageFile)
-    const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber,Image)
-                 VALUES (?, ?, curdate(),0,?,?)`;
+    const sql = `INSERT INTO Investors (InvestorID, InvestorName,StartDate,AmountInvested, PhoneNumber,Image,BankDetails)
+                 VALUES (?, ?, curdate(),0,?,?,?)`;
 
-    db.query(sql, [ InvestorID,InvestorName, PhoneNumber,ImageFile], (err, result) => {
+    db.query(sql, [ InvestorID,InvestorName, PhoneNumber,ImageFile,BankDetails], (err) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
+            res.send(`
+                <script>
+                  alert(Error inserting record:', ${err});
+                  window.location.href = "/AddInvestment";
+                </script>
+              `);
             return;
         }
         console.log('Record inserted');
@@ -447,7 +453,7 @@ app.post('/NewClient', upload.fields([
                      VALUES (?,?,0, ?, ?, ?, ?, ?,?,?,?)`;
 
         // Execute the query with form data and uploaded file names
-        db.query(sql, [ClientID,ClientName,AddressAndOccupation,PhoneNumber,Aadhar,AadharCardFile,Pan,PanCardFile,ImageFile,Comments], (err, result) => {
+        db.query(sql, [ClientID,ClientName,AddressAndOccupation,PhoneNumber,Aadhar,AadharCardFile,Pan,PanCardFile,ImageFile,Comments], (err) => {
             if (err) {
                 console.error('Error inserting record:', err);
                 res.status(500).send('Error inserting record');
@@ -477,7 +483,7 @@ app.post("/NewClientLead",(req,res)=>{
 
 
     // Execute the query, passing values from the request body
-    db.query(sql, [ ClientName,Amount,Duration,PhoneNumber,Collateral], (err, result) => {
+    db.query(sql, [ ClientName,Amount,Duration,PhoneNumber,Collateral], (err) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
@@ -502,7 +508,7 @@ app.post("/NewInvestorLead",(req,res)=>{
 
 
     // Execute the query, passing values from the request body
-    db.query(sql, [ InvestorName,Amount,PhoneNumber], (err, result) => {
+    db.query(sql, [ InvestorName,Amount,PhoneNumber], (err) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
@@ -526,7 +532,7 @@ app.post("/NewInvestment", (req, res) => {
 
     const updateInvestorSql = `UPDATE Investors SET AmountInvested = AmountInvested + ? WHERE InvestorID = ?`;
 
-    db.query(updateInvestorSql, [Amount, Investor], (updateErr, updateResult) => {
+    db.query(updateInvestorSql, [Amount, Investor], (updateErr) => {
         if (updateErr) {
             console.error('Error updating AmountInvested:', updateErr);
             res.status(500).send('Error updating AmountInvested');
@@ -540,7 +546,7 @@ app.post("/NewInvestment", (req, res) => {
             VALUES (?, ?, ?,?,?, ?, ?)
         `;
 
-        db.query(insertInvestmentSql, [InvestmentID, Investor, Amount,Amount,PayableInterest, InvestmentDate, InterestRate], (insertErr, insertResult) => {
+        db.query(insertInvestmentSql, [InvestmentID, Investor, Amount,Amount,PayableInterest, InvestmentDate, InterestRate], (insertErr) => {
             if (insertErr) {
                 console.error('Error inserting Investment:', insertErr);
                 res.status(500).send('Error inserting Investment');
@@ -576,7 +582,7 @@ app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (re
 
     const updateInvestorSql = `UPDATE Clients SET TotalAmount = TotalAmount + ? WHERE ClientID = ?`;
 
-    db.query(updateInvestorSql, [Amount, Client], (updateErr, updateResult) => {
+    db.query(updateInvestorSql, [Amount, Client], (updateErr) => {
         if (updateErr) {
             console.error('Error updating AmountInvested:', updateErr);
             res.status(500).send('Error updating AmountInvested');
@@ -587,10 +593,10 @@ app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (re
 
         const insertOrderSql = `
             INSERT INTO Orders (OrderID, ClientID, Amount,ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Collaterals)
-            VALUES (?, ?, ?,?, ?, ?, ?+interval 1 day,?+interval 1 day, ?)
+            VALUES (?, ?, ?,?, ?, ?, ?,?, ?)
         `;
 
-        db.query(insertOrderSql, [OrderID, Client, Amount,Amount, PayableInterest, RateOfInterest, StartDate,EndDate, CollateralsFile], (insertErr, insertResult) => {
+        db.query(insertOrderSql, [OrderID, Client, Amount,Amount, PayableInterest, RateOfInterest, StartDate,EndDate, CollateralsFile], (insertErr) => {
             if (insertErr) {
                 console.error('Error inserting Order:', insertErr);
                 res.status(500).send('Error inserting Order');
@@ -694,7 +700,7 @@ app.get("/ClientDetails/:ID", (req, res) => {
 
 app.get("/InvestmentsDetails/:ID", (req, res) => {
     const InvestorID = req.params.ID;
-    db.query('SELECT * FROM Investments WHERE InvestorID = ?', [InvestorID], (err, results) => {
+    db.query('SELECT * FROM Investments WHERE InvestorID = ? ORDER BY InvestmentDate DESC', [InvestorID], (err, results) => {
         if (err) {
             console.error('Error fetching data:', err.message);
             return res.status(500).json({ error: "Internal Server Error" });
@@ -711,7 +717,7 @@ app.get("/InvestmentsDetails/:ID", (req, res) => {
 
 app.get("/OrdersDetails/:ID", (req, res) => {
     const ClientID = req.params.ID;
-    db.query('SELECT * FROM Orders WHERE ClientID = ?', [ClientID], (err, results) => {
+    db.query('SELECT * FROM Orders WHERE ClientID = ? ORDER BY StartDate DESC', [ClientID], (err, results) => {
         if (err) {
             console.error('Error fetching data:', err.message);
             return res.status(500).json({ error: "Internal Server Error" });
@@ -729,9 +735,19 @@ app.get("/OrdersDetails/:ID", (req, res) => {
 app.get("/TodayInvestor", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the investment date
     const query = `
-SELECT InvestmentID,InvestorID, ActiveAmount,PayableInterest
+SELECT InvestmentID, InvestorID, ActiveAmount, PayableInterest
 FROM Investments 
-WHERE DAY(InvestmentDate) = DAY( curdate());
+WHERE (
+        DAY(InvestmentDate) = DAY(curdate())
+
+     OR (
+        DAY(curdate()) = DAY(LAST_DAY(curdate())) 
+        AND DAY(InvestmentDate) IN (30, 31) 
+        AND InvestmentDate < curdate()
+    )
+)
+AND InvestmentDate < curdate();  
+
     `;
    
     db.query(query, (err, results) => {
@@ -747,9 +763,18 @@ WHERE DAY(InvestmentDate) = DAY( curdate());
 app.get("/TodayClient", (req, res) => {
     // SQL query to check if today's date is exactly 1 month after the start date
     const query = `
-SELECT OrderID,ClientID, ActiveAmount, PayableInterest,StartDate
+SELECT OrderID, ClientID, ActiveAmount, PayableInterest, StartDate
 FROM Orders
-WHERE DAY(StartDate) = DAY( curdate()+ interval 1 day );
+WHERE (
+    DAY(StartDate) = DAY(curdate())
+    
+     OR (
+        DAY(curdate()) = DAY(LAST_DAY(curdate())) 
+        AND DAY(StartDate) IN (30, 31) 
+        AND StartDate < curdate()
+    )
+)
+AND StartDate < curdate();
     `;
    
     db.query(query, (err, results) => {
@@ -852,7 +877,7 @@ WHERE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post('/UpdateInvestor', upload.single('Image'), (req, res) => {
-    const { InvestorID, InvestorName, AmountInvested, PhoneNumber } = req.body;
+    const { InvestorID, InvestorName, AmountInvested, PhoneNumber,BankDetails } = req.body;
     const oldImagePath = req.body.oldImagePath;  // Get the old image path from the form if available
     let newImageFile = null;
 
@@ -874,13 +899,14 @@ app.post('/UpdateInvestor', upload.single('Image'), (req, res) => {
             InvestorName = ?,
             AmountInvested = ?,
             PhoneNumber = ?,
-            Image = ?
+            Image = ?,
+            BankDetails=?
         WHERE InvestorID = ?
     `;
 
     const updatedImagePath = newImageFile || oldImagePath;  // Use the new image or the old image path if no new image is uploaded
 
-    db.query(updateQuery, [InvestorName, AmountInvested, PhoneNumber, updatedImagePath, InvestorID], (err, result) => {
+    db.query(updateQuery, [InvestorName, AmountInvested, PhoneNumber, updatedImagePath,BankDetails, InvestorID], (err) => {
         if (err) {
             console.error('Error updating investor details:', err);
             return res.status(500).send('Error updating investor details');
@@ -900,7 +926,7 @@ app.post('/UpdateInvestor', upload.single('Image'), (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post('/UpdateClient', upload.fields([{ name: 'AadharCard' }, { name: 'PanCard' }, { name: 'Image' }]), (req, res) => {
-    const { ClientID, ClientName, TotalAmount, PhoneNumber,Aadhar,Pan, Comments, oldAadharPath, oldPanPath, oldImagePath } = req.body;
+    const { ClientID, ClientName, PhoneNumber,Aadhar,Pan, Comments, oldAadharPath, oldPanPath, oldImagePath } = req.body;
     // Extract file paths from multer
     const panFile = req.files['PanCard'] ? req.files['PanCard'][0].filename : null;
     const aadharFile = req.files['AadharCard'] ? req.files['AadharCard'][0].filename : null;
@@ -941,7 +967,7 @@ app.post('/UpdateClient', upload.fields([{ name: 'AadharCard' }, { name: 'PanCar
     const updatedPanPath = panFile ? panFile : oldPanPath;
     const updatedImagePath = imageFile ? imageFile : oldImagePath;
 
-    db.query(updateQuery, [ClientName,PhoneNumber,Aadhar,updatedAadharPath,Pan,updatedPanPath, updatedImagePath, Comments, ClientID], (err, result) => {
+    db.query(updateQuery, [ClientName,PhoneNumber,Aadhar,updatedAadharPath,Pan,updatedPanPath, updatedImagePath, Comments, ClientID], (err) => {
         if (err) {
             console.error('Error updating client details:', err);
             return res.status(500).send('Error updating client details');
@@ -971,7 +997,7 @@ app.post('/UpdateInvestment', (req, res) => {
         db.query(
             query,
             [ActiveAmount,PayableInterest,InterestRate,InvestmentID],
-            (err, results) => {
+            (err) => {
                 if(err){
                     console.log(err)
                     res.send("GONE WRONG");
@@ -1053,8 +1079,8 @@ app.post('/UpdateInvestment', (req, res) => {
         const updatedCollateralsPath = newCollateralsPath ?newCollateralsPath : oldCollateralsPath;
         db.query(query, [ActiveAmount,PayableInterest,RateOfInterest,updatedCollateralsPath, OrderID], (err, results) => {
             if (err) {
-                console.error('Error updating order:', err);
-                return res.status(500).json({ message: 'Error updating order' });
+                console.error('Error deleting client:', err);
+                return res.status(500).json({ message: 'Error deleting client' });
             }
     
             if (results.affectedRows === 0) {
@@ -1080,10 +1106,10 @@ const {Amount}=req.query;
     DELETE FROM ClientLead WHERE ClientName = ? AND Amount = ?;
 `;
 
-db.query(query, [ClientName,Amount], (err, results) => {
+db.query(query, [ClientName,Amount], (err) => {
     if (err) {
-        console.error('Error updating order:', err);
-        return res.status(500).json({ message: 'Error updating order' });
+        console.error('Error updating client:', err);
+        return res.status(500).json({ message: 'Error updating client' });
     }
 
     res.redirect('/Queue');
@@ -1098,7 +1124,7 @@ app.get ('/RejectInvestorLead/:InvestorName',(req,res)=>{
        DELETE  FROM InvestorLead WHERE InvestorName=? And Amount=? ;
     `;
     
-    db.query(query, [InvestorName,Amount], (err, results) => {
+    db.query(query, [InvestorName,Amount], (err) => {
         if (err) {
             console.error('Error updating order:', err);
             return res.status(500).json({ message: 'Error updating order' });
@@ -1121,14 +1147,24 @@ app.get('/DeleteInvestor/:ID', (req, res) => {
    DELETE  FROM Investors WHERE InvestorID=? ;
 `;
 
-db.query(query, [InvestorID], (err, results) => {
+db.query(query, [InvestorID], (err) => {
     if (err) {
         console.error('Error updating order:', err);
-        return res.status(500).json({ message: 'Error updating order' });
+        return res.send(`
+            <script>
+              alert("Error,${err}");
+              window.location.href = "/Investors";
+            </script>
+          `);;
     }
 
-
-    res.redirect('/Investors');
+    res.send(`
+        <script>
+          alert("Investor Deleted!");
+          window.location.href = "/Investors";
+        </script>
+      `);
+    
 });
 });
 
@@ -1146,10 +1182,19 @@ db.query(query, [ClientID], (err, results) => {
     }
 
     if (results.affectedRows === 0) {
-        return res.send("WHYYy");
+       return  res.send(`
+            <script>
+              window.location.href = "/Clients";
+            </script>
+          `);
     }
-
-    res.redirect('/Clients');
+    res.send(`
+        <script>
+          alert("Client Deleted!");
+          window.location.href = "/Clients";
+        </script>
+      `);
+   
 });
 });
 
@@ -1157,8 +1202,19 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
     const { InvestmentID } = req.params;
     var { InvestorName, Amount, InvestmentDate } = req.query;
 
+    function formatDate(InvestmentDate) {
+        const [day,month, year] = InvestmentDate.split('/'); // Assuming 'MM/DD/YYYY' format
+        if (!month || !day || !year) {
+            return null; // Invalid date format
+        }
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; // Convert to 'YYYY-MM-DD'
+    }
+    
+    const investmentDate = formatDate(InvestmentDate);
 
-    InvestmentDate=InvestmentDate.split('T')[0]
+
+
+   
     // SQL queries
     const deleteQuery = `DELETE FROM Investments WHERE InvestmentID = ?`;
     const insertQuery = `
@@ -1176,8 +1232,8 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
         // Insert into ClosedInvestment table
         db.query(
             insertQuery,
-            [InvestmentID, InvestorName, Amount, InvestmentDate],
-            (insertErr, insertResult) => {
+            [InvestmentID, InvestorName, Amount, investmentDate],
+            (insertErr) => {
                 if (insertErr) {
                     return db.rollback(() => {
                         console.error('Insert Error:', insertErr);
@@ -1186,25 +1242,37 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
                 }
 
                 // Delete from InvestmentTable
-                db.query(deleteQuery, [InvestmentID], (deleteErr, deleteResult) => {
+                db.query(deleteQuery, [InvestmentID], (deleteErr) => {
                     if (deleteErr) {
-                        return db.rollback(() => {
-                            console.error('Delete Error:', deleteErr);
-                            res.status(500).send('Failed to delete from InvestmentTable.');
-                        });
+                        return  res.send(`
+                            <script>
+                              alert("Error In Deletion,${deleteErr}");
+                              window.location.href = "/Investors";
+                            </script>
+                          `);
+                          
                     }
 
                     // Commit the transaction
                     db.commit((commitErr) => {
                         if (commitErr) {
-                            return db.rollback(() => {
-                                console.error('Commit Error:', commitErr);
-                                res.status(500).send('Transaction commit failed.');
-                            });
+                            return  res.send(`
+                                <script>
+                                  alert("Error In Deletion,${commitErr}");
+                                  window.location.href = "/Investors";
+                                </script>
+                              `);
+                              
                         }
 
                         console.log('Investment deleted and moved to ClosedInvestment successfully.');
-                        res.redirect('/Home');
+                        res.send(`
+                            <script>
+                              alert("Investment Closed!");
+                              window.location.href = "/Home";
+                            </script>
+                          `);
+                        
                     });
                 });
             }
@@ -1214,9 +1282,20 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
 app.get('/DeleteOrder/:OrderID', (req, res) => {
     const { OrderID } = req.params; // Extract OrderID from URL params
     const { ClientName, Amount, StartDate } = req.query; // Extract query parameters
-
     // Validate inputs
-    if (!OrderID || !ClientName || !Amount || !StartDate) {
+
+    function formatDate(StartDate) {
+        const [day,month, year] = StartDate.split('/'); // Assuming 'MM/DD/YYYY' format
+        if (!month || !day || !year) {
+            return null; // Invalid date format
+        }
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; // Convert to 'YYYY-MM-DD'
+    }
+    
+    const startDate = formatDate(StartDate);
+
+    
+    if (!OrderID || !ClientName || !Amount || !startDate) {
         return res.status(400).send('Missing required parameters.');
     }
 
@@ -1237,53 +1316,71 @@ app.get('/DeleteOrder/:OrderID', (req, res) => {
         // Step 1: Check for duplicate entry in ClosedOrders
         db.query(checkDuplicateQuery, [OrderID], (checkErr, results) => {
             if (checkErr) {
-                return db.rollback(() => {
-                    console.error('Duplicate Check Error:', checkErr);
-                    res.status(500).send('Failed to verify duplicate entry.');
-                });
+                return  res.send(`
+                    <script>
+                      alert("Failed to delete,${checkErr}");
+                      window.location.href = "/clients";
+                    </script>
+                  `);
+                
             }
 
             if (results.length > 0) {
-                return db.rollback(() => {
-                    console.warn(`Duplicate entry detected for OrderID: ${OrderID}`);
-                    res.status(400).send('Order has already been closed.');
-                });
+                return res.send(`
+                    <script>
+                      alert("Order already closed!");
+                      window.location.href = "/clients";
+                    </script>
+                  `);
             }
 
             // Step 2: Insert into ClosedOrders
             db.query(
                 insertQuery,
-                [OrderID, ClientName, Amount, StartDate],
-                (insertErr, insertResult) => {
+                [OrderID, ClientName, Amount, startDate],
+                (insertErr) => {
                     if (insertErr) {
-                        return db.rollback(() => {
-                            console.error('Insert Error:', insertErr);
-                            res.status(500).send('Failed to insert into ClosedOrders.');
-                        });
+                        console.log(insertErr)
+                        return  res.send(`
+                            <script>
+                              alert("Failed to insert,${insertErr}");
+                              window.location.href = "/clients";
+                            </script>
+                          `);
                     }
 
                     // Step 3: Delete from Orders
-                    db.query(deleteQuery, [OrderID], (deleteErr, deleteResult) => {
+                    db.query(deleteQuery, [OrderID], (deleteErr) => {
                         if (deleteErr) {
-                            return db.rollback(() => {
-                                console.error('Delete Error:', deleteErr);
-                                res.status(500).send('Failed to delete from Orders.');
-                            });
+                            return  res.send(`
+                                <script>
+                                  alert("Failed to delete,${deleteErr}");
+                                  window.location.href = "/clients";
+                                </script>
+                              `);
                         }
 
                         // Step 4: Commit the transaction
                         db.commit((commitErr) => {
                             if (commitErr) {
-                                return db.rollback(() => {
-                                    console.error('Commit Error:', commitErr);
-                                    res.status(500).send('Transaction commit failed.');
-                                });
+                                return  res.send(`
+                                    <script>
+                                      alert("Failed to delete2,${commitErr}");
+                                      window.location.href = "/clients";
+                                    </script>
+                                  `);
                             }
 
                             console.log(
                                 `Order ${OrderID} moved to ClosedOrders and deleted from Orders successfully.`
                             );
-                            res.redirect('/Clients');
+                            res.send(`
+                                <script>
+                                  alert("Order Closed!");
+                                  window.location.href = "/Clients";
+                                </script>
+                              `);
+                            
                         });
                     });
                 }
@@ -1316,7 +1413,13 @@ const InvestorName=req.query.InvestorName
         }
 
         console.log("EMI payment recorded successfully:", result);
-        res.redirect('/Investors');
+        res.send(`
+            <script>
+              alert("EMI Paid Successfully!");
+              window.location.href = "/Investors";
+            </script>
+          `);
+        
     });
 });
 
@@ -1490,19 +1593,32 @@ app.get('/OrderEMIHistoryData/:ID',(req,res)=>{
 app.get("/AddDueEMI/:ID", (req, res) => {
     const OrderID=req.params.ID
     const{ClientName,ActiveAmount,EMIDate,EMIAmount}=req.query;
-   
+   console.log(EMIDate)
+   function formatDate(EMIDate) {
+    if (!EMIDate) return null;
+
+    const parts = EMIDate.split('/'); 
+    if (parts.length !== 3) return null; // Ensure it's a valid date format
+
+    const [day, month, year] = parts; // Correct order for DD-MM-YYYY
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`; // Convert to YYYY-MM-DD
+}
+    
+    const emiDate = formatDate(EMIDate);
+    
+    console.log(emiDate)
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
         INSERT INTO DueEMI (OrderID,IssuedDate,ClientName,OrderAmount,EMIDate,EMIAmount,RemainingEMI)
         VALUES (?, curdate() ,?,?,?,?,?)
     `;
 
-    db.query(query, [OrderID,ClientName,ActiveAmount,EMIDate,EMIAmount,EMIAmount], (err, result) => {
+    db.query(query, [OrderID,ClientName,ActiveAmount,emiDate,EMIAmount,EMIAmount], (err, result) => {
         if (err) {
             console.error("Error inserting data into InvestorEMIHistory:", err);
             res.send(`
                 <script>
-                  alert("Added In Due Succesfully!");
+                  alert("${err}");
                   window.location.href = "/Clients";
                 </script>
               `);
@@ -1622,7 +1738,7 @@ app.post('/AddExtraExpenses', (req, res) => {
     const sql = `INSERT INTO ExtraExpenses (Reason,Amount,Date)
                  VALUES (?, ?, curdate() )`;
 
-    db.query(sql, [Reason,Amount], (err, result) => {
+    db.query(sql, [Reason,Amount], (err) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
@@ -1638,7 +1754,7 @@ app.post('/AddExtraIncomes', (req, res) => {
     const sql = `INSERT INTO ExtraIncomes (Reason,Amount,Date)
                  VALUES (?, ?, curdate() )`;
 
-    db.query(sql, [Reason,Amount], (err, result) => {
+    db.query(sql, [Reason,Amount], (err) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
@@ -1733,7 +1849,7 @@ app.get('/signup',(req,res)=>{
             const sql = `INSERT INTO Users (UserName,Password,Email,Access)
             VALUES (?, ?,?,1)`;
 
-db.query(sql, [UserName,hash,Email], (err, result) => {
+db.query(sql, [UserName,hash,Email], (err) => {
    if (err) {
        console.error('Error inserting record:', err);
        res.status(500).send('Error inserting record');
@@ -1750,7 +1866,7 @@ db.query(sql, [UserName,hash,Email], (err, result) => {
 
 
 
-app.get('/ForgetPassword',(req,res)=>{
+app.get('/ForgetPassword',()=>{
 
     
     
@@ -1768,7 +1884,7 @@ app.post("/SubmitLoanRequest",(req,res)=>{
 
 
     // Execute the query, passing values from the request body
-    db.query(sql, [ ClientName,Amount,Duration,PhoneNumber,Collateral], (err, result) => {
+    db.query(sql, [ ClientName,Amount,Duration,PhoneNumber,Collateral], (err) => {
         if (err) {
             console.error('Error inserting record:', err);
             res.status(500).send('Error inserting record');
@@ -1798,46 +1914,64 @@ app.get("/getTables",(req,res)=>{
 
 
 // Route to export data to Excel
+app.get('/ExportExcel', async (req, res) => {
+    const tableName = req.query.table;
+    if (!tableName) {
+        return res.status(400).send("Table name is required");
+    }
 
-    app.get('/ExportExcel', async (req, res) => {
-        const tableName = req.query.table;
-        if (!tableName) {
-            return res.status(400).send("Table name is required");
+    // Step 1: Get column names and types for the given table
+    db.query(`SHOW COLUMNS FROM \`${tableName}\``, (err, columns) => {
+        if (err) {
+            return res.status(500).send("Error fetching table columns");
         }
-    
-        db.query(`SELECT * FROM \`${tableName}\``, async (err, results) => {
+
+        // Step 2: Identify date/time columns correctly
+        const dateColumns = columns
+            .filter(col => col.Type.toLowerCase().includes("datetime") || col.Type.toLowerCase().includes("timestamp"))
+            .map(col => `CONVERT_TZ(\`${col.Field}\`, '+00:00', '+05:30') AS \`${col.Field}_Adjusted\``); // Adjust in MySQL
+
+        // Step 3: Construct the final SQL query
+        const selectFields = dateColumns.length > 0 ? `*, ${dateColumns.join(", ")}` : "*";
+        const query = `SELECT ${selectFields} FROM \`${tableName}\``;
+
+        db.query(query, async (err, results) => {
             if (err) {
                 return res.status(500).send("Error retrieving data");
             }
-    
+
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet(tableName);
-    
+
             if (results.length > 0) {
                 worksheet.columns = Object.keys(results[0]).map(col => ({
                     header: col,
                     key: col,
                     width: 20
                 }));
-    
+
+                // Step 4: Fix date offset issue manually in JavaScript
                 results.forEach(row => {
+                    Object.keys(row).forEach(col => {
+                        if (row[col] instanceof Date) {
+                            row[col] = new Date(row[col].getTime() + (5.5 * 60 * 60 * 1000)); // Add 5:30 hours for IST
+                        }
+                    });
                     worksheet.addRow(row);
                 });
             }
-    
-            res.setHeader(
-                'Content-Disposition',
-                `attachment; filename="${tableName}.xlsx"`
-            );
-            res.setHeader(
-                'Content-Type',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            );
-    
+
+            res.setHeader('Content-Disposition', `attachment; filename="${tableName}.xlsx"`);
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
             await workbook.xlsx.write(res);
             res.end();
         });
     });
+});
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////// 
 

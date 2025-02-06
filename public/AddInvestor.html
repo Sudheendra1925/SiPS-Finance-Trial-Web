@@ -181,10 +181,13 @@ input[type="number"]::-webkit-outer-spin-button,
                 <label for="PhoneNumber">Phone Number *</label>
                 <input type="tel" id="PhoneNumber" name="PhoneNumber" minlength="10" maxlength="10" required>
             </div>
-            
+            <div>
+              <label for="BankDetails">Bank Details *</label>
+              <input type="tel" id="BankDetails" name="BankDetails"  required>
+          </div>
             <div>
                 <label for="Image">Image [upload if required]</label>
-                <input type="file" id="Image" name="Image">
+                <input type="file" id="Image" name="Image" accept=".jpg, .jpeg, .png" >
             </div>
             
             <button id="Submit" type="submit">Submit</button>
@@ -192,14 +195,25 @@ input[type="number"]::-webkit-outer-spin-button,
     </div>
     <script>
 
-
+document.getElementById('InvestorName').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (value.length > 20) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
         document.getElementById('PhoneNumber').addEventListener('input', function (e) {
             const value = e.target.value;
             if (!/^\d{0,10}$/.test(value)) {
                 e.target.value = value.slice(0, -1); // Restrict input to 10 digits
             }
         });
-        
+      
+        document.getElementById('BankDetails').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (value.length > 100) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
         </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

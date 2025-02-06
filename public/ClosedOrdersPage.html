@@ -185,8 +185,8 @@ async function fetchClosedOrdersHistory() {
                          <td>${index + 1}</td>
                      <td>${order.OrderID || 'Unknown'}</td>
                      <td>${order.ClientName || 'Unknown'}</td>
-                    <td>${order.StartDate ? order.StartDate.split('T')[0] : 'Unknown'}</td>
-                    <td>${order.ClosedDate ? order.ClosedDate.split('T')[0] : 'Unknown'}</td>
+                    <td>${order.StartDate ? new Date(order.StartDate).toLocaleDateString('en-IN') : 'Unknown'}</td>
+                    <td>${order.ClosedDate ? new Date(order.ClosedDate).toLocaleDateString('en-IN') : 'Unknown'}</td>
                         <td>${amount.toFixed(2)}</td>
                     `;
                     tbody.appendChild(tr);

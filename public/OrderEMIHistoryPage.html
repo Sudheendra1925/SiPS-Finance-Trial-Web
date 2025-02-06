@@ -140,7 +140,7 @@
                 <tr>
                     <th scope="col">S.No</th>
                     <th scope="col">Order ID</th>
-                    <th scope="col">EMI Date</th>
+                    <th scope="col">Paid Date</th>
                     <th scope="col">Actual EMI Amount</th>
                     <th scope="col">Paid EMI Amount</th>
                 </tr>
@@ -174,7 +174,7 @@
                     tr.innerHTML = `
                         <td>${++i}</td> <!-- Increment row number -->
                         <td>${item.OrderId || 'Unknown'}</td>
-                        <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                        <td>${item.EMIDate ? new Date(item.EMIDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${item.ActualEMI ? item.ActualEMI.toLocaleString() : 'Unknown'}</td>
                         <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
                     `;

@@ -93,15 +93,9 @@ table tr:hover {
 }
 
 .btn-primary:hover {
-    background-color: var(--accent-color);
+    background-color: var(--success-color);
     border-color: var(--accent-color);
     transform: scale(1.05);
-}
-
-
-
-a:hover {
-    color: var(--accent-color);
 }
 
 .table-container {
@@ -287,7 +281,7 @@ a:hover {
 
 <!--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////   --> 
     <div class="container mt-4">
-        <h1>Clients Queue Table</h1>
+        <h3>Clients Queue Table</h3>
         <input type="text" id="clientSearch" class="form-control mb-3" placeholder="Search Client Leads" onkeyup="searchClientLeads()">
    
         <table class="table table-striped">
@@ -309,7 +303,7 @@ a:hover {
     </div>
     <a href="/AddClientLead" class="btn btn-primary">ADD Client Lead</a>
     <div class="container mt-4">
-        <h1>Investors Queue Table</h1>
+        <h3>Investors Queue Table</h3>
         <input type="text" id="investorSearch" class="form-control mb-3" placeholder="Search Investor Leads" onkeyup="searchInvestorLeads()">
         
         <table class="table table-striped Investortable">
@@ -381,7 +375,7 @@ let OrderTotal=0;
                         <td>${investor.Amount}</td>
                         <td>${investor.PhoneNumber}</td>
                          <td>
-                            <a href="/AddOrder" class="btn btn-primary btn-sm">Convert</a>
+                            <a href="/AddInvestment" class="btn btn-primary btn-sm">Convert</a>
                             <a onclick="confirmDeleteI('${investor.InvestorName}','${investor.Amount}')" class="btn btn-danger btn-sm">Reject</a>
                         </td>
                     `;

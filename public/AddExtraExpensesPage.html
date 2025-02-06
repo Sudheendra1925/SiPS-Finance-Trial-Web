@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Investment</title>
+    <title>New ExtraExpenses</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"  crossorigin="anonymous">
     <style>
   *{  
@@ -185,7 +185,23 @@ input[type="number"]::-webkit-outer-spin-button,
             <button id="Submit" type="submit">Submit</button>
         </form>
     </div>
+<script>
 
+
+document.getElementById('Reason').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (value.length > 80) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
+        document.getElementById('Amount').addEventListener('input', function (e) {
+            const value = e.target.value;
+            if (!/^\d{0,10}$/.test(value)) {
+                e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+            }
+        });
+
+</script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
   </body>

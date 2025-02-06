@@ -15,7 +15,7 @@
     :root {
       --primary-color: #0875e1;
       --secondary-color: #f8faff;
-      --accent-color: #0875e1;
+      --accent-color: #24b4e4;
       --text-dark: #2a2a2a;
       --text-light: #5f6f81;
       --success-color: #27ae60;
@@ -107,6 +107,7 @@
     input[type="number"] {
       -moz-appearance: textfield;
     }
+   
   </style>
 </head>
 
@@ -130,7 +131,7 @@
       </form>
       <div class="text-center mt-3">
         <p class="mb-0">New account? 
-          <button class="btn btn-link p-0 switcher switcher-login" data-target="signup">SignUp here</button>
+          <span class=" switcher switcher-login" data-target="signup">SignUp</span>
         </p>
       </div>
       <div class="text-end mb-3">
@@ -168,7 +169,7 @@
           <label for="signup-password-confirm">Confirm Password</label>
           <input id="signup-password-confirm" type="password" class="form-control" placeholder="Confirm your password" required>
           <button type="button" class="btn-eye" onclick="togglePasswordVisibility('signup-password-confirm')">👁</button>
-
+</div>
           <div class="input-block" id="Accessotp-section">
             <button type="button" class="btn btn-primary mt-2" onclick="sendAccessOtp()">Send Access OTP</button>
             <p id="email-Accessotp-status" style="color:#e63946; font-size:2vh; padding-top: 0.5vh;"></p>
@@ -185,7 +186,7 @@
       </form>
       <div class="text-center mt-3">
         <p class="mb-0">Already have an account? 
-          <button class="btn btn-link p-0 switcher switcher-login" data-target="login">Login here</button>
+          <span class=" switcher switcher-login" data-target="login">Login here</span>
         </p>
       </div>
     </div>

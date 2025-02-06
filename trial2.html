@@ -1,93 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Import Excel to MySQL</title>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center">Import Excel File into Existing MySQL Table</h2>
+<script>
 
-        <div class="mb-3">
-            <label for="tableSelect" class="form-label">Select Table:</label>
-            <select id="tableSelect" class="form-control" onchange="loadColumns()">
-                <option value="">-- Select Table --</option>
-            </select>
-        </div>
 
-        <div id="columnInfo" class="mb-3"></div>
+    document.addEventListener('DOMContentLoaded', async () => {
+        let ClientName=''
+        //const loader = document.getElementById('loader');
+        const clientContainer = document.querySelector('.Client-container');
+        const clientID = window.location.pathname.split('/').pop();
 
-        <div class="mb-3">
-            <label for="fileInput" class="form-label">Upload Excel File:</label>
-            <input type="file" id="fileInput" class="form-control">
-        </div>
-
-        <button class="btn btn-primary" onclick="importExcel()">Import to MySQL</button>
-    </div>
-
-    <script>
-        async function loadTables() {
+        const fetchClientDetails = async (id) => {
             try {
-                const response = await axios.get('/getTables');
-                const tableSelect = document.getElementById('tableSelect');
-                response.data.forEach(table => {
-                    const option = document.createElement('option');
-                    option.value = table;
-                    option.textContent = table;
-                    tableSelect.appendChild(option);
+const response = await fetch(`/ClientDetails/${id}`);
+if (!response.ok) throw new Error('Failed to fetch client details.');
+const data = await response.json();
+img=data.Image ? `../uploads/images/${data.Image}`: '../Images/DummyProfile.png';
+const clientInfo = document.querySelector('.Client-info');
+clientInfo.querySelector('img').src =img
+clientInfo.querySelector('h2').textContent = data.ClientName || 'N/A';
+clientInfo.querySelector('p:nth-of-type(1)').innerHTML = `<strong>ClientID:</strong> ${data.ClientID || 'N/A'}`;
+clientInfo.querySelector('p:nth-of-type(2)').innerHTML = `<strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}`;
+clientInfo.querySelector('p:nth-of-type(3)').innerHTML = `<strong>Address and Occupation:</strong> ${data.AddressAndOccupation || 'N/A'}`;
+clientInfo.querySelector('p:nth-of-type(4)').innerHTML = `<strong>Aadhar Number:</strong> ${data.Aadhar || 'N/A'}`;
+clientInfo.querySelector('p:nth-of-type(5)').innerHTML = `<strong>Aadhar Card:</strong> <a href="../uploads/aadhar/${data.AadharCard}" target="_blank">View Document</a>`;
+clientInfo.querySelector('p:nth-of-type(6)').innerHTML = `<strong>PAN Number:</strong> ${data.Pan || 'N/A'}`;
+clientInfo.querySelector('p:nth-of-type(7)').innerHTML = `<strong>PAN Card:</strong> <a href="../uploads/pancard/${data.PanCard}" target="_blank">View Document</a>`;
+clientInfo.querySelector('p:nth-of-type(8)').innerHTML = `<strong>Comments:</strong> ${data.Comments || 'N/A'}`;
+document.getElementById("TotalAmount").innerHTML = `<strong>Total Borrowing:</strong> ${data.TotalAmount || 'N/A'}`;
+document.getElementById("UpdateClient").href = `/UpdateClientPage/${data.ClientID}`;
+ClientName= data.ClientName;
+// Fixing the deletion event listener
+const deleteButton = document.getElementById("DeleteClient");
+deleteButton.addEventListener("click", () => {
+
+    if (confirm("Are you sure you want to delete this Client?")) {
+        window.location.href = `/DeleteClient/${data.ClientID}`;
+        alert("Deletion Done.");
+    } else {
+        alert("Deletion canceled.");
+    }
+});
+}
+  
+            
+            catch (error) {
+                console.error('Client Details API Error:', error);
+            }
+        };
+
+        const fetchOrderDetails = async (id) => {
+            let ActiveLending = 0;
+            try {
+                const response = await fetch(`/OrdersDetails/${id}`);
+                if (!response.ok) throw new Error('Failed to fetch order details.');
+                const data = await response.json();
+                const tbody = document.querySelector('.Orders-section table tbody');
+                tbody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No Orders Found</td></tr>`;
+                    return;
+                }
+
+                data.forEach((order) => {
+                    const row = `
+                    
+        <tr>
+        <td>${order.OrderID || 'N/A'}</td>
+        <td>₹${order.Amount?.toLocaleString('en-IN') || '0'}</td>
+        <td>₹${order.ActiveAmount?.toLocaleString('en-IN') || '0'}</td>
+        <td>₹${order.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
+        <td>${order.StartDate.split('T')[0] || 'N/A'}</td>
+        <td>${order.RateOfInterest || 'N/A'}%</td>
+        <td>${order.EndDate.split('T')[0] || 'N/A'}</td>
+        <td><a href="../uploads/collaterals/${order.Collaterals}" target="_blank">Collaterals</td>
+        <td>
+            <a href="/UpdateOrderPage/${order.OrderID}" class="btn btn-primary">Update</a>
+            <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.Amount}','${order.StartDate}')" class="btn btn-danger">Close Order</button>
+           <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}" class="btn btn-primary">Recived EMI</a>
+           <a href="/OrderEMIHistoryPage/${order.OrderID}" class="btn btn-primary"> EMI History</a>
+         <a 
+onclick="alert('Done')" 
+href="/AddDueEMI/${order.OrderID}?ClientName=${ClientName}&ActiveAmount=${order.ActiveAmount}&EMIDate=${order.StartDate.split('T')[0]}&EMIAmount=${order.PayableInterest}" 
+class="btn btn-primary">
+ Due
+</a>
+        </td>
+    </tr>
+                
+                    `; 
+                    ActiveLending += order.Amount || 0;
+                    tbody.innerHTML += row;
                 });
+                
+            const ActiveLendingElement = document.getElementById("ActiveLending");
+    if (ActiveLendingElement) {
+        ActiveLendingElement.innerHTML = `Active Investment Amount: ₹${ActiveLending.toLocaleString('en-IN')}`;
+    }
+            
             } catch (error) {
-                console.error(error);
+                console.error('Order Details API Error:', error);
             }
+        };
+
+        try {
+            await fetchClientDetails(clientID);
+            await fetchOrderDetails(clientID);
+        } catch (error) {
+            console.error('Data Fetch Error:', error);
+        } finally {
+            loader.style.display = 'none';
+            clientContainer.style.display = 'flex';
         }
+    });
 
-        async function loadColumns() {
-            const table = document.getElementById('tableSelect').value;
-            if (!table) return;
 
-            try {
-                const response = await axios.get(`http://localhost:3000/columns/${table}`);
-                document.getElementById('columnInfo').innerHTML = `<strong>Table Columns:</strong> ${response.data.join(', ')}`;
-            } catch (error) {
-                console.error(error);
-            }
+
+    function confirmDelete(OrderID,ClientName,Amount,StartDate) {
+        // Show confirmation alert
+        if (confirm("Are you sure you want to Close this Order?")) {
+            // Action if user confirms
+            StartDate=StartDate.split('T')[0]
+            window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&Amount=${Amount}&StartDate=${StartDate}`;
+            alert("Deletion Done.");
+        } else {
+            // Action if user cancels
+            alert("Deletion canceled.");
         }
+    }
 
-        async function importExcel() {
-            const table = document.getElementById('tableSelect').value;
-            const fileInput = document.getElementById('fileInput');
 
-            if (!table) {
-                alert("Please select a table");
-                return;
-            }
-
-            if (!fileInput.files.length) {
-                alert("Please select a file");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            formData.append('tableName', table);
-
-            try {
-                const response = await axios.post('/ImportExcel', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-                alert(response.data.message);
-            } catch (error) {
-                console.error(error);
-                alert("Error importing file");
-            }
-        }
-
-        window.onload = loadTables;
-    </script>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>
-</html>
-

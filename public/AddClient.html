@@ -190,7 +190,7 @@ input[type="number"]::-webkit-outer-spin-button,
           
                 <div>
                 <label for="AadharCard">Upload Aadhar Card *</label>
-                <input type="file" id="AadharCard" name="AadharCard" placeholder="Upload if required" >
+                <input type="file" id="AadharCard" name="AadharCard" placeholder="Upload if required" accept=".jpg, .jpeg, .png, .pdf"  >
             </div>
 
             <div>
@@ -200,12 +200,13 @@ input[type="number"]::-webkit-outer-spin-button,
              
             <div>
                 <label for="PanCard">Upload Pan Card *</label>
-                <input type="file" id="PanCard" name="PanCard" >
+                <input type="file" id="PanCard" name="PanCard"  accept=".jpg, .jpeg, .png, .pdf"  >
             </div>
             
             <div>
                 <label for="Image">Upload Image [if required]</label>
-                <input type="file" id="Image" name="Image" placeholder="Upload if required" >
+                <input type="file" id="Image" name="Image" placeholder="Upload if required" accept=".jpg, .jpeg, .png">
+
             </div>
             <div>
                 <label for="Comments">Comments</label>
@@ -229,7 +230,25 @@ document.getElementById('Aadhar').addEventListener('input', function (e) {
         e.target.value = value.slice(0, -1); // Restrict input to 10 digits
     }
 });
+document.getElementById('ClientName').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (value.length > 20) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
+document.getElementById('AddressAndOccupation').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (value.length >50) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
 
+document.getElementById('Comments').addEventListener('input', function (e) {
+    const value = e.target.value;
+    if (value.length > 70) {
+        e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+    }
+});
 </script>
  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>

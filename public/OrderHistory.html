@@ -221,8 +221,8 @@
                         <td>${order.OrderID}</td>
                         <td>${order.ClientName}</td>
                         <td>${order.Amount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(order.Amount) : '$0.00'}</td>
-                        <td>${order.StartDate ? order.StartDate.split('T')[0] : 'N/A'}</td>
-                        <td>${order.EndDate ? order.EndDate.split('T')[0] : 'N/A'}</td>
+                        <td>${order.StartDate ?new Date(order.StartDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                        <td>${order.EndDate ? new Date(order.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${order.RateOfInterest || '0'}%</td>
                         <td><a href="/uploads/collaterals/${order.Collaterals}" target="blank">Collaterals</a></td>
                     `;
@@ -244,8 +244,8 @@
                     return (
                         (order.OrderID && order.OrderID.toLowerCase().includes(query.toLowerCase())) ||
                         (order.ClientName && order.ClientName.toLowerCase().includes(query.toLowerCase())) ||
-                        (order.StartDate && order.StartDate.toLowerCase().includes(query.toLowerCase())) ||
-                        (order.EndDate && order.EndDate.toLowerCase().includes(query.toLowerCase())) ||
+                        (new Date(order.StartDate).toLocaleDateString('en-IN') && new Date(order.StartDate).toLocaleDateString('en-IN').toLowerCase().includes(query.toLowerCase())) ||
+                        (new Date(order.EndDate).toLocaleDateString('en-IN') && new Date(order.EndDate).toLocaleDateString('en-IN').toLowerCase().includes(query.toLowerCase())) ||
                         (order.Amount && order.Amount.toString().includes(query))
                     );
                 });

@@ -148,7 +148,7 @@
     }
 
     .chart-title {
-      font-size: 1.25rem;
+      font-size: 1rem;
       font-weight: 600;
       margin-bottom: 1rem;
       color: var(--font-dark);
@@ -351,7 +351,7 @@
       <p>Active Orders: <span id="totalOrders" style="color:red">Loading...</span></p>
       <p>Total Investor EMI: <span id="totalInvestorEmi" style="color:red">Loading...</span></p>
       <a href="/ExtraExpensesHistoryPage" style="color:black"><p>Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
-      <a href="/ExtraIncomesHistoryPage" style="color:black"><p>Total Extra Incomes: <span id="ExtraIncomes" style="color:red">Loading...</span></p></a>
+      <a href="/ExtraIncomesHistoryPage" style="color:black"><p>Total Extra Incomes: <span id="ExtraIncomes" style="color:green">Loading...</span></p></a>
     </div>
 
     <div class="quick-actions">
@@ -580,7 +580,7 @@ async function fetchInvestmentData() {
     }
 }
 
-function drawInvestorChart(chartData) {
+ function drawInvestorChart(chartData) {
     try {
         if (!Array.isArray(chartData) || chartData.length <= 1) {
             throw new Error('Invalid chart data');
@@ -588,7 +588,7 @@ function drawInvestorChart(chartData) {
 
         const data = google.visualization.arrayToDataTable(chartData);
         const options = {
-            is3D: true,
+            is3D: false,
             pieSliceText: 'value',
             backgroundColor: 'transparent',
         };
@@ -659,7 +659,7 @@ function drawClientChart(ClientchartData) {
 
         const dataClient = google.visualization.arrayToDataTable(ClientchartData);
         const Clientoptions = {
-            is3D: true,
+            is3D: false,
             pieSliceText: 'value',
             backgroundColor: 'transparent',
         };

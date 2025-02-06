@@ -177,7 +177,7 @@
                         <td>${++i}</td>
                         <td>${item.InvestmentId || 'Unknown'}</td>
                         <td>${item.InvestorName || 'N/A'}</td>
-                        <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                        <td>${item.EMIDate ? new Date(item.EMIDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
                     `;
                     TotalEMIPaid += item.PaidEMI || 0;
@@ -208,7 +208,7 @@
                 return (
                     (item.InvestorName && item.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
                     (item.InvestmentId && item.InvestmentId.toLowerCase().includes(query.toLowerCase())) ||
-                    (item.EMIDate && item.EMIDate.toLowerCase().includes(query.toLowerCase()))
+                    (new Date(item.EMIDate).toLocaleDateString('en-IN') && new Date(item.EMIDate).toLocaleDateString('en-IN').toLowerCase().includes(query.toLowerCase()))
                 );
             });
 
@@ -224,7 +224,7 @@
                     <td>${++i}</td>
                     <td>${item.InvestmentId || 'Unknown'}</td>
                     <td>${item.InvestorName || 'N/A'}</td>
-                    <td>${item.EMIDate ? item.EMIDate.split('T')[0] : 'N/A'}</td>
+                    <td>${item.EMIDate ? new Date(item.EMIDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                     <td>${item.PaidEMI ? item.PaidEMI.toLocaleString() : 0}</td>
                 `;  
                 TotalEMIPaid += item.PaidEMI || 0;
