@@ -123,7 +123,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -142,9 +142,11 @@
                 <tr>
                     <th scope="col">S.No</th>
                     <th scope="col">Investor Name</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Date</th>
+                    <th scope="col">Amount Sanctioned</th>
+                    <th scope="col">Investment Date</th>
                     <th scope="col">Rate of Interest</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Update</th>
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -152,7 +154,7 @@
             </tbody>
         </table>
     </div>
-
+  <center>  <a class="btn btn-danger" href="/Investors">Back</a></center>
     <script>
         let originalData = []; // Store fetched data for filtering
 
@@ -207,21 +209,24 @@ function populateTable(data) {
     let i = 0; // Row counter
 
     data.forEach(investment => {
+         
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${++i}</td>
             <td>${investment.InvestorName || 'Unknown'}</td>
-            <td>${investment.Amount ? investment.Amount.toLocaleString() : '0'}</td>
-            <td>${investment.InvestmentDate ? investment.InvestmentDate.split('T')[0] : 'N/A'}</td>
-            <td>${investment.InterestRate || '0'}%</td>
+            <td>${investment.AmountSanctioned ? investment.AmountSanctioned.toLocaleString("en-In") : '0'}</td>
+            <td> ${investment.InvestmentDate?new Date(investment.InvestmentDate).toLocaleDateString('en-IN'):"N/A"} </td>
+            <td>${investment.InterestRate || '0'}</td>
+          <td> ${investment.EndDate ?new Date(investment.EndDate).toLocaleDateString('en-IN'):"N/A"} </td>
+          <td> <a href="/UpdateInvestmentPage/${investment.InvestmentID}" class="btn btn-primary">Update</a> </td>
         `;
-        TotalInvestment +=investment.Amount || 0;
+        TotalInvestment +=investment.AmountSanctioned || 0;
         tbody.appendChild(tr);
     });
     const totalRow = document.createElement('tr');
-                totalRow.innerHTML = `
-                    <td colspan="2" class="text-right font-weight-bold">Total Amount:</td>
-                    <td style="color:green;" >${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(TotalInvestment)}</td>
+                totalRow.innerHTML = `<td></td>
+                    <td  class="font-weight-bold " ><b>Total Amount:</b></td>
+                    <td style="color:green;" style="border:2px solid red;"><b>${TotalInvestment.toLocaleString("en-In")}</b></td>
                  
                 `;
                 tbody.appendChild(totalRow);
@@ -234,7 +239,7 @@ function filterData(query) {
     const filteredData = originalData.filter(investment => {
         return (
             (investment.InvestorName && investment.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
-            (investment.Amount && investment.Amount.toString().includes(query)) ||
+            (investment.AmountSanctioned && investment.AmountSanctioned.toString().includes(query)) ||
             (investment.InvestmentDate && investment.InvestmentDate.toLowerCase().includes(query.toLowerCase())) ||
             (investment.InterestRate && investment.InterestRate.toString().includes(query))
         );

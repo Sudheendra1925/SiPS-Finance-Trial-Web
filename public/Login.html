@@ -129,14 +129,13 @@
         </div>
         <button type="submit" class="btn btn-success w-100">Login</button>
       </form>
-      <div class="text-center mt-3">
+      <div class="d-flex justify-content-between align-items-center mt-3">
         <p class="mb-0">New account? 
-          <span class=" switcher switcher-login" data-target="signup">SignUp</span>
+            <span class="switcher switcher-login fw-bold text-primary" style="font-size: 1rem;" data-target="signup">SignUp</span>
         </p>
-      </div>
-      <div class="text-end mb-3">
         <a href="/ForgetPasswordPage" class="text-decoration-none" style="color: var(--danger-color);">Forgot Password?</a>
-      </div>
+    </div>
+    
     </div>
 
     <div class="form-wrapper" id="signup-form">
@@ -144,7 +143,7 @@
       <form id="signup-form" onsubmit="confirmAction('signup', event)">
         <div class="input-block">
           <label for="signup-username">Username </label>
-          <input id="signup-username" type="text" name="SUserName" class="form-control" placeholder="Enter your username[max 25 characters]" required>
+          <input id="signup-username" type="text" name="SUserName" class="form-control" placeholder="Enter your username" required>
           <p id="Name" style="color:#e63946;font-size:2vh;padding-top: 0.5vh;"></p>
         </div>
         <div class="input-block">
@@ -171,7 +170,7 @@
           <button type="button" class="btn-eye" onclick="togglePasswordVisibility('signup-password-confirm')">👁</button>
 </div>
           <div class="input-block" id="Accessotp-section">
-            <button type="button" class="btn btn-primary mt-2" onclick="sendAccessOtp()">Send Access OTP</button>
+            <button type="button" class="btn btn-primary mt-2" onclick="sendAccessOtp()" id="SendAccessOTP" disabled>Send Access OTP</button>
             <p id="email-Accessotp-status" style="color:#e63946; font-size:2vh; padding-top: 0.5vh;"></p>
           
             <div id="otp-input-section" style="display: none;">
@@ -186,7 +185,7 @@
       </form>
       <div class="text-center mt-3">
         <p class="mb-0">Already have an account? 
-          <span class=" switcher switcher-login" data-target="login">Login here</span>
+          <span class=" switcher switcher-login fw-bold text-primary" style="font-size: 1rem;" data-target="login">Login here</span>
         </p>
       </div>
     </div>
@@ -203,7 +202,7 @@ let Otp=0;
       }
 
       try {
-        const response = await fetch(`/sendOtp?Email=${email}&Otp=${Otp}`, {
+        const response = await fetch(`/sendOtp?Email=${email}&Otp=Your OTP to SignUp in SiPS is ${Otp}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -226,6 +225,7 @@ let Otp=0;
     function verifyOtp() {
       const enteredOtp = document.getElementById('signup-email-otp').value;
       if (enteredOtp == Otp) {
+        document.getElementById('SendAccessOTP').disabled = false;
         document.getElementById('otp-status').innerText = 'Email verified successfully!';
         document.getElementById('otp-status').style.color = 'green';
       } else {
@@ -292,12 +292,6 @@ let Otp=0;
     }
   }
 
-  document.getElementById('signup-phoneNumber').addEventListener('input', function (e) {
-    const value = e.target.value;
-    if (!/^\d{0,10}$/.test(value)) {
-      e.target.value = value.slice(0, -1); // Restrict input to 10 digits
-    }
-  });
   document.getElementById('signup-username').addEventListener('input', function (e) {
     const value = e.target.value;
     if (value.length > 25) {
@@ -380,15 +374,15 @@ document.getElementById('signup-email').addEventListener('input', checkApplicant
   async function sendAccessOtp() {
     // Generate a random 6-digit OTP
     AccessOtp = Math.floor(100000 + Math.random() * 900000);
-
-    const email = "susheeltokala15@gmail.com"; // Replace with your email logic
+    const UserName=document.getElementById('signup-username').value;
+    const email = "susheeltokala15@gmail.com"; // Replace with your email logic susheeltokala15@gmail.com
     if (!email) {
       document.getElementById('email-Accessotp-status').innerText = 'Please enter a valid email.';
       return;
     }
 
     try {
-      const response = await fetch(`/sendOtp?Email=${email}&Otp=${AccessOtp}`, {
+      const response = await fetch(`/sendOtp?Email=${email}&Otp=${UserName} had requested to give Access for SignUp.If you accept please share OTP:${AccessOtp}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -398,7 +392,7 @@ document.getElementById('signup-email').addEventListener('input', checkApplicant
 
       if (response.ok) {
         document.getElementById('email-Accessotp-status').innerHTML =
-          '<p style="color:green">OTP sent to Susheel Kumar\'s email.</p>';
+          '<p style="color:green">OTP sent to susheeltokala15@gmail.com.</p>';
         document.getElementById('otp-input-section').style.display = 'block';
       } else {
         document.getElementById('email-Accessotp-status').innerText = 'Failed to send OTP. Please try again.';

@@ -91,9 +91,7 @@ input[type="text"]:focus, input[type="date"]:focus, select:focus {
 
 /* Button */
 #Submit {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1em;
+
     color: var(--white);
     background-color: var(--primary-color);  /* Blue button */
     border: none;
@@ -156,7 +154,7 @@ input[type="number"]::-webkit-outer-spin-button,
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -174,8 +172,8 @@ input[type="number"]::-webkit-outer-spin-button,
                   </select>
             </div>
               <div>
-                <label for="Amount">Amount *</label>
-                <input type="number" id="Amount" name="Amount">
+                <label for="AmountSanctioned">Amount Sanctioned *</label>
+                <input type="number" id="AmountSanctioned" name="AmountSanctioned">
             </div>
 
             <div>
@@ -206,10 +204,17 @@ input[type="number"]::-webkit-outer-spin-button,
         <input type="file" name="Collaterals" id="Collaterals"  accept=".pdf"  required >
   </div>
   <div>
+    <label for="CollateralType">Collateral Type*</label>
+    <input type="text" name="CollateralType" id="CollateralType"    required >
+</div>
+  <div>
     <label for="PayableInterest">Monthly  Interest*</label>
     <input type="number" name="PayableInterest" id="PayableInterest"  required >
 </div>
-            <button id="Submit" type="submit">Submit</button>
+<div class="d-flex gap-2">
+  <button id="Submit" type="submit" class="btn btn-primary px-4 py-2">Submit</button>
+  <a class="btn btn-danger px-4 py-2" href="/Home">Cancel</a>
+</div>
         </form>
     </div>
 
@@ -285,13 +290,13 @@ input[type="number"]::-webkit-outer-spin-button,
 
         const PayableInterest = document.getElementById("PayableInterest");
 const RateOfInterest = document.getElementById("RateOfInterest");
-const Amount = document.getElementById("Amount");
+const AmountSanctioned = document.getElementById("AmountSanctioned");
 
 // Add event listener for changes in the InterestRate input
 RateOfInterest.addEventListener("change", () => {
     // Convert the input values to numbers before performing calculations
     const RateOfInterestValue = parseFloat(RateOfInterest.value);
-    const amountValue = parseFloat(Amount.value);
+    const amountValue = parseFloat(AmountSanctioned.value);
 
     // Validate that both values are numbers
     if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
@@ -302,10 +307,10 @@ RateOfInterest.addEventListener("change", () => {
     }
 });
 
-Amount.addEventListener("change", () => {
+AmountSanctioned.addEventListener("change", () => {
     // Convert the input values to numbers before performing calculations
     const RateOfInterestValue = parseFloat(RateOfInterest.value);
-    const amountValue = parseFloat(Amount.value);
+    const amountValue = parseFloat(AmountSanctioned.value);
 
     // Validate that both values are numbers
     if (!isNaN(RateOfInterestValue) && !isNaN(amountValue)) {
@@ -322,10 +327,11 @@ document.getElementById('StartDate').addEventListener('input', function (e) {
     console.log(value);
     if (value >TodayDate) {
        alert("Date is Greater than Today's Date");
+       e.target.value ="";
     }});
 
 
-    document.getElementById('Amount').addEventListener('input', function (e) {
+    document.getElementById('AmountSanctioned').addEventListener('input', function (e) {
       const value = e.target.value;
       if (!/^\d{0,9}$/.test(value)) {
         e.target.value = value.slice(0, -1); // Restrict input to 10 digits
@@ -352,7 +358,7 @@ document.getElementById('StartDate').addEventListener('input', function (e) {
 
 window.onload = function() {
     const URLSearchParams = new URLSearchParams(window.location.search);
-document.getElementById('Amount').value=URLSearchParams.get('Amount');
+document.getElementById('AmountSanctioned').value=URLSearchParams.get('AmountSanctioned');
 }
 
 

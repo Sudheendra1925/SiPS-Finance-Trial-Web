@@ -372,7 +372,7 @@
           <option value="Yearly">Yearly</option>
           <option value="Quarterly">Quarterly</option>
       </select>
-  
+      <input type="number" id="yearInput" placeholder="Enter Year" style="display:none; margin-top: 10px;" min="2000" max="2100">
       <canvas id="chart_div" style="width: 100px; height: 100px;"></canvas>
       </div>
 
@@ -488,6 +488,13 @@
 
   document.getElementById("reportSelector").addEventListener("change", async () => {
       const reportType = document.getElementById("reportSelector").value;
+      const yearInput = document.getElementById("yearInput");
+
+if (reportType === "MonthlyLineGraph") {
+  yearInput.style.display = "block";
+} else {
+  yearInput.style.display = "none";
+}
 
       if (chart) {
           chart.destroy(); // Clear previous chart
@@ -500,6 +507,7 @@
       } else if (reportType === "ClientSplit") {
           fetchOrderData();
       } else if (reportType === "MonthlyLineGraph") {
+        
           fetchMonthlyData();
       }
   });

@@ -77,7 +77,7 @@ label {
     margin-bottom: 5px;
 }
 
-input {
+input ,textarea {
     width: 100%;
     padding: 10px;
     font-size: 1em;
@@ -92,9 +92,7 @@ input:focus {
 
 /* Button */
 #Submit {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
+   
     color: var(--white); /* White text */
     background-color: var(--primary-color); /* Primary blue background */
     border: none;
@@ -159,7 +157,7 @@ input[type="number"]::-webkit-outer-spin-button,
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -177,7 +175,7 @@ input[type="number"]::-webkit-outer-spin-button,
 
             <div>
                 <label for="AddressAndOccupation">Address and Occupation *</label>
-                <input type="text" id="AddressAndOccupation" name="AddressAndOccupation" required>
+                <textarea  id="AddressAndOccupation" name="AddressAndOccupation" rows="2" cols="30"  placeholder="Please use , to seperate details" required></textarea>
             </div>
             <div>
                 <label for="PhoneNumber">Phone Number *</label>
@@ -189,7 +187,7 @@ input[type="number"]::-webkit-outer-spin-button,
             </div>
           
                 <div>
-                <label for="AadharCard">Upload Aadhar Card *</label>
+                <label for="AadharCard">Upload Aadhar Card </label>
                 <input type="file" id="AadharCard" name="AadharCard" placeholder="Upload if required" accept=".jpg, .jpeg, .png, .pdf"  >
             </div>
 
@@ -199,7 +197,7 @@ input[type="number"]::-webkit-outer-spin-button,
             </div>
              
             <div>
-                <label for="PanCard">Upload Pan Card *</label>
+                <label for="PanCard">Upload Pan Card </label>
                 <input type="file" id="PanCard" name="PanCard"  accept=".jpg, .jpeg, .png, .pdf"  >
             </div>
             
@@ -212,7 +210,10 @@ input[type="number"]::-webkit-outer-spin-button,
                 <label for="Comments">Comments</label>
                 <input type="text" id="Comments" name="Comments">
             </div>
-            <button id="Submit" type="submit" >Submit</button>
+            <div class="d-flex gap-2">
+                <button id="Submit" type="submit" class="btn btn-primary px-4 py-2">Submit</button>
+                <a class="btn btn-danger px-4 py-2" href="/Clients">Cancel</a>
+            </div>
         </form>
     </div>
 <script>

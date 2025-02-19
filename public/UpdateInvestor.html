@@ -90,6 +90,7 @@
 
         /* Image Container Styling */
         .img-container {
+          
             margin-bottom: var(--img-container-margin-bottom);
         }
 
@@ -151,7 +152,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -187,11 +188,14 @@
             <div class="form-group">
                 <label for="Image">Image</label>
                 <input type="file" class="form-control" id="Image"  name="Image" accept=".jpg, .jpeg, .png" >
-                <img id="imgpreview" height="150px" width="150px">
+                <img id="imgpreview" height="150px" width="150px" alt="Image Preview" >
             </div>
             <input type="hidden" id="oldImagePath" name="oldImagePath" readonly>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a class="btn btn-primary" id="Cancel">Cancel</a>
+            <div class="d-flex gap-2">
+              <button  type="submit" class="btn btn-primary px-4 py-2">Save Changes</button>
+              <a class="btn btn-danger px-4 py-2" onclick="history.back()">Cancel</a>
+          </div>
+           
         </form>
     </div>
 

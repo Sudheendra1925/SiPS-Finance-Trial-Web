@@ -94,12 +94,7 @@
     font-weight: bold;
 }
 
-.Orders-section .total-amount {
-    margin-top: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--primary-color);
-}
+
 
 /* Client Info Section */
 .Client-info {
@@ -161,7 +156,21 @@
 a{
     margin:3px;
 }
+.details-card {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 18px;
+            font-weight: bold;
+        }
 
+        /* Spacing for each detail */
+        .detail-item {
+            display: block;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -211,15 +220,16 @@ a{
             <h2>Name</h2>
             <p><strong>ClientID:</strong></p>
             <p><strong>PhoneNumber:</strong></p>
-            <p><strong>Address and Occupation:</strong></p>
+            <p><strong id="AddressAndOccupationContent">Address and Occupation:</strong></p>
             <p><strong>Aadhar Number:</strong></p>
             <p><strong>Aadhar Card:</strong></p>
             <p><strong>PAN Number:</strong></p>
             <p><strong>PAN Card:</strong></p>
             <p><strong>Comments:</strong></p>
-        </div>
-        <a id="UpdateClient" class="btn btn-primary" style="display:inline-block">EDIT</a>
+            <a id="UpdateClient" class="btn btn-primary" style="display:inline-block">EDIT</a>
         <button id="DeleteClient"  class="btn btn-danger" style="display:inline-block" >Delete</button>
+        </div>
+        
     </div>
         <!-- Order Details Section -->
         <div class="Orders-section">
@@ -228,7 +238,7 @@ a{
                 <thead>
                     <tr>
                         <th>OrderID</th>
-                        <th>Amount</th>
+                        <th>AmountSanctioned</th>
                         <th>Outstanding Amount</th>
                         <th>Payable Interest</th>
                         <th>Start Date</th>
@@ -240,8 +250,10 @@ a{
                 </thead>
                 <tbody></tbody>
             </table>
-           <center> <div class="total-amount" id="TotalAmount"></div>
+           <center> 
             <div  id="ActiveLending"></div>
+            <div class="total-amount" id="TotalAmount"></div>
+           
         </center>
         </div>
 
@@ -262,7 +274,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await fetch(`/ClientDetails/${id}`);
             if (!response.ok) throw new Error('Failed to fetch client details.');
             const data = await response.json();
-
+            let formattedDetails = data.AddressAndOccupation.split(",").map(detail => 
+            `<span class="detail-item">${detail.trim()}</span>`
+        ).join("");
             ClientName = data.ClientName; // Store ClientName for later use
 
             // Set image
@@ -272,15 +286,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             clientInfo.querySelector('h2').textContent = data.ClientName || 'N/A';
             clientInfo.querySelector('p:nth-of-type(1)').innerHTML = `<strong>ClientID:</strong> ${data.ClientID || 'N/A'}`;
             clientInfo.querySelector('p:nth-of-type(2)').innerHTML = `<strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}`;
-            clientInfo.querySelector('p:nth-of-type(3)').innerHTML = `<strong>Address and Occupation:</strong> ${data.AddressAndOccupation || 'N/A'}`;
+            clientInfo.querySelector('p:nth-of-type(3)').innerHTML = `<strong>Address and Occupation:</strong><details> ${formattedDetails || 'N/A'}</details>`;
             clientInfo.querySelector('p:nth-of-type(4)').innerHTML = `<strong>Aadhar Number:</strong> ${data.Aadhar || 'N/A'}`;
             clientInfo.querySelector('p:nth-of-type(5)').innerHTML = `<strong>Aadhar Card:</strong> <a href="../uploads/aadhar/${data.AadharCard}" target="_blank">View Document</a>`;
             clientInfo.querySelector('p:nth-of-type(6)').innerHTML = `<strong>PAN Number:</strong> ${data.Pan || 'N/A'}`;
             clientInfo.querySelector('p:nth-of-type(7)').innerHTML = `<strong>PAN Card:</strong> <a href="../uploads/pancard/${data.PanCard}" target="_blank">View Document</a>`;
             clientInfo.querySelector('p:nth-of-type(8)').innerHTML = `<strong>Comments:</strong> ${data.Comments || 'N/A'}`;
-            document.getElementById("TotalAmount").innerHTML = `<strong>Total Borrowing:</strong> ${data.TotalAmount || 'N/A'}`;
+            document.getElementById("TotalAmount").innerHTML = ` <span class="fw-semibold text-secondary">Total Borrowing:</span> 
+            <span class="fw-bold text-primary">₹${data.TotalAmount.toLocaleString("en-IN") || '0'}</span>`;
             document.getElementById("UpdateClient").href = `/UpdateClientPage/${data.ClientID}`;
-
+           
         } catch (error) {
             console.error('Client Details API Error:', error);
         }
@@ -306,7 +321,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const row = `
                         <tr>
                             <td>${order.OrderID || 'N/A'}</td>
-                            <td>₹${order.Amount?.toLocaleString('en-IN') || '0'}</td>
+                            <td>₹${order.AmountSanctioned?.toLocaleString('en-IN') || '0'}</td>
                             <td>₹${order.ActiveAmount?.toLocaleString('en-IN') || '0'}</td>
                             <td>₹${order.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
                              <td> ${order.StartDate ? new Date(order.StartDate).toLocaleDateString('en-IN') : 'N/A'}</td>
@@ -315,7 +330,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <td><a href="../uploads/collaterals/${order.Collaterals}" target="_blank">Collaterals</td>
                             <td>
                                 <a href="/UpdateOrderPage/${order.OrderID}" class="btn btn-primary">Update</a>
-                                <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.Amount}','${new Date(order.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger">Close Order</button>
+                                <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.AmountSanctioned}','${new Date(order.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger">Close Order</button>
                                 <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}" class="btn btn-primary">Received EMI</a>
                                 <a href="/OrderEMIHistoryPage/${order.OrderID}" class="btn btn-primary">EMI History</a>
                                 <a 
@@ -327,16 +342,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </td>
                         </tr>
                     `; 
-                    ActiveLending += order.Amount || 0;
+                    ActiveLending += order.ActiveAmount || 0;
                     tbody.innerHTML += row;
                 });
             }
 
             const ActiveLendingElement = document.getElementById("ActiveLending");
             if (ActiveLendingElement) {
-                ActiveLendingElement.innerHTML = `Active Investment Amount: ₹${ActiveLending.toLocaleString('en-IN')}`;
+                ActiveLendingElement.innerHTML = ` <span class="fw-bold text-danger fs-5">Active  Amount:</span> 
+            <span class="fw-bolder text-dark fs-4">₹${ActiveLending.toLocaleString('en-IN') || '0'}</span>`;
             }
-
+           
         } catch (error) {
             console.error('Order Details API Error:', error);
         }
@@ -365,9 +381,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Function for confirming Order Deletion
-function confirmDelete(OrderID, ClientName, Amount, StartDate) {
+function confirmDelete(OrderID, ClientName, AmountSanctioned, StartDate) {
     if (confirm("Are you sure you want to Close this Order?")) {
-        window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&Amount=${Amount}&StartDate=${StartDate}`;
+        window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&AmountSanctioned=${AmountSanctioned}&StartDate=${StartDate}`;
        
     } else {
         alert("Deletion canceled.");

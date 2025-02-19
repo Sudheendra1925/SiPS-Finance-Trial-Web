@@ -123,7 +123,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -153,9 +153,10 @@
             </thead>
             <tbody id="tbody">
                 <!-- Dynamic content will be added here -->
-            </tbody>
+            </tbody>S
         </table>
     </div>
+    <center><a class="btn btn-danger mb-3" href="/Company">Back</a></center>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         let originalData = []; // Declare originalData to store the fetched data
@@ -208,7 +209,7 @@
             const tbody = document.getElementById('tbody');
             const totalRow = document.createElement('tr');
             totalRow.innerHTML = `
-                <td colspan="4" class="text-right font-weight-bold">Total EMI Paid:</td>
+                <td colspan="4" class="text-right font-weight-bold"><b>Total EMI Paid:</b></td>
                 <td>${ActualEMIToBePaid.toLocaleString()}</td>
                 <td>${TotalEMIPaid.toLocaleString()}</td>
             ;`

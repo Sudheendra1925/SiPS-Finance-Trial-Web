@@ -66,6 +66,7 @@
             margin-bottom: 20px;
         }
 
+      
         /* Table Styles */
         table.table {
             background-color: var(--table-bg);
@@ -101,10 +102,12 @@
         .text-center.text-danger {
             color: var(--danger-color);
         }
+      
 
     </style>
 </head>
 <body>
+
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
           <a class="navbar-brand d-flex align-items-center" href="/Home">
@@ -129,7 +132,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -138,8 +141,9 @@
           </div>
         </div>
       </nav>
+
     <div class="container mt-4">
-        <h1>Order History</h1>
+     <center>   <h1><b>Order History</b></h1></center>
         <div class="mb-3">
             <input type="text" id="searchBar" class="form-control" placeholder="Search by OrderID, Client Name, Start or End Date">
         </div>
@@ -149,11 +153,12 @@
                     <th scope="col">S.No</th>
                     <th scope="col">Order ID</th>
                     <th scope="col">Client Name</th>
-                    <th scope="col">Amount</th>
+                    <th scope="col">Amount Sanctioned</th>
                     <th scope="col">Date</th>
                     <th scope="col">EndDate</th>
                     <th scope="col">Rate of Interest</th>
                     <th scope="col">Collaterals</th>
+                    <th scope="col">Update</th>
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -161,7 +166,7 @@
             </tbody>
         </table>
     </div>
-
+    <center><a class="btn btn-danger" href="/Clients">Back</a></center>
     <script>
    document.addEventListener('DOMContentLoaded', () => {
             let originalData = [];
@@ -220,20 +225,22 @@
                         <td>${index + 1}</td>
                         <td>${order.OrderID}</td>
                         <td>${order.ClientName}</td>
-                        <td>${order.Amount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(order.Amount) : '$0.00'}</td>
+                        <td>${order.AmountSanctioned ? order.AmountSanctioned.toLocaleString("en-In") : '$0.00'}</td>
                         <td>${order.StartDate ?new Date(order.StartDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${order.EndDate ? new Date(order.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${order.RateOfInterest || '0'}%</td>
-                        <td><a href="/uploads/collaterals/${order.Collaterals}" target="blank">Collaterals</a></td>
+                        <td><a href="/uploads/collaterals/${order.Collaterals}" target="blank" style="font-size:2vh">${order.CollateralType}</a></td>
+                       <td> <a href="/UpdateOrderPage/${order.OrderID}" class="btn btn-primary">Update</a></td>
                     `;
                     tbody.appendChild(tr);
-                    totalAmount += order.Amount || 0;
+                    totalAmount += order.AmountSanctioned || 0;
                 });
 
                 const totalRow = document.createElement('tr');
                 totalRow.innerHTML = `
-                    <td colspan="3" class="text-right font-weight-bold">Total Amount:</td>
-                    <td style="color:green;" >${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(totalAmount)}</td>
+                <td></td>
+                    <td  class="text-right font-weight-bold"><b>Total Amount:</b></td>
+                    <td style="color:#027d10;" ><b>${totalAmount.toLocaleString('en-In')}</b></td>
                  
                 `;
                 tbody.appendChild(totalRow);
@@ -246,7 +253,7 @@
                         (order.ClientName && order.ClientName.toLowerCase().includes(query.toLowerCase())) ||
                         (new Date(order.StartDate).toLocaleDateString('en-IN') && new Date(order.StartDate).toLocaleDateString('en-IN').toLowerCase().includes(query.toLowerCase())) ||
                         (new Date(order.EndDate).toLocaleDateString('en-IN') && new Date(order.EndDate).toLocaleDateString('en-IN').toLowerCase().includes(query.toLowerCase())) ||
-                        (order.Amount && order.Amount.toString().includes(query))
+                        (order.AmountSanctioned && order.AmountSanctioned.toString().includes(query))
                     );
                 });
 

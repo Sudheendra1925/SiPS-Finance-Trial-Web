@@ -149,7 +149,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -178,8 +178,11 @@
                 <label for="PaidEMI">Paid EMI *</label>
                 <input type="number" class="form-control" id="PaidEMI" name="PaidEMI" required>
             </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="/DueEmiPage" class="btn btn-danger">cancel</a>
+            <div class="d-flex gap-2">
+              <button  type="submit" class="btn btn-primary px-4 py-2">Submit</button>
+              <a class="btn btn-danger px-4 py-2" href="/DueEmiPage">Cancel</a>
+          </div>
+    
         </form>
     </div>
 

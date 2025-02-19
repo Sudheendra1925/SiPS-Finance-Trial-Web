@@ -148,7 +148,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -166,26 +166,32 @@
                 <input type="text" class="form-control" id="InvestmentID" name="InvestmentID" readonly>
             </div>
             <div class="form-group">
-                <label for="Amount">Amount Invested</label>
-                <input type="number" class="form-control" id="Amount"  name="Amount" required readonly>
+                <label for="AmountSanctioned">Amount Sanctioned</label>
+                <input type="number" class="form-control" id="AmountSanctioned"  name="AmountSanctioned" required readonly>
             </div>
             <div class="form-group">
                 <label for="ActiveAmount">Active Amount</label>
                 <input type="number" class="form-control" id="ActiveAmount"  name="ActiveAmount" required>
             </div>
-
+            <div class="form-group">
+              <label for="EndDate">EndDate</label>
+              <input type="Date" class="form-control" id="EndDate"  name="EndDate" required>
+          </div>
            
             <div class="form-group">
                 <label for="InterestRate">Interest Rate</label>
-                <input type="text" class="form-control" id="InterestRate"  name="InterestRate" required readaonly>
+                <input type="text" class="form-control" id="InterestRate"  name="InterestRate" required >
             </div>
 
             <div class="form-group">
                 <label for="PayableInterest">Payable Interest</label>
                 <input type="text" class="form-control" id="PayableInterest"  name="PayableInterest" required>
             </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a class="btn btn-primary" id="Cancel" href="/Investors">Cancel</a>
+            <div class="d-flex gap-2">
+              <button  type="submit" class="btn btn-primary px-4 py-2">Save Changes</button>
+              <a class="btn btn-danger px-4 py-2" onclick="history.back()">Cancel</a>
+          </div>
+          
         </form>
     </div>
 
@@ -201,10 +207,16 @@
 
                 // Fill form with previous data
                 document.getElementById('InvestmentID').value = data.InvestmentID;
-                document.getElementById('Amount').value = data.Amount;
+                document.getElementById('AmountSanctioned').value = data.AmountSanctioned;
                 document.getElementById('ActiveAmount').value = data.ActiveAmount;
                 document.getElementById('PayableInterest').value = data.PayableInterest;
                 document.getElementById('InterestRate').value = data.InterestRate;
+               
+                
+                let endDate = new Date(data.EndDate);
+                let localISODate = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+                document.getElementById('EndDate').value = localISODate;
+console.log(localISODate)
                 document.getElementById('Cancel').href = `/Investors`;
                 
                 // Display image preview if availabl

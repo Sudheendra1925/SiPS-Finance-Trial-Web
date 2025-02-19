@@ -94,9 +94,7 @@ input:focus, select:focus {
 
 /* Button */
 #Submit {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1em;
+
     color: var(--white);
     background-color: var(--primary-color);  /* Deep blue button */
     border: none;
@@ -159,7 +157,7 @@ input[type="number"]::-webkit-outer-spin-button,
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -180,9 +178,13 @@ input[type="number"]::-webkit-outer-spin-button,
               <div>
                 <label for="Amount">Amount *</label>
                 <input type="number" id="Amount" name="Amount">
+
             </div>
             
-            <button id="Submit" type="submit">Submit</button>
+              <div class="d-flex gap-2">
+              <button id="Submit" type="submit" class="btn btn-primary px-4 py-2">Submit</button>
+              <a class="btn btn-danger px-4 py-2" href="/Company">Cancel</a>
+          </div>
         </form>
     </div>
 <script>

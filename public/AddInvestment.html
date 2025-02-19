@@ -92,9 +92,8 @@ input:focus, select:focus {
 
 /* Button */
 #Submit {
-    width: 100%;
-    padding: 12px;
-    font-size: 1.1em;
+    
+ 
     color: var(--white);
     background-color: var(--primary-color);  /* Deep blue button */
     border: none;
@@ -157,7 +156,7 @@ input[type="number"]::-webkit-outer-spin-button,
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -176,8 +175,8 @@ input[type="number"]::-webkit-outer-spin-button,
                   </select>
             </div>
               <div>
-                <label for="Amount">Amount *</label>
-                <input type="number" id="Amount" name="Amount">
+                <label for="AmountSanctioned">Amount Sanctioned *</label>
+                <input type="number" id="AmountSanctioned" name="AmountSanctioned">
             </div>
 
             <div>
@@ -185,15 +184,22 @@ input[type="number"]::-webkit-outer-spin-button,
                 <input type="date" id="InvestmentDate" name="InvestmentDate" required>
             </div>
             <div>
-                <label for="InterestRate">Intrest Rate*</label>
-                <input type="number" name="InterestRate" id="InterestRate" min="0" value="0" step="any" placeholder="Intrest per month" required >
+                <label for="InterestRate">Interest Rate*</label>
+                <input type="number" name="InterestRate" id="InterestRate" min="0" value="0" step="any" placeholder="Interest per year" required >
             </div>
             <div>
                 <label for="PayableInterest">Payable Interest*</label>
                 <input type="number" name="PayableInterest" id="PayableInterest"  required >
             </div>
-            
-            <button id="Submit" type="submit">Submit</button>
+            <div>
+              <label for="EndDate">End Date*</label>
+              <input type="Date" name="EndDate" id="EndDate"  required >
+          </div>
+            <div class="d-flex gap-2">
+              <button id="Submit" type="submit" class="btn btn-primary px-4 py-2">Submit</button>
+              <a class="btn btn-danger px-4 py-2" href="/Home">Cancel</a>
+          </div>
+       
         </form>
     </div>
 
@@ -262,13 +268,13 @@ async function fetchData() {
 }
 const PayableInterest = document.getElementById("PayableInterest");
 const InterestRate = document.getElementById("InterestRate");
-const Amount = document.getElementById("Amount");
+const AmountSanctioned = document.getElementById("AmountSanctioned");
 
 // Add event listener for changes in the InterestRate input
 InterestRate.addEventListener("change", () => {
     // Convert the input values to numbers before performing calculations
     const interestRateValue = parseFloat(InterestRate.value);
-    const amountValue = parseFloat(Amount.value);
+    const amountValue = parseFloat(AmountSanctioned.value);
 
     // Validate that both values are numbers
     if (!isNaN(interestRateValue) && !isNaN(amountValue)) {
@@ -279,10 +285,10 @@ InterestRate.addEventListener("change", () => {
     }
 });
 
-Amount.addEventListener("change", () => {
+AmountSanctioned.addEventListener("change", () => {
     // Convert the input values to numbers before performing calculations
     const interestRateValue = parseFloat(InterestRate.value);
-    const amountValue = parseFloat(Amount.value);
+    const amountValue = parseFloat(AmountSanctioned.value);
 
     // Validate that both values are numbers
     if (!isNaN(interestRateValue) && !isNaN(amountValue)) {
@@ -300,9 +306,10 @@ document.addEventListener('DOMContentLoaded', fetchData);
 document.getElementById('InvestmentDate').addEventListener('input', function (e) {
     const TodayDate=new Date().toISOString().split('T')[0];
     const value = e.target.value;
-    console.log(value);
+    
     if (value >TodayDate) {
        alert("Date is Greater than Today's Date");
+        e.target.value ="";
     }});
 
     document.getElementById('InterestRate').addEventListener('input', function (e) {
@@ -315,7 +322,7 @@ document.getElementById('InvestmentDate').addEventListener('input', function (e)
 });
 
 
-document.getElementById('Amount').addEventListener('input', function (e) {
+document.getElementById('AmountSanctioned').addEventListener('input', function (e) {
       const value = e.target.value;
       if (!/^\d{0,10}$/.test(value)) {
         e.target.value = value.slice(0, -1); // Restrict input to 10 digits

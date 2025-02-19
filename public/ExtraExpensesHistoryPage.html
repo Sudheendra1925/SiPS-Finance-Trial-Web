@@ -124,7 +124,7 @@
                 <a class="btn btn-info" href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -151,7 +151,7 @@
             </tbody>
         </table>
     </div>
-
+   <center> <a class="btn btn-danger" href="/Company">Back</a></center>
     <script>
         async function fetchExtraExpensesHistory() {
             try {
@@ -172,7 +172,7 @@
                     tr.innerHTML = `
                         <td>${++i}</td> <!-- Increment row number -->
                         <td>${item.reason|| 'Unknown'}</td>
-                        <td>${item.Date ? item.Date.split('T')[0] : 'N/A'}</td>
+                        <td>${item.Date ? new Date(item.Date).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${item.amount ? item.amount.toLocaleString() : 'Unknown'}</td>
                         
                     `;

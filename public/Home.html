@@ -10,7 +10,7 @@
     <style>
   *{  
     font-family:sans-serif;
-     
+    
 }
 :root {
     --primary-color: #0875e1; /* Deeper Blue for Trust */
@@ -40,7 +40,7 @@ body {
 }
 
 .navbar {
-    background: #f1f7fa;
+    background: #eed7df;
     padding: 10px 20px;
     box-shadow: 0 4px 8px var(--shadow-color);
     margin: 5vh;
@@ -280,6 +280,7 @@ button:active {
     }}
     .table-responsive {
         margin-bottom: 20px;
+      
     }
 
   
@@ -300,30 +301,26 @@ button:active {
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="/Home">
-                <img src="../Images/Sips Finance Logo.png" alt="Logo" width="80" height="80" class="me-2">  
-            </a>
-  
+      <a class="navbar-brand d-flex align-items-center" href="/Home">
+          <img src="../Images/Sips Finance Logo.png" alt="Logo" width="80" height="80" class="me-2">
+      </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarToggler">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-linkh active btn btn-warning" style="color:#2a2a2a" href="/Home">Home</a>
-                    </li>
-                 
-                    
-                </ul>
-                <div class="d-flex align-items-center ms-3 " >
-                    <a href="/" class="sign-out btn btn-danger">Sign Out</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+     
+      <div class="collapse navbar-collapse" id="navbarToggler">
+        <h1 class="mx-auto" style="font-size:4vw;margin-left: 3vw;">SiPS Finance</h1>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                  <a class="nav-linkh active btn btn-warning" style="color:#2a2a2a" href="/Home">Home</a>
+              </li>
+          </ul>
+          <div class="d-flex align-items-center ms-3">
+              <a href="/" class="sign-out btn btn-danger">Sign Out</a>
+          </div>
+      </div>
+  </nav>
     
     <!-- Content -->
     <div class="content" id="content">
@@ -371,9 +368,9 @@ button:active {
                 </div>
             </div>
             <div class="section-box" data-page="company" onclick="window.location.href='/Company'">
-                <h3>Company</h3>
+                <h3>Dashboard</h3>
                 <div class="section-stats">
-                    <img src="/Images/MetricImage.gif" style="height:100px;width:100px;" alt="Company">
+                    <img src="/Images/MetricImage.gif" style="height:100px;width:100px;" alt="Dashboard">
                 </div>
             </div>
             <div class="section-box" data-page="history">
@@ -411,7 +408,7 @@ button:active {
                 <thead>
                     <tr>
                         <th>Investor Name</th>
-                        <th>Amount</th>
+                        <th>Active Amount</th>
                         <th>Payable Interest</th>
                         <th>Phone Number</th>
                         <th>BankDetails</th>
@@ -435,7 +432,7 @@ button:active {
                     <tr>
                         <th>Order ID</th>
                         <th>Client Name</th>
-                        <th>Loan Amount</th>
+                        <th>Amount Sanctioned</th>
                         <th>Remaining Amount</th>
                         <th>Phone Number</th>
                         <th>Payable Interest</th>
@@ -487,7 +484,7 @@ console.log(clients);
                         <td>
                             <button 
                                 class="btn btn-sm btn-success" 
-                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}','${clientDetails.ClientName}','${client.PayableInterest}')">
+                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}','${clientDetails.ClientName}','${client.PayableInterest}','${new Date(client.StartDate).toLocaleDateString('en-IN')}')">
                                 Send Message
                             </button>
                             <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}&ClientName=${clientDetails.ClientName}" class="btn btn-primary btn-sm received-emi-btn" onclick="changeButtonColor(this)">Received EMI</a>
@@ -536,7 +533,7 @@ console.log(InvestorDetails);
                                 onclick="InvestorWhatsappMessage('${InvestorDetails.PhoneNumber}','${InvestorDetails.InvestorName}','${Investor.PayableInterest}')">
                                 Send Message
                             </button>
-                           <a class="btn btn-primary btn-sm received-emi-btn" onclick="confirmEMI('${Investor.InvestmentID}', '${Investor.PayableInterest}', '${InvestorDetails.InvestorName}')">Received EMI</a>
+                           <a class="btn btn-primary btn-sm received-emi-btn" onclick="confirmEMI('${Investor.InvestmentID}', '${Investor.PayableInterest}', '${InvestorDetails.InvestorName}')">EMI Paid</a>
                         </td>
                     </tr>
                 `;
@@ -571,7 +568,7 @@ console.log(InvestorDetails);
                         <tr>
                             <td>${ClosingClient.OrderID || 'N/A'}</td>
                             <td>${ClosingClientDetails.ClientName || 'N/A'}</td>
-                            <td>${ClosingClient.Amount || 'N/A'}</td>
+                            <td>${ClosingClient.AmountSanctioned || 'N/A'}</td>
                             <td>${ClosingClient.ActiveAmount || 'N/A'}</td>
                             <td>${ClosingClientDetails.PhoneNumber || 'N/A'}</td>
                             <td>${ClosingClient.PayableInterest.toLocaleString()}</td>
@@ -583,7 +580,7 @@ console.log(InvestorDetails);
                                     onclick="ClosingClientWhatsappMessage('${ClosingClientDetails.PhoneNumber}','${ClosingClientDetails.ClientName}','${ClosingClient.PayableInterest}')">
                                     Send Message
                                 </button>
-                                <a onclick="CloseOrder('${ClosingClient.OrderID}','${ClosingClientDetails.ClientName}','${ClosingClient.Amount}','${new Date(ClosingClient.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger btn-sm received-emi-btn" >Close Order</a>
+                                <a onclick="CloseOrder('${ClosingClient.OrderID}','${ClosingClientDetails.ClientName}','${ClosingClient.AmountSanctioned}','${new Date(ClosingClient.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger btn-sm received-emi-btn" >Close Order</a>
                             </td>
                         </tr>
                     `;
@@ -604,13 +601,13 @@ console.log(InvestorDetails);
         const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     }
-    function CloseOrder(OrderID,ClientName,Amount,StartDate) {
+    function CloseOrder(OrderID,ClientName,AmountSanctioned,StartDate) {
             // Show confirmation alert
             if (confirm("Are you sure you want to Close this Order?")) {
                 // Action if user confirms
                
                 StartDate=StartDate.split('T')[0]
-                window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&Amount=${Amount}&StartDate=${StartDate}`;
+                window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&AmountSanctioned=${AmountSanctioned}&StartDate=${StartDate}`;
                
             } else {
                 // Action if user cancels
@@ -624,8 +621,22 @@ console.log(InvestorDetails);
         const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
         window.location.href=whatsappUrl;
       }
-     function  ClientWhatsappMessage(PhoneNumber,ClientName,PayableInterest){
-        const message = `Hello ${ClientName}, your payable interest of ${PayableInterest} is due. Please make the payment to avoid late fee. Thank you!`;
+     function  ClientWhatsappMessage(PhoneNumber,ClientName,PayableInterest,StartDate){
+        const message = `Hello ${ClientName},
+
+This is a reminder to pay the EMI of Rs. ${PayableInterest} due on or before Today  for loan from SiPS finance dated ${StartDate}. Please pay the EMI before due date to avoid additional charges.
+
+Thank You,
+
+Account Details:
+SIPS Financial Services
+Canara Bank
+A/C #: 120031763211
+IFSC code: CNRB0008686
+Account type: Current
+
+Regards,
+SiPS Finance team`;
         const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
         window.location.href=whatsappUrl;
       }

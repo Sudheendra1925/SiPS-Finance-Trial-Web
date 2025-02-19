@@ -89,12 +89,7 @@
     color: var(--text-dark);
 }
 
-.investments-section .total-amount {
-    margin-top: 20px;
-    font-size: 1.2em;
-    font-weight: bold;
-    color: var(--primary-color);
-}
+
 
 .investor-info {
     flex: 1;
@@ -145,7 +140,21 @@ border-radius: 10px;;
         order: 1;
     }
 }
+.bank-details-card {
+            background: linear-gradient(135deg, #0077FF, #0044CC);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 18px;
+            font-weight: bold;
+        }
 
+        /* Spacing for each bank detail */
+        .bank-detail-item {
+            display: block; /* Ensures each item appears on a new line */
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -194,9 +203,8 @@ border-radius: 10px;;
           <center>  <img  alt="Investor Photo"></center>
             <h2>Name</h2>
             <p><strong>InvestorID:</strong></p>
-            <p><strong>Since:</strong></p>
             <p><strong>PhoneNumber:</strong></p>
-            <p><strong>BankDetails:</strong></p>
+            <p><strong id="BankDetailsContent">BankDetails:</strong></p>
             <a  id="UpdateInvestor" class="btn btn-primary">EDIT</a>
             <button id="DeleteInvestor"  class="btn btn-danger">Delete</button>
      
@@ -210,18 +218,23 @@ border-radius: 10px;;
             <thead>
                 <tr>
                     <th>InvestmentID</th>
-                    <th>Amount</th>
+                    <th>AmountSanctioned</th>
                     <th>Outstanding Balance</th>
                     <th>Interest</th>
-                    <th>Date</th>
+                    <th>Investment Date</th>
                     <th>ROI</th>
+                    <th>End Date</th>
                     <th>Operations</th>
+                    
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
-    <center> <div class="total-amount"></div> 
-        <div id="ActiveInvestment"></div> </center>
+        
+    <center> 
+        <div id="ActiveInvestment"></div> 
+        <div class="total-amount"></div> 
+    </center>
     </div>
 
     <script>
@@ -236,7 +249,9 @@ border-radius: 10px;;
                     if (!response.ok) throw new Error('Failed to fetch investor details');
                     const data = await response.json();
                     
-
+                    let formattedDetails = data.BankDetails.split(",").map(detail => 
+            `<span class="bank-detail-item">${detail.trim()}</span>`
+        ).join("");
                     const img = data.Image ? `../uploads/images/${data.Image}`:'../Images/DummyProfile2.jpg'  ;
                     
                     console.log("Image Path:", img);
@@ -245,9 +260,8 @@ border-radius: 10px;;
                     investorInfo.querySelector('img').src =img;
                     investorInfo.querySelector('h2').textContent = data.InvestorName || 'N/A';
                     investorInfo.querySelector('p:nth-of-type(1)').innerHTML = `<strong>InvestorID:</strong> ${data.InvestorID || 'N/A'}`;
-                    investorInfo.querySelector('p:nth-of-type(2)').innerHTML = `<strong>Since:</strong> ${data.StartDate ? new Date(data.StartDate).toLocaleDateString('en-IN') : 'N/A'}`;
-                    investorInfo.querySelector('p:nth-of-type(3)').innerHTML = `<strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}`;
-                    investorInfo.querySelector('p:nth-of-type(4)').innerHTML = `<strong>BankDetails:</strong> ${data.BankDetails || 'N/A'}`;
+                    investorInfo.querySelector('p:nth-of-type(2)').innerHTML = `<strong>PhoneNumber:</strong> ${data.PhoneNumber || 'N/A'}`;
+                    investorInfo.querySelector('p:nth-of-type(3)').innerHTML = `<strong>BankDetails:</strong><details> ${formattedDetails || 'N/A'}</details>`;
                     document.getElementById("UpdateInvestor").href = `/UpdateInvestorPage/${id}`;
                                  // document.getElementById("DeleteInvestor").href = `/DeleteInvestor/${id}`;
     
@@ -265,7 +279,8 @@ border-radius: 10px;;
                     });
     
                     const totalAmountDiv = document.querySelector('.investments-section .total-amount');
-                    totalAmountDiv.innerHTML = `Total Investment Amount: ₹${data.AmountInvested?.toLocaleString() || '0'}`;
+                    totalAmountDiv.innerHTML = ` <span class="fw-semibold text-secondary">Total Investment Amount:</span> 
+    <span class="fw-bold text-primary">₹${data.AmountInvested?.toLocaleString("en-IN") || '0'}</span>`;
     
                     document.getElementById('loader').style.display = 'none';
                     document.querySelector('.investor-container').style.display = 'flex';
@@ -292,14 +307,15 @@ border-radius: 10px;;
                         rows += `
                             <tr>
                                 <td>${investment.InvestmentID || 'N/A'}</td>
-                                <td>₹${investment.Amount?.toLocaleString('en-IN') || '0'}</td>
+                                <td>₹${investment.AmountSanctioned?.toLocaleString('en-IN') || '0'}</td>
                                 <td>₹${investment.ActiveAmount?.toLocaleString('en-IN') || '0'}</td>
                                 <td>₹${investment.PayableInterest?.toLocaleString('en-IN') || '0'}</td>
                                 <td>${investment.InvestmentDate ? new Date(investment.InvestmentDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                                 <td>${investment.InterestRate || 'N/A'}%</td>
+                                 <td>${investment.EndDate ? new Date(investment.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                                 <td>
                                     <a href="/UpdateInvestmentPage/${investment.InvestmentID}" class="btn btn-primary" aria-label="Update Investment">Update</a>
-                                    <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.Amount}','${new Date(investment.InvestmentDate).toLocaleDateString('en-IN')}')" class="btn btn-danger" aria-label="Close Investment">Close</button>
+                                    <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.AmountSanctioned}','${new Date(investment.InvestmentDate).toLocaleDateString('en-IN')}')" class="btn btn-danger" aria-label="Close Investment">Close</button>
                                     <a onclick="confirmPay('${investment.InvestmentID}', '${InvestorName}','${investment.PayableInterest}')" class="btn btn-primary" aria-label="Pay EMI">Pay EMI</a>
                                     <a href="/InvestmentEMIHistoryPage/${investment.InvestmentID}" class="btn btn-primary" aria-label="View EMI History">EMI History</a>
                                 </td>
@@ -312,7 +328,8 @@ border-radius: 10px;;
     
                     const activeInvestmentElement = document.getElementById("ActiveInvestment");
                     if (activeInvestmentElement) {
-                        activeInvestmentElement.innerHTML = `Active Investment Amount: ₹${activeInvestment.toLocaleString('en-IN')}`;
+                        activeInvestmentElement.innerHTML = ` <span class="fw-bold text-danger fs-5">Active Investment Amount:</span> 
+    <span class="fw-bolder text-dark fs-4">₹${activeInvestment.toLocaleString('en-IN') || '0'}</span>`;
                     }
                 } catch (error) {
                     console.error('Investments API Error:', error);
@@ -335,11 +352,11 @@ border-radius: 10px;;
     </script>
     <script>
 
-function confirmDelete(InvestmentID,InvestorName,Amount,InvestmentDate) {
+function confirmDelete(InvestmentID,InvestorName,AmountSanctioned,InvestmentDate) {
             // Show confirmation alert
             if (confirm("Are you sure you want to Close this Investment?")) {
               
-                window.location.href = `/DeleteInvestment/${InvestmentID}?InvestorName=${InvestorName}&Amount=${Amount}&InvestmentDate=${InvestmentDate}`;
+                window.location.href = `/DeleteInvestment/${InvestmentID}?InvestorName=${InvestorName}&Amount=${AmountSanctioned}&InvestmentDate=${InvestmentDate}`;
                 
             } else {
                 // Action if user cancels

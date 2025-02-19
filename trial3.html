@@ -1,81 +1,870 @@
-google.charts.load("current", { packages: ["corechart"] });
-
-async function fetchOrderData() {
-  try {
-    const responseClient = await fetch('/getOrderData');
-    if (!responseClient.ok) throw new Error('Failed to fetch order data');
-
-    const dataClient = await response.json();
-
-    // Validate data format
-    if (!Array.isArray(dataClient) || dataClient.length === 0) {
-      throw new Error('No Orders Yet');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sips Finance Dashboard</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+   
+*{  
+    font-family:sans-serif;
+     
+}
+:root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary-color: #f5f2f2;
+      --success-color: #22c55e;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --white: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --font-dark: #1e293b;
+      --font-light: #64748b;
+      --border-color: #e2e8f0;
     }
 
-    // Function to fetch client details by ID
-    async function fetchClientName(id) {
+    * {
+      font-family:  sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--secondary-color);
+      color: var(--font-dark);
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background: var(--white);
+      padding: 1rem 2rem;
+      box-shadow: 0 1px 3px var(--shadow-color);
+    }
+
+.sign-out:hover {
+    color: var(--white);
+}
+
+.sign-out:hover {
+    background-color: var(--danger-color);
+}
+.btn{
+    margin:0.2vw;
+}
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .summary-box {
+      background:white;
+      color: black;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .summary-box p {
+      font-size: 1.5rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-box span {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .details-toggle {
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.2s ease;
+    }
+
+    .details-toggle:hover {
+      background: var(--primary-hover);
+    }
+
+    .details-content {
+      display: none;
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px var(--shadow-color);
+      margin-bottom: 2rem;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-button {
+      background: var(--white);
+      color: var(--primary-color);
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .action-button:hover {
+      background: var(--primary-color);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-card {
+      background: var(--white);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      position: relative;
+    }
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--font-dark);
+    }
+
+    .distribution-summary {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--secondary-color);
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--font-dark);
+    }
+
+    .distribution-summary strong {
+      color: var(--primary-color);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .chart-card {
+        min-height: 400px;
+      }
+    }
+
+
+    .distribution-summary {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--secondary-color);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--font-dark);
+        }
+
+        .distribution-summary strong {
+            color: var(--primary-color);
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card {
+                min-height: 400px;
+            }
+        }
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--font-dark);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100%;
+            width: 250px;
+            background-color: var(--white);
+            box-shadow: 2px 0 5px var(--shadow-color);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            padding-top: 80px;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: var(--font-dark);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-link:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+        .profit {
+      color: var(--success-color);
+    }
+
+    .loss {
+      color: var(--danger-color);
+    }
+
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <div class="hamburger-menu" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <a class="navbar-brand d-flex align-items-center" href="/Home">
+        <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
+        
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+      <div class="collapse navbar-collapse" id="navbarToggler">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="btn  btn-warning" href="/Home">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-info" href="/Investors" style="background-color:rgb(255, 85, 0);"> Investors</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn"  style="background-color:#27ae60;"  href="/Clients">Clients</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-info" href="/Queue">Queue</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center ms-3">
+          <a href="/" class="sign-out btn btn-danger">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="overlay"></div>
+  <div class="sidebar">
+      <a href="/TotalInvestmentEMIHistoryPage" class="sidebar-link">Investor EMI History</a>
+      <a href="/TotalOrderEMIHistoryPage" class="sidebar-link">Client EMI History</a>
+      <a href="/DueEMIPage" class="sidebar-link">Due EMI</a>
+      <a href="/ClosedInvestmentsPage" class="sidebar-link">Closed Investments</a>
+      <a href="/ClosedOrdersPage" class="sidebar-link">Closed Orders</a>
+      <a href="/ExcelExportPage" class="sidebar-link">Export To Excel</a>
+      <a href="/ExcelImportPage" class="sidebar-link">Import From Excel</a>
+      <a href="/RejectedInvestmentsPage" class="sidebar-link">Rejected Investments</a>
+      <a href="/RejectedOrdersPage" class="sidebar-link">Rejected Orders</a>
+  </div>
+
+  <div class="dashboard-container">
+    <div id="summaryBox" class="summary-box">
+      <p>A/c balance:</p>
+      <span id="totalSum" class="profit">Loading...</span>
+    </div>
+   
+    <button class="details-toggle" onclick="toggleDetails()">Show Details</button>
+    <div class="details-content" id="detailsContent">
+      <p>Active Investments: <span id="totalInvestments" style="color:green">Loading...</span></p>
+      <p>Total Client EMI: <span id="totalClientEmi" style="color:green">Loading...</span></p>
+      <p>Active Orders: <span id="totalOrders" style="color:red">Loading...</span></p>
+      <p>Total Investor EMI: <span id="totalInvestorEmi" style="color:red">Loading...</span></p>
+      <a href="/ExtraExpensesHistoryPage" style="color:black"><p>Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
+      <a href="/ExtraIncomeHistoryPage" style="color:black"><p>Total Extra Income: <span id="ExtraIncome" style="color:green">Loading...</span></p></a>
+    </div>
+
+    <div class="quick-actions">
+      <button class="action-button" onclick="location.href='/AddExtraExpensesPage'">Add Extra Expenses</button>
+      <button class="action-button" onclick="location.href='/AddExtraIncomePage'">Add Extra Income</button>
+    </div>
+
+
+
+    <div class="chart-card">
+      <select id="reportSelector">
+          <option value="InvestmentsVsOrders">Investment V/S Orders</option>
+          <option value="InvestorSplit">Investor Split</option>
+          <option value="ClientSplit">Client Split</option>
+          <option value="MonthlyLineGraph">Monthly</option>
+          <option value="Yearly">Yearly</option>
+          <option value="Quarterly">Quarterly</option>
+      </select>
+  
+      <canvas id="chart_div" style="width: 100px; height: 100px;"></canvas>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Fetch and update data
+    async function fetchDashboardData() {
       try {
+        const response = await fetch("/TotalCompanyAccount");
+        const data = await response.json();
+
+        // Update Total Sum and Breakdown
+        const totalSumElement = document.getElementById("totalSum");
+        totalSumElement.textContent = data.totalSum.toLocaleString();
+
+        // Apply Profit/Loss Styling
+        if (data.totalSum >= 0) {
+          totalSumElement.classList.add("profit");
+          totalSumElement.classList.remove("loss");
+        } else {
+          totalSumElement.classList.add("loss");
+          totalSumElement.classList.remove("profit");
+        }
+        
+        // Update Breakdown
+        document.getElementById("totalInvestments").textContent = data.breakdown.totalInvestments.toLocaleString();
+        document.getElementById("totalClientEmi").textContent = data.breakdown.totalClientEmi.toLocaleString();
+        document.getElementById("totalOrders").textContent = data.breakdown.totalOrders.toLocaleString();
+        document.getElementById("totalInvestorEmi").textContent = data.breakdown.totalInvestorEmi.toLocaleString();
+        document.getElementById("ExtraExpenses").textContent = data.breakdown.totalExtraExpenses.toLocaleString();
+        document.getElementById("ExtraIncome").textContent = data.breakdown.totalExtraIncome.toLocaleString();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        document.getElementById("totalSum").textContent = "Error loading data";
+      }
+    }
+
+    // Initialize everything when the document is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchDashboardData();
+    });
+
+    function toggleDetails() {
+      const detailsContent = document.getElementById("detailsContent");
+      detailsContent.style.display =
+        detailsContent.style.display === "none" || detailsContent.style.display === ""
+          ? "block"
+          : "none";
+    }
+
+    async function fetchData() {
+      try {
+        const response = await fetch("/TotalCompanyAccount");
+        const data = await response.json();
+
+        // Update Total Sum and Breakdown
+        const totalSumElement = document.getElementById("totalSum");
+        totalSumElement.textContent = data.totalSum.toLocaleString();
+
+        // Apply Profit/Loss Styling
+        if (data.totalSum >= 0) {
+          totalSumElement.classList.add("profit");
+          totalSumElement.classList.remove("loss");
+        } else {
+          totalSumElement.classList.add("loss");
+          totalSumElement.classList.remove("profit");
+        }
+
+        // Update Breakdown
+        document.getElementById("totalInvestments").textContent = data.breakdown.totalInvestments.toLocaleString();
+        document.getElementById("totalClientEmi").textContent = data.breakdown.totalClientEmi.toLocaleString();
+        document.getElementById("totalOrders").textContent = data.breakdown.totalOrders.toLocaleString();
+        document.getElementById("totalInvestorEmi").textContent = data.breakdown.totalInvestorEmi.toLocaleString();
+        document.getElementById("ExtraExpenses").textContent = data.breakdown.totalExtraExpenses.toLocaleString();
+        document.getElementById("ExtraIncome").textContent = data.breakdown.totalExtraIncome.toLocaleString();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        document.getElementById("totalSum").textContent = "Error loading data";
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerMenu = document.querySelector('.hamburger-menu');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+
+            hamburgerMenu.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.overlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }})
+  </script>
+
+
+<!--///////////////////////////////////////////////////////////////////////INVESTOR vs ORDERS CHART////////////////////////////////////////////////-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  
+<script>
+  let chart;
+
+  document.getElementById("reportSelector").addEventListener("change", async () => {
+      const reportType = document.getElementById("reportSelector").value;
+
+      if (chart) {
+          chart.destroy(); // Clear previous chart
+      }
+
+      if (reportType === "InvestmentsVsOrders") {
+          fetchInvestmentVsOrders();
+      } else if (reportType === "InvestorSplit") {
+          fetchInvestmentData();
+      } else if (reportType === "ClientSplit") {
+          fetchOrderData();
+      } else if (reportType === "MonthlyLineGraph") {
+          fetchMonthlyData();
+      }
+  });
+
+  async function fetchInvestmentVsOrders() {
+      try {
+          const response = await fetch('/TotalCompanyAccount');
+          const result = await response.json();
+
+          if (result.status === "success") {
+              drawChart(["Investments", "Orders"], 
+                  [result.breakdown.totalInvestments, result.breakdown.totalOrders], 
+                  "bar",
+                  ["#4CAF50", "#1565C0"]);
+          } else {
+              console.error("Error fetching data:", result.message);
+          }
+      } catch (error) {
+          console.error("Error fetching chart data:", error);
+      }
+  }
+
+  async function fetchInvestmentData() {
+      try {
+          const response = await fetch('/getInvestmentData');
+          if (!response.ok) throw new Error('Failed to fetch investment data');
+          const data = await response.json();
+
+          if (!Array.isArray(data) || data.length === 0) {
+              throw new Error('No Investments Yet');
+          }
+
+          const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
+          const investorNames = await Promise.all(investorNamesPromises);
+
+          const labels = [];
+          const investments = [];
+
+          data.forEach((item, index) => {
+              if (item.InvestorID && item.TotalInvestment) {
+                  labels.push(investorNames[index]);
+                  investments.push(item.TotalInvestment);
+              }
+          });
+
+          if (labels.length === 0) throw new Error('No valid investment data to display');
+
+          drawChart(labels, investments, "pie", ['#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#33FFF6']);
+      } catch (error) {
+          console.error('Error fetching investment data:', error.message);
+      }
+  }
+
+  async function fetchOrderData() {
+      try {
+          const response = await fetch('/getOrderData');
+          if (!response.ok) throw new Error('Failed to fetch order data');
+          const dataClient = await response.json();
+
+          if (!Array.isArray(dataClient) || dataClient.length === 0) {
+              throw new Error('No Orders Yet');
+          }
+
+          const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
+          const clientNames = await Promise.all(clientNamesPromises);
+
+          const labels = [];
+          const orders = [];
+
+          dataClient.forEach((item, index) => {
+              if (item.ClientID && item.TotalOrder) {
+                  labels.push(clientNames[index]);
+                  orders.push(item.TotalOrder);
+              }
+          });
+
+          if (labels.length === 0) throw new Error('No valid order data to display');
+
+          drawChart(labels, orders, "pie", ['#FFC107', '#03A9F4', '#4CAF50', '#E91E63', '#9C27B0']);
+      } catch (error) {
+          console.error('Error fetching client data:', error.message);
+      }
+  }
+
+  async function fetchMonthlyData() {
+      try {
+          const response = await fetch('/getMonthlyInvestmentOrders');
+          const result = await response.json();
+
+          if (result.status === "success") {
+              drawLineChart(result.labels, result.investments, result.orders);
+          } else {
+              console.error("Error fetching data:", result.message);
+          }
+      } catch (error) {
+          console.error("Error fetching chart data:", error);
+      }
+  }
+
+  async function fetchInvestorName(id) {
+      try {
+          const res = await fetch(`/InvestorDetails/${id}`);
+          if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
+          const investorDetails = await res.json();
+          return investorDetails.InvestorName;
+      } catch (err) {
+          console.error(err.message);
+          return `Investor ${id}`;
+      }
+  }
+
+  async function fetchClientName(id) {
+      try {
+          const res = await fetch(`/ClientDetails/${id}`);
+          if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+          const clientDetails = await res.json();
+          return clientDetails.ClientName;
+      } catch (err) {
+          console.error(err.message);
+          return `Client ${id}`;
+      }
+  }
+
+  function drawChart(labels, data, type, colors) {
+      const ctx = document.getElementById('chart_div').getContext('2d');
+
+      if (chart) {
+          chart.destroy();
+      }
+
+      chart = new Chart(ctx, {
+          type: type,
+          data: {
+              labels: labels,
+              datasets: [{
+                  label: type === "bar" ? "Amount" : "Distribution",
+                  data: data,
+                  backgroundColor: colors,
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              responsive: true,
+              scales: type === "bar" ? { y: { beginAtZero: true } } : {},
+              plugins: {
+                  legend: { position: 'top' },
+                  tooltip: { enabled: true }
+              }
+          }
+      });
+  }
+
+  function drawLineChart(labels, investments, orders) {
+    const ctx = document.getElementById('chart_div').getContext('2d');
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Investments",
+                    data: investments,
+                    borderColor: "#4CAF50",
+                    backgroundColor: "rgba(76, 175, 80, 0.2)",
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: "Orders",
+                    data: orders,
+                    borderColor: "#1565C0",
+                    backgroundColor: "rgba(21, 101, 192, 0.2)",
+                    tension: 0.3,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: { enabled: true }
+            }
+        }
+    });
+}
+  // Load default data on page load
+  fetchInvestmentVsOrders();
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- <script>
+
+google.charts.load("current", { packages: ["corechart"] });
+
+/////////////////////////////////////////// INVESTOR CHART ///////////////////////////////////////////
+async function fetchInvestmentData() {
+    try {
+        const response = await fetch('/getInvestmentData');
+        if (!response.ok) throw new Error('Failed to fetch investment data');
+        const data = await response.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error('No Investments Yet');
+        }
+
+        const chartData = [['Investor Name', 'Investment Amount']];
+        const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
+        const investorNames = await Promise.all(investorNamesPromises);
+
+        data.forEach((item, index) => {
+            if (item.InvestorID && item.TotalInvestment) {
+                chartData.push([investorNames[index], item.TotalInvestment]);
+            }
+        });
+
+        if (chartData.length <= 1) {
+            throw new Error('No valid investment data to display');
+        }
+
+        drawInvestorChart(chartData);
+    } catch (error) {
+        console.error('Error fetching investment data:', error.message);
+        document.getElementById('investor_chart').innerHTML = `
+            <h6 class="text-muted text-center">${error.message}</h6>
+        `;
+    }
+}
+
+ function drawInvestorChart(chartData) {
+    try {
+        if (!Array.isArray(chartData) || chartData.length <= 1) {
+            throw new Error('Invalid chart data');
+        }
+
+        const data = google.visualization.arrayToDataTable(chartData);
+        const options = {
+            is3D: false,
+            pieSliceText: 'value',
+            backgroundColor: 'transparent',
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('investor_chart'));
+        chart.draw(data, options);
+    } catch (error) {
+        console.error('Error drawing chart:', error.message);
+        document.getElementById('investor_chart').innerHTML = `
+            <p class="text-danger">Error drawing chart: ${error.message}</p>
+        `;
+    }
+}
+
+async function fetchInvestorName(id) {
+    try {
+        const res = await fetch(`/InvestorDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
+        const investorDetails = await res.json();
+        return investorDetails.InvestorName;
+    } catch (err) {
+        console.error(err.message);
+        return id; // Fallback to ID if name can't be fetched
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchInvestmentData);
+
+/////////////////////////////////////////// CLIENTS CHART ///////////////////////////////////////////
+async function fetchOrderData() {
+    try {
+        const response = await fetch('/getOrderData');
+        if (!response.ok) throw new Error('Failed to fetch order data');
+
+        const dataClient = await response.json();
+        if (!Array.isArray(dataClient) || dataClient.length === 0) {
+            throw new Error('No Orders Yet');
+        }
+
+        const ClientchartData = [['Client Name', 'Order Amount']];
+        const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
+        const clientNames = await Promise.all(clientNamesPromises);
+
+        dataClient.forEach((item, index) => {
+            if (item.ClientID && item.TotalOrder) {
+                ClientchartData.push([clientNames[index], item.TotalOrder]);
+            }
+        });
+
+        if (ClientchartData.length <= 1) {
+            throw new Error('No valid order data to display');
+        }
+
+        drawClientChart(ClientchartData);
+    } catch (error) {
+        console.error('Error fetching client data:', error.message);
+        document.getElementById('client_chart').innerHTML = `
+            <h6 class="text-muted text-center">${error.message}</h6>
+        `;
+    }
+}
+
+function drawClientChart(ClientchartData) {
+    try {
+        if (!Array.isArray(ClientchartData) || ClientchartData.length <= 1) {
+            throw new Error('Invalid chart data');
+        }
+
+        const dataClient = google.visualization.arrayToDataTable(ClientchartData);
+        const Clientoptions = {
+            is3D: false,
+            pieSliceText: 'value',
+            backgroundColor: 'transparent',
+        };
+
+        const Clientchart = new google.visualization.PieChart(document.getElementById('client_chart'));
+        Clientchart.draw(dataClient, Clientoptions);
+    } catch (error) {
+        console.error('Error drawing chart:', error.message);
+        document.getElementById('client_chart').innerHTML = `
+            <p class="text-danger">Error drawing chart: ${error.message}</p>
+        `;
+    }
+}
+
+async function fetchClientName(id) {
+    try {
         const res = await fetch(`/ClientDetails/${id}`);
         if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
         const clientDetails = await res.json();
-        return clientDetails.ClientName; // Assuming the API returns an object with a `name` property
-      } catch (err) {
+        return clientDetails.ClientName;
+    } catch (err) {
         console.error(err.message);
-        return id; // Fallback to ID if the name cannot be fetched
-      }
+        return id; // Fallback to ID if name can't be fetched
     }
-
-    // Build chartData array
-    const ClientchartData = [['Client Name', 'Order Amount']];
-
-    const clientNamesPromises = data.map(item => fetchClientName(item.ClientID));
-    const clientNames = await Promise.all(clientNamesPromises);
-
-    data.forEach((item, index) => {
-      if (item.ClientID && item.TotalOrder) {
-        ClientchartData.push([clientNames[index], item.TotalOrder]);
-      }
-    });
-
-    // Ensure chartData has at least one row of data
-    if (ClientchartData.length <= 1) {
-      throw new Error('No valid order data to display');
-    }
-
-    // Draw chart
-    drawChart(ClientchartData);
-  } catch (error) {
-    console.error('Error fetching client data:', error.message);
-    document.getElementById('piechart_3d').innerHTML = `
-      <h6 class="text-muted text-center"> ${error.message}</h6>
-    `;
-  }
-}
-
-function drawChart(ClientchartData) {
-  try {
-    // Validate chartData
-    if (!Array.isArray(ClientchartData) || ClientchartData.length <= 1) {
-      throw new Error('Invalid chart data');
-    }
-
-    const data = google.visualization.arrayToDataTable(ClientchartData);
-
-    const Clientoptions = {
-      is3D: true,
-   
-      pieSliceText: 'value',
-      backgroundColor: '#none', // Show investment amounts directly on slices
-    };
-
-    const Clientchart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-    Clientchart.draw(dataClient, Clientoptions);
-  } catch (error) {
-    console.error('Error drawing chart:', error.message);
-    document.getElementById('piechart_3d').innerHTML = `
-      <p class="text-muted text-center">Error drawing chart: ${error.message}</p>
-    `;
-  }
 }
 
 document.addEventListener('DOMContentLoaded', fetchOrderData);
+
+
+</script> -->

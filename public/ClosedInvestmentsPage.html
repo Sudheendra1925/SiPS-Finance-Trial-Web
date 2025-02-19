@@ -152,7 +152,7 @@
                     <th scope="col">Investor Name</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">Closed Date</th>
-                    <th scope="col">Amount</th>
+                    <th scope="col">AmountSanctioned</th>
                 </tr>
             </thead>
             <tbody id="tbody">
@@ -161,6 +161,8 @@
         </table>
     </div>
 
+      <center>  <a class="btn btn-danger px-4 py-2" href="/Company">Back</a></center>
+   
     <script>
 
     async function fetchClosedInvestmentsHistory() {
@@ -185,15 +187,16 @@
                         <td>${Investment.InvestorName || 'Unknown'}</td>
                         <td>${Investment.StartDate ? new Date(Investment.StartDate).toLocaleDateString('en-IN') : 'Unknown'}</td>
                         <td>${Investment.ClosedDate ? new Date(Investment.ClosedDate).toLocaleDateString('en-IN') : 'Unknown'}</td>
-                        <td>${amount.toFixed(2)}</td>
+                        <td>${Investment.Amount.toLocaleString("en-In")}</td>
                     `;
                     tbody.appendChild(tr);
                 });
 
                 const totalRow = document.createElement('tr');
                 totalRow.innerHTML = `
-                    <td colspan="5" class="text-end font-weight-bold">Total:</td>
-                    <td class="font-weight-bold" style="color: var(--success-color);">${totalAmount.toFixed(2)}</td>
+                <td></td><td></td><td></td><td></td>
+                    <td  class="text-center font-weight-bold"><b>Total</b></td>
+                    <td class="font-weight-bold" style="color: var(--success-color);">${totalAmount.toLocaleString("en-In")}</td>
                 `;
                 tbody.appendChild(totalRow);
             } else {

@@ -2294,10 +2294,10 @@ app.get("/RejectedOrders",(req,res)=>{
 
 app.get('/getMonthlyInvestmentOrders', async (req, res) => {
     try {
-        const currentYear = req.query.currentYear; // Get current year
-console.log(currentYear)
+        const currentYear = moment().year(); // Get current year
+
         // Fetch investments per month
-        const [investmentsData] = await db.promise().query(`
+        const [investmentsData] = await db.query(`
             SELECT 
                 MONTH(InvestmentDate) AS month, 
                 SUM(AmountSanctioned) AS totalInvestments
@@ -2308,7 +2308,7 @@ console.log(currentYear)
         `, [currentYear]);
 
         // Fetch orders per month
-        const [ordersData] = await db.promise().query(`
+        const [ordersData] = await db.query(`
             SELECT 
                 MONTH(StartDate) AS month, 
                 SUM(AmountSanctioned) AS totalOrders
@@ -2337,56 +2337,6 @@ console.log(currentYear)
     } catch (error) {
         console.error("Database query error:", error);
         res.status(500).send({ status: "error", message: "Failed to fetch monthly investments and orders" });
-    }
-});
-
-app.get('/getYearlyInvestmentOrders', async (req, res) => {
-    try {
-        // Fetch total investments per year
-        const [investmentsData] = await db.promise().query(`
-            SELECT 
-                YEAR(InvestmentDate) AS year, 
-                SUM(AmountSanctioned) AS totalInvestments
-            FROM Investments
-            GROUP BY YEAR(InvestmentDate)
-            ORDER BY YEAR(InvestmentDate);
-        `);
-
-        // Fetch total orders per year
-        const [ordersData] = await db.promise().query(`
-            SELECT 
-                YEAR(StartDate) AS year, 
-                SUM(AmountSanctioned) AS totalOrders
-            FROM Orders
-            GROUP BY YEAR(StartDate)
-            ORDER BY YEAR(StartDate);
-        `);
-
-        // Extract unique years from both datasets
-        const allYears = [
-            ...new Set([...investmentsData.map(row => row.year), ...ordersData.map(row => row.year)])
-        ].sort((a, b) => a - b); // Ensure years are sorted
-
-        // Initialize data for all years
-        let investments = Array(allYears.length).fill(0);
-        let orders = Array(allYears.length).fill(0);
-
-        // Map investments data
-        investmentsData.forEach(row => {
-            let index = allYears.indexOf(row.year);
-            if (index !== -1) investments[index] = row.totalInvestments || 0;
-        });
-
-        // Map orders data
-        ordersData.forEach(row => {
-            let index = allYears.indexOf(row.year);
-            if (index !== -1) orders[index] = row.totalOrders || 0;
-        });
-
-        res.send({ status: "success", labels: allYears, investments, orders });
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).send({ status: "error", message: "Failed to fetch yearly investments and orders" });
     }
 });
 

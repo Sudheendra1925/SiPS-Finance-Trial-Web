@@ -5,7 +5,6 @@ You said:
 CREATE TABLE Investors (
     InvestorID VARCHAR(15) PRIMARY KEY,
     InvestorName VARCHAR(30) NOT NULL ,
-    StartDate DATE,
     AmountInvested BIGINT NOT NULL,
     PhoneNumber CHAR(10),
     Image varchar(225)
