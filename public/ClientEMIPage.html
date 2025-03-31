@@ -190,7 +190,7 @@ input[type="number"]::-webkit-outer-spin-button,
         
             <div class="d-flex gap-2">
                 <button  type="submit" class="btn btn-primary px-4 py-2">Submit</button>
-                <a class="btn btn-danger px-4 py-2" onclick="history.back()">Cancel</a>
+                <a class="btn btn-danger px-4 py-2" id="Cancel" >Cancel</a>
             </div>
         </form>
     </div>
@@ -212,16 +212,17 @@ input[type="number"]::-webkit-outer-spin-button,
             const params = new URLSearchParams(window.location.search);
             const PayableInterest = params.get('PayableInterest');
             const ClientName = params.get('ClientName');
-            
+            const ClientId = params.get('ClientId');
             const OrderID = window.location.pathname.split('/').pop();
-            return { OrderID, PayableInterest ,ClientName};
+            return { OrderID, PayableInterest ,ClientName,ClientId};
         }
     
         // Call fetchOrderDetails function with parameters on page load
         window.onload = function () {
-            const { OrderID, PayableInterest,ClientName } = getURLParams();
-        
-            if (OrderID && PayableInterest&& ClientName) {
+            const { OrderID, PayableInterest,ClientName,ClientId } = getURLParams();
+        const Cancel = document.getElementById('Cancel');
+        Cancel.href = `/Client/${ClientId}`;
+            if (OrderID && PayableInterest&& ClientName,ClientId) {
                 fetchOrderDetails(OrderID, PayableInterest,ClientName);
             } else {
                 console.error('Missing required URL parameters: OrderID or PayableInterest or Client Name');

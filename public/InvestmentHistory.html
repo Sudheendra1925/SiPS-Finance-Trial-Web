@@ -218,7 +218,7 @@ function populateTable(data) {
             <td> ${investment.InvestmentDate?new Date(investment.InvestmentDate).toLocaleDateString('en-IN'):"N/A"} </td>
             <td>${investment.InterestRate || '0'}</td>
           <td> ${investment.EndDate ?new Date(investment.EndDate).toLocaleDateString('en-IN'):"N/A"} </td>
-          <td> <a href="/UpdateInvestmentPage/${investment.InvestmentID}" class="btn btn-primary">Update</a> </td>
+          <td> <a href="/UpdateInvestmentPage/${investment.InvestmentID}?InvestorId=${investment.InvestorID}" class="btn btn-primary">Update</a> </td>
         `;
         TotalInvestment +=investment.AmountSanctioned || 0;
         tbody.appendChild(tr);

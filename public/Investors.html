@@ -40,11 +40,7 @@
             box-shadow: 0 1px 3px var(--shadow-color);
         }
 
-        .sign-out:hover {
-            color: var(--white);
-            background-color: var(--danger-color);
-        }
-
+      
         .btn {
             margin: 0.2vw;
         }
@@ -110,8 +106,9 @@
         #TwoButtons {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 20px;
+            justify-content: center;
+     
+         margin-top:2vh;
         }
 
         #searchBar {
@@ -132,47 +129,61 @@
             box-shadow: 0 4px 8px var(--shadow-color);
             outline: none;
         }
+        .nav-link{
+            color:black;
+            font-size: large;
+            font-weight: bold;
+            
+        }
+        .nav-link:hover{
+            color: #f59e0b;
+        }
+        .sign-out{
+            color: var(--danger-color);
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
+        
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="/Home">
-                <img src="/Images/Sips Finance Logo.png" alt="Logo" width="80" height="60" class="me-2">
+                <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            <input type="text" id="searchBar" class="form-control mb-3" placeholder="Search Investor">
             <div class="collapse navbar-collapse" id="navbarToggler">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="btn btn-warning" href="/Home">Home</a>
+                        <a class="nav nav-link" href="/Home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-info" href="/Investors" style="background-color:rgb(255, 85, 0);">Investors</a>
+                        <a class="nav nav-link" href="/Investors" >Investors</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn" style="background-color:#27ae60;" href="/Clients">Clients</a>
+                        <a class="nav nav-link"  href="/Clients">Clients</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-info" href="/Queue">Queue</a>
+                        <a class="nav nav-link" href="/Queue">Queue</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Company</a>
+                        <a class="nav nav-link"  href="/Company">Company</a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center ms-3">
-                    <a href="/" class="sign-out btn btn-danger">Sign Out</a>
+                    <a href="/" class="nav-link sign-out">Sign Out</a>
                 </div>
             </div>
         </div>
     </nav>
+  
+    
 
-    <input type="text" id="searchBar" class="form-control mb-3" placeholder="Search Investor">
-
-    <div id="TwoButtons">
+    <div id="TwoButtons" style="margin:4vh">
         <a href="/AddInvestor" class="btn btn-primary">Add Investor</a>
-        <a href="/InvestmentHistory" class="btn btn-primary">Active Investment History</a>
+        <a href="/InvestmentHistory" class="btn btn-success">Active Investment History</a>
     </div>
     <div class="container my-5">
         <div class="row" id="profile-cards-container">

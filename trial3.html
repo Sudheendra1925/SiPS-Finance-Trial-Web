@@ -1,870 +1,671 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sips Finance Dashboard</title>
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <style>
-   
-*{  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <style>
+  *{  
     font-family:sans-serif;
-     
+    
 }
 :root {
-      --primary-color: #2563eb;
-      --primary-hover: #1d4ed8;
-      --secondary-color: #f5f2f2;
-      --success-color: #22c55e;
-      --danger-color: #ef4444;
-      --warning-color: #f59e0b;
-      --white: #ffffff;
-      --shadow-color: rgba(0, 0, 0, 0.08);
-      --font-dark: #1e293b;
-      --font-light: #64748b;
-      --border-color: #e2e8f0;
-    }
+    --primary-color: #0875e1; /* Deeper Blue for Trust */
+    --secondary-color: #f8faff; /* Soft Light Blue Background */
+    --accent-color: #0875e1; /* Darker Blue for Emphasis */
+    --text-dark: #2a2a2a; /* Neutral Dark Gray */
+    --text-light: #5f6f81; /* Muted Gray-Blue Text */
+    --white: #ffffff;
+    --success-color: #27ae60; /* Fresh Green */
+    --warning-color: #f39c12; /* Warm Amber */
+    --danger-color: #e74c3c; /* Vibrant Red */
+    --highlight-color: #f1c40f; /* Warm Gold for Highlights */
+    --table-bg: #ffffff; /* Clean White Table */
+    --table-border: #dcdcdc; /* Softer Gray Borders */
+    --card-bg: #f9f9f9; /* Subtle Gray-White for Cards */
+    --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
+    --transition-speed: 0.3s; /* Smooth Transitions */
+}
 
-    * {
-      font-family:  sans-serif;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+body {
+    margin: 0;
+    padding: 0;
+    background-color:#e8ecf4;
+    color: var(--text-dark);
+    line-height: 1.6;
+ 
+}
 
-    body {
-      background-color: var(--secondary-color);
-      color: var(--font-dark);
-      line-height: 1.6;
-    }
+.navbar {
+    background: #f8faff;
+    
+    box-shadow: 0 4px 8px var(--shadow-color);
+   
+}
 
-    .navbar {
-      background: var(--white);
-      padding: 1rem 2rem;
-      box-shadow: 0 1px 3px var(--shadow-color);
-    }
+.navbar-brand {
+    color: var(--white);
+    font-size: 1.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
+.navbar-nav .nav-linkh {
+    margin: 0 10px;
+    transition: color var(--transition-speed);
+    font-weight: bold;
+}
+
+
+.navbar-nav .nav-linkh.active {
+    color: var(--highlight-color);
+    font-weight: bold;
+}
+.search-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    max-width: 600px;
+    margin: 0 30px;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-right: none;
+    border-radius: 25px 0 0 25px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.search-btn {
+    padding: 12px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: 2px solid var(--primary-color);
+    border-radius: 0 25px 25px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .sign-out:hover {
     color: var(--white);
 }
 
-.sign-out:hover {
-    background-color: var(--danger-color);
+.content {
+    padding: 30px;
+
+    margin: auto;
+   
 }
-.btn{
-    margin:0.2vw;
+
+h4 {
+    color: var(--accent-color);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-weight: 600;
 }
 
-    .dashboard-container {
-      max-width: 1400px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--table-bg);
+    color: var(--text-dark);
+    box-shadow: 0 4px 8px var(--shadow-color);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: small;
+}
 
-    .summary-box {
-      background:white;
-      color: black;
-      padding: 2rem;
-      border-radius: 1rem;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
+.table thead {
+    background: var(--primary-color);
+    color: var(--white);
+    font-weight: bold;
+    text-transform: uppercase;
+}
 
-    .summary-box p {
-      font-size: 1.5rem;
-      opacity: 0.9;
-      margin-bottom: 0.5rem;
-    }
+.table th,
+.table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--table-border);
+}
 
-    .summary-box span {
-      font-size: 2.5rem;
-      font-weight: 700;
-      letter-spacing: -1px;
-    }
+.table tr:hover {
+    background-color: var(--secondary-color);
+    cursor: pointer;
+}
 
-    .details-toggle {
-      background: var(--primary-color);
-      color: var(--white);
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      margin-bottom: 1rem;
-      transition: background 0.2s ease;
-    }
+#orderButton {
+    background-color: var(--success-color);
+}
 
-    .details-toggle:hover {
-      background: var(--primary-hover);
-    }
+#TotalInvestments, #TotalLendings {
+    display: inline-block;
+    margin: 20px;
+    border: 2px solid var(--accent-color);
+    background: linear-gradient(135deg, #4a69bd, #78e08f); /* Cool Blue to Fresh Green */
+    color: #ffffff; /* White */
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px var(--shadow-color);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
 
-    .details-content {
-      display: none;
-      background: var(--white);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px var(--shadow-color);
-      margin-bottom: 2rem;
-    }
+#TotalInvestments:hover, #TotalLendings:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px var(--shadow-color);
+}
 
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
+button {
+    font-weight: bold;
+    color: var(--white);
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+}
 
-    .action-button {
-      background: var(--white);
-      color: var(--primary-color);
-      border: 1px solid var(--border-color);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      text-align: center;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
+button:hover {
+  
+    transform: scale(1.05);
+}
 
-    .action-button:hover {
-      background: var(--primary-color);
-      color: var(--white);
-      transform: translateY(-2px);
-    }
+button:active {
+    transform: scale(0.95);
+}
 
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-      gap: 2rem;
-      margin-bottom: 2rem;
-    }
 
-    .chart-card {
-      background: var(--white);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px var(--shadow-color);
-      position: relative;
-    }
 
-    .chart-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--font-dark);
-    }
+.table-responsive{
+    border-radius: 10px;
+    border: 2px solid  white ;
+    margin: 2vh;
+    padding: 2vw;
+    background-color: white;
+}
+/* /////////////////////////////////////////////////////////////////////*/
 
-    .distribution-summary {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: var(--secondary-color);
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      color: var(--font-dark);
-    }
+.section-box {
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+.section-box:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
 
-    .distribution-summary strong {
-      color: var(--primary-color);
-    }
+.section-box h3 {
+    margin-bottom: 15px;
+    
+    font-size: 1.3em;
+}
 
-    .chart-container {
-      position: relative;
-      height: 300px;
-      width: 100%;
-    }
 
-    @media (max-width: 768px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
+
+.section-stats span {
+    background-color: #f3f4f6;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin-top: 2vh;
+}
+
+
+.dashboard-footer {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 20px 30px;
+    background-color: rgba(255, 252, 252, 0.9);
+    border-top: 1px solid #e5e7eb;
+    margin: 10px;;
+    width: 100%;
+}
+
+.copyright {
+    font-weight: 500;
+}
+
+.contact-details {
+    display: flex;
+    gap: 20px;
+}
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    grid-auto-flow: row;
+}
+.add-buttons {
+        display: flex;
+        align-items: center;
+        gap:1vw;
+     
+    }
+    .highlight {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .dashboard-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .contact-details {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .section-grid {
+    display: flex;
+    flex-direction: column;
+ 
+}
+}
+
+
+    .table-responsive {
+        margin-bottom: 20px;
       
-      .chart-card {
-        min-height: 400px;
-      }
     }
 
+  
+    #TotalInvestments, #TotalLendings {
+        font-size: 15px;
+        padding: 15px 20px;
+    }
 
-    .distribution-summary {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--secondary-color);
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--font-dark);
-        }
-
-        .distribution-summary strong {
+/* /////////////////////////////////////////////////////////////////////*/
+ i {
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
             color: var(--primary-color);
         }
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .chart-card {
-                min-height: 400px;
-            }
-        }
-        .hamburger-menu {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 24px;
-            height: 20px;
-            cursor: pointer;
-            margin-right: 1rem;
-        }
-
-        .hamburger-menu span {
-            display: block;
-            width: 100%;
-            height: 2px;
-            background-color: var(--font-dark);
-            transition: all 0.3s ease;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: -250px;
-            top: 0;
-            height: 100%;
-            width: 250px;
-            background-color: var(--white);
-            box-shadow: 2px 0 5px var(--shadow-color);
-            transition: all 0.3s ease;
-            z-index: 1000;
-            padding-top: 80px;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            color: var(--font-dark);
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-link:hover {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 999;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-        .profit {
-      color: var(--success-color);
-    }
-
-    .loss {
-      color: var(--danger-color);
-    }
-
-  </style>
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <div class="hamburger-menu" onclick="toggleSidebar()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
       <a class="navbar-brand d-flex align-items-center" href="/Home">
-        <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
-        
+          <img src="../Images/Sips Finance Logo.png" alt="Logo" width="80" height="80" class="me-2">
       </a>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <h1 class="mx-auto" >SiPS Finance</h1>
       <div class="collapse navbar-collapse" id="navbarToggler">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="btn  btn-warning" href="/Home">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-info" href="/Investors" style="background-color:rgb(255, 85, 0);"> Investors</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn"  style="background-color:#27ae60;"  href="/Clients">Clients</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-info" href="/Queue">Queue</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
-          </li>
-        </ul>
-        <div class="d-flex align-items-center ms-3">
-          <a href="/" class="sign-out btn btn-danger">Sign Out</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-  <div class="overlay"></div>
-  <div class="sidebar">
-      <a href="/TotalInvestmentEMIHistoryPage" class="sidebar-link">Investor EMI History</a>
-      <a href="/TotalOrderEMIHistoryPage" class="sidebar-link">Client EMI History</a>
-      <a href="/DueEMIPage" class="sidebar-link">Due EMI</a>
-      <a href="/ClosedInvestmentsPage" class="sidebar-link">Closed Investments</a>
-      <a href="/ClosedOrdersPage" class="sidebar-link">Closed Orders</a>
-      <a href="/ExcelExportPage" class="sidebar-link">Export To Excel</a>
-      <a href="/ExcelImportPage" class="sidebar-link">Import From Excel</a>
-      <a href="/RejectedInvestmentsPage" class="sidebar-link">Rejected Investments</a>
-      <a href="/RejectedOrdersPage" class="sidebar-link">Rejected Orders</a>
-  </div>
-
-  <div class="dashboard-container">
-    <div id="summaryBox" class="summary-box">
-      <p>A/c balance:</p>
-      <span id="totalSum" class="profit">Loading...</span>
-    </div>
-   
-    <button class="details-toggle" onclick="toggleDetails()">Show Details</button>
-    <div class="details-content" id="detailsContent">
-      <p>Active Investments: <span id="totalInvestments" style="color:green">Loading...</span></p>
-      <p>Total Client EMI: <span id="totalClientEmi" style="color:green">Loading...</span></p>
-      <p>Active Orders: <span id="totalOrders" style="color:red">Loading...</span></p>
-      <p>Total Investor EMI: <span id="totalInvestorEmi" style="color:red">Loading...</span></p>
-      <a href="/ExtraExpensesHistoryPage" style="color:black"><p>Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
-      <a href="/ExtraIncomeHistoryPage" style="color:black"><p>Total Extra Income: <span id="ExtraIncome" style="color:green">Loading...</span></p></a>
-    </div>
-
-    <div class="quick-actions">
-      <button class="action-button" onclick="location.href='/AddExtraExpensesPage'">Add Extra Expenses</button>
-      <button class="action-button" onclick="location.href='/AddExtraIncomePage'">Add Extra Income</button>
-    </div>
-
-
-
-    <div class="chart-card">
-      <select id="reportSelector">
-          <option value="InvestmentsVsOrders">Investment V/S Orders</option>
-          <option value="InvestorSplit">Investor Split</option>
-          <option value="ClientSplit">Client Split</option>
-          <option value="MonthlyLineGraph">Monthly</option>
-          <option value="Yearly">Yearly</option>
-          <option value="Quarterly">Quarterly</option>
-      </select>
-  
-      <canvas id="chart_div" style="width: 100px; height: 100px;"></canvas>
-      </div>
-
-    </div>
-  </div>
-
-  <script>
-    // Fetch and update data
-    async function fetchDashboardData() {
-      try {
-        const response = await fetch("/TotalCompanyAccount");
-        const data = await response.json();
-
-        // Update Total Sum and Breakdown
-        const totalSumElement = document.getElementById("totalSum");
-        totalSumElement.textContent = data.totalSum.toLocaleString();
-
-        // Apply Profit/Loss Styling
-        if (data.totalSum >= 0) {
-          totalSumElement.classList.add("profit");
-          totalSumElement.classList.remove("loss");
-        } else {
-          totalSumElement.classList.add("loss");
-          totalSumElement.classList.remove("profit");
-        }
         
-        // Update Breakdown
-        document.getElementById("totalInvestments").textContent = data.breakdown.totalInvestments.toLocaleString();
-        document.getElementById("totalClientEmi").textContent = data.breakdown.totalClientEmi.toLocaleString();
-        document.getElementById("totalOrders").textContent = data.breakdown.totalOrders.toLocaleString();
-        document.getElementById("totalInvestorEmi").textContent = data.breakdown.totalInvestorEmi.toLocaleString();
-        document.getElementById("ExtraExpenses").textContent = data.breakdown.totalExtraExpenses.toLocaleString();
-        document.getElementById("ExtraIncome").textContent = data.breakdown.totalExtraIncome.toLocaleString();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        document.getElementById("totalSum").textContent = "Error loading data";
-      }
-    }
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                  <a class="nav-linkh active btn btn-warning" style="color:#2a2a2a" href="/Home">Home</a>
+              </li>
+          </ul>
+          <div class="d-flex align-items-center ms-3">
+              <a href="/" class="sign-out btn btn-danger">Sign Out</a>
+          </div>
+      </div>
+  </nav>
+    
+    <!-- Content -->
+    <div class="content" id="content">
+        <!-- Buttons -->
+        <div class=" add-buttons d-flex justify-content-center mb-4">
+            <div>
+            <a href="/AddInvestment" class="btn Add" style="background-color: rgb(255, 85, 0);">  
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Add Investment</a>
+        </div>
+        <!--GRAPH POSITIO 1-->
+        <div style="background-color: whitesnow;">
+            <a href="/AddOrder" class="btn btn-success Add" id="orderButton">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="13" x2="12" y2="17"></line>
+                    <line x1="9" y1="16" x2="15" y2="16"></line>
+                </svg>Add Order</a>
+        </div>
+        </div>
+        <!-- ----------------------------------------------------------------------------------------------------->
+        <div class="section-grid">
+            <div class="section-box" data-page="investors" onclick="window.location.href='/Investors'">
+                <div class="section-stats">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Investors</h3>
+           
+            </div>
+            <div class="section-box" data-page="clients" onclick="window.location.href='/Clients'">
+                <div class="section-stats">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h3>Clients</h3>
+              
+            </div>
+            <div class="section-box" data-page="queue" onclick="window.location.href='/Queue'">
+                <div class="section-stats">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3>Queue</h3>
+             
+            </div>
+            <div class="section-box" data-page="company" onclick="window.location.href='/Company'">
+                <div class="section-stats">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Dashboard</h3>
+               
+            </div>
+            <div class="section-box" data-page="history">
+                <div class="section-stats">
+                    <img src="/Images/WorkInProgess.gif" style="height:100px;width:100px;" alt="Work In Progress">
+                   </div>
+                <h3>History</h3>
+               
+            </div>
+        </div>
+       <!----------------------------------------------------------------------------------------------------------->
+        <!-- Clients Paying Interest Today -->
+        <div class="table-responsive" >
+            <h4><center>Receivable EMI</center></h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Total Loan</th>
+                        <th>Payable Interests</th>
+                        <th>Phone Number</th>
+                        <th>Send Message</th>
+                       
+                    </tr>
+                </thead>
+                <tbody id="clientsTable">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
 
-    // Initialize everything when the document is ready
-    document.addEventListener('DOMContentLoaded', function() {
-      fetchDashboardData();
-    });
-
-    function toggleDetails() {
-      const detailsContent = document.getElementById("detailsContent");
-      detailsContent.style.display =
-        detailsContent.style.display === "none" || detailsContent.style.display === ""
-          ? "block"
-          : "none";
-    }
-
-    async function fetchData() {
-      try {
-        const response = await fetch("/TotalCompanyAccount");
-        const data = await response.json();
-
-        // Update Total Sum and Breakdown
-        const totalSumElement = document.getElementById("totalSum");
-        totalSumElement.textContent = data.totalSum.toLocaleString();
-
-        // Apply Profit/Loss Styling
-        if (data.totalSum >= 0) {
-          totalSumElement.classList.add("profit");
-          totalSumElement.classList.remove("loss");
-        } else {
-          totalSumElement.classList.add("loss");
-          totalSumElement.classList.remove("profit");
-        }
-
-        // Update Breakdown
-        document.getElementById("totalInvestments").textContent = data.breakdown.totalInvestments.toLocaleString();
-        document.getElementById("totalClientEmi").textContent = data.breakdown.totalClientEmi.toLocaleString();
-        document.getElementById("totalOrders").textContent = data.breakdown.totalOrders.toLocaleString();
-        document.getElementById("totalInvestorEmi").textContent = data.breakdown.totalInvestorEmi.toLocaleString();
-        document.getElementById("ExtraExpenses").textContent = data.breakdown.totalExtraExpenses.toLocaleString();
-        document.getElementById("ExtraIncome").textContent = data.breakdown.totalExtraIncome.toLocaleString();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        document.getElementById("totalSum").textContent = "Error loading data";
-      }
-    }
-    document.addEventListener('DOMContentLoaded', function() {
-            const hamburgerMenu = document.querySelector('.hamburger-menu');
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.querySelector('.overlay');
-
-            hamburgerMenu.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
-            });
-
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-
-    function toggleSidebar() {
-      const sidebar = document.querySelector('.sidebar');
-      const overlay = document.querySelector('.overlay');
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-    }})
-  </script>
+        <!-- Investors to Pay Today -->
+        <div class="table-responsive">
+            <h4><center>Payable Interest</center></h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Investor Name</th>
+                        <th>Active Amount</th>
+                        <th>Payable Interest</th>
+                        <th>Phone Number</th>
+                        <th>BankDetails</th>
+                        <th>Message</th>
+                        
+                    </tr>
+                </thead>
+                <tbody id="investorsTable">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
 
 
-<!--///////////////////////////////////////////////////////////////////////INVESTOR vs ORDERS CHART////////////////////////////////////////////////-->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+        <div class="table-responsive">
+            <h4><center>Clients Whose TERM is Over </center></h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Client Name</th>
+                        <th>Amount Sanctioned</th>
+                        <th>Remaining Amount</th>
+                        <th>Phone Number</th>
+                        <th>Payable Interest</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody id="ClosingClientsTable">
+                    <!-- Populated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+    <div id="chart_div"  ></div>
+
+        <footer class="dashboard-footer" id="fotter">
+            <div class="copyright">
+                © 2025 Sips Finance. All Rights Reserved.
+            </div>
+            <div class="contact-details">
+                <span>Contact:+91 9966061602</span>
+                <span>Email: chinnasusheel15@gmail.com</span>
+            </div>
+</footer>
+    </div>
   
 <script>
-  let chart;
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Fetch today's interest payments (clients)
+            const clientResponse = await fetch('/TodayClient');
+        const clients = await clientResponse.json();
+console.log(clients);
+        const clientsTable = document.getElementById('clientsTable');
+        for (const client of clients) {
+            try {
+                // Fetch additional details for the client
+                const clientDetailsResponse = await fetch(`/ClientDetails/${client.ClientID}`);
+                const clientDetails = await clientDetailsResponse.json();
 
-  document.getElementById("reportSelector").addEventListener("change", async () => {
-      const reportType = document.getElementById("reportSelector").value;
-
-      if (chart) {
-          chart.destroy(); // Clear previous chart
-      }
-
-      if (reportType === "InvestmentsVsOrders") {
-          fetchInvestmentVsOrders();
-      } else if (reportType === "InvestorSplit") {
-          fetchInvestmentData();
-      } else if (reportType === "ClientSplit") {
-          fetchOrderData();
-      } else if (reportType === "MonthlyLineGraph") {
-          fetchMonthlyData();
-      }
-  });
-
-  async function fetchInvestmentVsOrders() {
-      try {
-          const response = await fetch('/TotalCompanyAccount');
-          const result = await response.json();
-
-          if (result.status === "success") {
-              drawChart(["Investments", "Orders"], 
-                  [result.breakdown.totalInvestments, result.breakdown.totalOrders], 
-                  "bar",
-                  ["#4CAF50", "#1565C0"]);
-          } else {
-              console.error("Error fetching data:", result.message);
-          }
-      } catch (error) {
-          console.error("Error fetching chart data:", error);
-      }
-  }
-
-  async function fetchInvestmentData() {
-      try {
-          const response = await fetch('/getInvestmentData');
-          if (!response.ok) throw new Error('Failed to fetch investment data');
-          const data = await response.json();
-
-          if (!Array.isArray(data) || data.length === 0) {
-              throw new Error('No Investments Yet');
-          }
-
-          const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
-          const investorNames = await Promise.all(investorNamesPromises);
-
-          const labels = [];
-          const investments = [];
-
-          data.forEach((item, index) => {
-              if (item.InvestorID && item.TotalInvestment) {
-                  labels.push(investorNames[index]);
-                  investments.push(item.TotalInvestment);
-              }
-          });
-
-          if (labels.length === 0) throw new Error('No valid investment data to display');
-
-          drawChart(labels, investments, "pie", ['#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#33FFF6']);
-      } catch (error) {
-          console.error('Error fetching investment data:', error.message);
-      }
-  }
-
-  async function fetchOrderData() {
-      try {
-          const response = await fetch('/getOrderData');
-          if (!response.ok) throw new Error('Failed to fetch order data');
-          const dataClient = await response.json();
-
-          if (!Array.isArray(dataClient) || dataClient.length === 0) {
-              throw new Error('No Orders Yet');
-          }
-
-          const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
-          const clientNames = await Promise.all(clientNamesPromises);
-
-          const labels = [];
-          const orders = [];
-
-          dataClient.forEach((item, index) => {
-              if (item.ClientID && item.TotalOrder) {
-                  labels.push(clientNames[index]);
-                  orders.push(item.TotalOrder);
-              }
-          });
-
-          if (labels.length === 0) throw new Error('No valid order data to display');
-
-          drawChart(labels, orders, "pie", ['#FFC107', '#03A9F4', '#4CAF50', '#E91E63', '#9C27B0']);
-      } catch (error) {
-          console.error('Error fetching client data:', error.message);
-      }
-  }
-
-  async function fetchMonthlyData() {
-      try {
-          const response = await fetch('/getMonthlyInvestmentOrders');
-          const result = await response.json();
-
-          if (result.status === "success") {
-              drawLineChart(result.labels, result.investments, result.orders);
-          } else {
-              console.error("Error fetching data:", result.message);
-          }
-      } catch (error) {
-          console.error("Error fetching chart data:", error);
-      }
-  }
-
-  async function fetchInvestorName(id) {
-      try {
-          const res = await fetch(`/InvestorDetails/${id}`);
-          if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
-          const investorDetails = await res.json();
-          return investorDetails.InvestorName;
-      } catch (err) {
-          console.error(err.message);
-          return `Investor ${id}`;
-      }
-  }
-
-  async function fetchClientName(id) {
-      try {
-          const res = await fetch(`/ClientDetails/${id}`);
-          if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
-          const clientDetails = await res.json();
-          return clientDetails.ClientName;
-      } catch (err) {
-          console.error(err.message);
-          return `Client ${id}`;
-      }
-  }
-
-  function drawChart(labels, data, type, colors) {
-      const ctx = document.getElementById('chart_div').getContext('2d');
-
-      if (chart) {
-          chart.destroy();
-      }
-
-      chart = new Chart(ctx, {
-          type: type,
-          data: {
-              labels: labels,
-              datasets: [{
-                  label: type === "bar" ? "Amount" : "Distribution",
-                  data: data,
-                  backgroundColor: colors,
-                  borderWidth: 1
-              }]
-          },
-          options: {
-              responsive: true,
-              scales: type === "bar" ? { y: { beginAtZero: true } } : {},
-              plugins: {
-                  legend: { position: 'top' },
-                  tooltip: { enabled: true }
-              }
-          }
-      });
-  }
-
-  function drawLineChart(labels, investments, orders) {
-    const ctx = document.getElementById('chart_div').getContext('2d');
-
-    if (chart) {
-        chart.destroy();
-    }
-
-    chart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: "Investments",
-                    data: investments,
-                    borderColor: "#4CAF50",
-                    backgroundColor: "rgba(76, 175, 80, 0.2)",
-                    tension: 0.3,
-                    fill: true
-                },
-                {
-                    label: "Orders",
-                    data: orders,
-                    borderColor: "#1565C0",
-                    backgroundColor: "rgba(21, 101, 192, 0.2)",
-                    tension: 0.3,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            },
-            plugins: {
-                legend: { position: 'top' },
-                tooltip: { enabled: true }
+                // Populate table with client details
+                clientsTable.innerHTML += `
+                    <tr>
+                        <td>${clientDetails.ClientName || 'N/A'}</td>
+                        <td>${client.ActiveAmount || 'N/A'}</td>
+                        <td>${client.PayableInterest.toLocaleString()}</td>
+                        <td>${clientDetails.PhoneNumber || 'N/A'}</td>            
+                        <td>
+                            <button 
+                                class="btn btn-sm btn-success" 
+                                onclick="ClientWhatsappMessage('${clientDetails.PhoneNumber}','${clientDetails.ClientName}','${client.PayableInterest}','${new Date(client.StartDate).toLocaleDateString('en-IN')}')">
+                                Send Message
+                            </button>
+                            <a href="/ClientEMIPage/${client.OrderID}?PayableInterest=${client.PayableInterest}&ClientName=${clientDetails.ClientName}" class="btn btn-primary btn-sm received-emi-btn" onclick="changeButtonColor(this)">Received EMI</a>
+                            <a href="/AddDueEMI/${client.OrderID}?ClientName=${clientDetails.ClientName}&ActiveAmount=${client.ActiveAmount}&EMIDate=${new Date(client.StartDate).toLocaleDateString('en-IN')}&EMIAmount=${client.PayableInterest}" class="btn btn-sm btn-warning">Due</a>
+                        </td>
+                    </tr>
+                `;
+            } catch (clientError) {
+                console.error(`Error fetching details for client ${client.ClientID}:`, clientError);
             }
         }
-    });
-}
-  // Load default data on page load
-  fetchInvestmentVsOrders();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
+
+
 </script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Fetch today's interest payments (Investors)
+            const InvestorResponse = await fetch('/TodayInvestor');
+        const Investors = await InvestorResponse.json();
+console.log(Investors);
+        const InvestorsTable = document.getElementById('InvestorsTable');
+        for (const Investor of Investors) {
+            try {
+                // Fetch additional details for the Investor
+                const InvestorDetailsResponse = await fetch(`/InvestorDetails/${Investor.InvestorID}`);
+                const InvestorDetails = await InvestorDetailsResponse.json();
+console.log(InvestorDetails);
+                // Populate table with Investor details
+                investorsTable.innerHTML += `
+                    <tr>
+                        <td>${InvestorDetails.InvestorName || 'N/A'}</td>
+                        <td>${Investor.ActiveAmount || 'N/A'}</td>
+                        <td>${Investor.PayableInterest.toLocaleString()}</td>
+                        <td>${InvestorDetails.PhoneNumber || 'N/A'}</td>    
+                        <td><details>${InvestorDetails.BankDetails || 'N/A'}</details></td>          
+                        <td>
+                            <button 
+                                class="btn btn-sm btn-success" 
+                                onclick="InvestorWhatsappMessage('${InvestorDetails.PhoneNumber}','${InvestorDetails.InvestorName}','${Investor.PayableInterest}')">
+                                Send Message
+                            </button>
+                           <a class="btn btn-primary btn-sm received-emi-btn" onclick="confirmEMI('${Investor.InvestmentID}', '${Investor.PayableInterest}', '${InvestorDetails.InvestorName}')">EMI Paid</a>
+                        </td>
+                    </tr>
+                `;
+            } catch (InvestorError) {
+                console.error(`Error fetching details for Investor ${Investor.InvestorID}:`, InvestorError);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+});
 
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Fetch today's interest payments (ClosingClients)
+            const ClosingClientResponse = await fetch('/ClosingClients');
+            const ClosingClients = await ClosingClientResponse.json();
+            console.log(ClosingClients);
+            const ClosingClientsTable = document.getElementById('ClosingClientsTable');
+            for (const ClosingClient of ClosingClients) {
+                try {
+                    // Fetch additional details for the ClosingClient
+                    const ClosingClientDetailsResponse = await fetch(`/ClientDetails/${ClosingClient.ClientID}`);
+                    const ClosingClientDetails = await ClosingClientDetailsResponse.json();
+                    console.log(ClosingClientDetails);
+                    // Populate table with ClosingClient details
+                    ClosingClientsTable.innerHTML += `
+                        <tr>
+                            <td>${ClosingClient.OrderID || 'N/A'}</td>
+                            <td>${ClosingClientDetails.ClientName || 'N/A'}</td>
+                            <td>${ClosingClient.AmountSanctioned || 'N/A'}</td>
+                            <td>${ClosingClient.ActiveAmount || 'N/A'}</td>
+                            <td>${ClosingClientDetails.PhoneNumber || 'N/A'}</td>
+                            <td>${ClosingClient.PayableInterest.toLocaleString()}</td>
+                            <td> ${ClosingClient.StartDate ? new Date(ClosingClient.StartDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                           <td> ${ClosingClient.EndDate ? new Date(ClosingClient.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                            <td>
+                                <button 
+                                    class="btn btn-sm btn-success" 
+                                    onclick="ClosingClientWhatsappMessage('${ClosingClientDetails.PhoneNumber}','${ClosingClientDetails.ClientName}','${ClosingClient.PayableInterest}')">
+                                    Send Message
+                                </button>
+                                <a onclick="CloseOrder('${ClosingClient.OrderID}','${ClosingClientDetails.ClientName}','${ClosingClient.AmountSanctioned}','${new Date(ClosingClient.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger btn-sm received-emi-btn" >Close Order</a>
+                            </td>
+                        </tr>
+                    `;
+                } catch (ClosingClientError) {
+                    console.error(`Error fetching details for ClosingClient ${ClosingClient.ClientID}:`, ClosingClientError);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+
+
+</script>
+<script>
+    function ClosingClientWhatsappMessage(phoneNumber, clientName, payableInterest) {
+        const message = `Hello ${clientName}, your payable interest is ${payableInterest}. Please make the payment at your earliest convenience.`;
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+    function CloseOrder(OrderID,ClientName,AmountSanctioned,StartDate) {
+            // Show confirmation alert
+            if (confirm("Are you sure you want to Close this Order?")) {
+                // Action if user confirms
+               
+                StartDate=StartDate.split('T')[0]
+                window.location.href = `/DeleteOrder/${OrderID}?ClientName=${ClientName}&AmountSanctioned=${AmountSanctioned}&StartDate=${StartDate}`;
+               
+            } else {
+                // Action if user cancels
+                alert("Deletion canceled.");
+            }
+        }
+
+
+      function  InvestorWhatsappMessage(PhoneNumber,InvestorName,PayableInterest){
+        const message = `Hello ${InvestorName}, we have successfully paid your interest of ${PayableInterest}. Thank you for your investment and trust in SiPS!`;
+        const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
+        window.location.href=whatsappUrl;
+      }
+     function  ClientWhatsappMessage(PhoneNumber,ClientName,PayableInterest,StartDate){
+        const message = `Hello ${ClientName},
+
+This is a reminder to pay the EMI of Rs. ${PayableInterest} due on or before Today  for loan from SiPS finance dated ${StartDate}. Please pay the EMI before due date to avoid additional charges.
+
+Thank You,
+
+Account Details:
+SIPS Financial Services
+Canara Bank
+A/C #: 120031763211
+IFSC code: CNRB0008686
+Account type: Current
+
+Regards,
+SiPS Finance team`;
+        const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
+        window.location.href=whatsappUrl;
+      }
+
+</script>
+
+<script>
+
+
+
+function confirmEMI(InvestmentID,PayableInterest,InvestorName){
+    if (confirm(`Are you sure you want to pay the interest of ${PayableInterest} to ${InvestorName}?`)) {
+        window.location.href=`/InvestorEMIPay/${InvestmentID}?PayableInterest=${PayableInterest}&InvestorName=${InvestorName}`;
+    } else {
+        alert("Payment canceled.");
+    }
+}
+
+</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- <script>
-
-google.charts.load("current", { packages: ["corechart"] });
-
-/////////////////////////////////////////// INVESTOR CHART ///////////////////////////////////////////
-async function fetchInvestmentData() {
-    try {
-        const response = await fetch('/getInvestmentData');
-        if (!response.ok) throw new Error('Failed to fetch investment data');
-        const data = await response.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-            throw new Error('No Investments Yet');
-        }
-
-        const chartData = [['Investor Name', 'Investment Amount']];
-        const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
-        const investorNames = await Promise.all(investorNamesPromises);
-
-        data.forEach((item, index) => {
-            if (item.InvestorID && item.TotalInvestment) {
-                chartData.push([investorNames[index], item.TotalInvestment]);
-            }
-        });
-
-        if (chartData.length <= 1) {
-            throw new Error('No valid investment data to display');
-        }
-
-        drawInvestorChart(chartData);
-    } catch (error) {
-        console.error('Error fetching investment data:', error.message);
-        document.getElementById('investor_chart').innerHTML = `
-            <h6 class="text-muted text-center">${error.message}</h6>
-        `;
-    }
-}
-
- function drawInvestorChart(chartData) {
-    try {
-        if (!Array.isArray(chartData) || chartData.length <= 1) {
-            throw new Error('Invalid chart data');
-        }
-
-        const data = google.visualization.arrayToDataTable(chartData);
-        const options = {
-            is3D: false,
-            pieSliceText: 'value',
-            backgroundColor: 'transparent',
-        };
-
-        const chart = new google.visualization.PieChart(document.getElementById('investor_chart'));
-        chart.draw(data, options);
-    } catch (error) {
-        console.error('Error drawing chart:', error.message);
-        document.getElementById('investor_chart').innerHTML = `
-            <p class="text-danger">Error drawing chart: ${error.message}</p>
-        `;
-    }
-}
-
-async function fetchInvestorName(id) {
-    try {
-        const res = await fetch(`/InvestorDetails/${id}`);
-        if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
-        const investorDetails = await res.json();
-        return investorDetails.InvestorName;
-    } catch (err) {
-        console.error(err.message);
-        return id; // Fallback to ID if name can't be fetched
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fetchInvestmentData);
-
-/////////////////////////////////////////// CLIENTS CHART ///////////////////////////////////////////
-async function fetchOrderData() {
-    try {
-        const response = await fetch('/getOrderData');
-        if (!response.ok) throw new Error('Failed to fetch order data');
-
-        const dataClient = await response.json();
-        if (!Array.isArray(dataClient) || dataClient.length === 0) {
-            throw new Error('No Orders Yet');
-        }
-
-        const ClientchartData = [['Client Name', 'Order Amount']];
-        const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
-        const clientNames = await Promise.all(clientNamesPromises);
-
-        dataClient.forEach((item, index) => {
-            if (item.ClientID && item.TotalOrder) {
-                ClientchartData.push([clientNames[index], item.TotalOrder]);
-            }
-        });
-
-        if (ClientchartData.length <= 1) {
-            throw new Error('No valid order data to display');
-        }
-
-        drawClientChart(ClientchartData);
-    } catch (error) {
-        console.error('Error fetching client data:', error.message);
-        document.getElementById('client_chart').innerHTML = `
-            <h6 class="text-muted text-center">${error.message}</h6>
-        `;
-    }
-}
-
-function drawClientChart(ClientchartData) {
-    try {
-        if (!Array.isArray(ClientchartData) || ClientchartData.length <= 1) {
-            throw new Error('Invalid chart data');
-        }
-
-        const dataClient = google.visualization.arrayToDataTable(ClientchartData);
-        const Clientoptions = {
-            is3D: false,
-            pieSliceText: 'value',
-            backgroundColor: 'transparent',
-        };
-
-        const Clientchart = new google.visualization.PieChart(document.getElementById('client_chart'));
-        Clientchart.draw(dataClient, Clientoptions);
-    } catch (error) {
-        console.error('Error drawing chart:', error.message);
-        document.getElementById('client_chart').innerHTML = `
-            <p class="text-danger">Error drawing chart: ${error.message}</p>
-        `;
-    }
-}
-
-async function fetchClientName(id) {
-    try {
-        const res = await fetch(`/ClientDetails/${id}`);
-        if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
-        const clientDetails = await res.json();
-        return clientDetails.ClientName;
-    } catch (err) {
-        console.error(err.message);
-        return id; // Fallback to ID if name can't be fetched
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fetchOrderData);
-
-
-</script> -->

@@ -148,11 +148,15 @@
             </tbody>
         </table>
     </div>
-    <center> <button class="btn btn-danger" onclick="history.back()">Back</button></center>
+    <center> <a class="btn btn-danger" id="Back">Back</a></center>
    
     <script>
         async function fetchInvestmentHistory() {
             const id = window.location.pathname.split('/').pop();
+            const params = new URLSearchParams(window.location.search);
+            const InvestorId = params.get('InvestorId');
+            const Back = document.getElementById('Back');
+              Back.href = `/Investor/${InvestorId}`;
   try {
     let TotalEMIPaid = 0; // Initialize total EMI paid
     let i = 0; // Initialize row counter

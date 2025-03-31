@@ -40,10 +40,10 @@ body {
 }
 
 .navbar {
-    background: #eed7df;
-    padding: 10px 20px;
+    background: #f8faff;
+    
     box-shadow: 0 4px 8px var(--shadow-color);
-    margin: 5vh;
+   
 }
 
 .navbar-brand {
@@ -197,12 +197,6 @@ button:active {
 }
 /* /////////////////////////////////////////////////////////////////////*/
 
-.section-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-}
-
 .section-box {
     background-color: white;
     border-radius: 15px;
@@ -212,6 +206,7 @@ button:active {
     transition: all 0.3s ease;
     cursor: pointer;
     border: 2px solid transparent;
+
 }
 .section-box:hover {
     transform: translateY(-10px);
@@ -221,7 +216,7 @@ button:active {
 
 .section-box h3 {
     margin-bottom: 15px;
-    color: var(--primary-color);
+    
     font-size: 1.3em;
 }
 
@@ -233,6 +228,7 @@ button:active {
     border-radius: 20px;
     font-size: 0.9em;
     margin-top: 2vh;
+   
 }
 
 
@@ -255,10 +251,16 @@ button:active {
     display: flex;
     gap: 20px;
 }
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    grid-auto-flow: row;
+}
 .add-buttons {
         display: flex;
         align-items: center;
-        gap:10vw;
+        gap:1vw;
      
     }
     .highlight {
@@ -277,7 +279,15 @@ button:active {
         flex-direction: column;
         gap: 10px;
         margin-top: 10px;
-    }}
+    }
+    .section-grid {
+    display: flex;
+    flex-direction: column;
+ 
+}
+}
+
+
     .table-responsive {
         margin-bottom: 20px;
       
@@ -288,15 +298,15 @@ button:active {
         font-size: 15px;
         padding: 15px 20px;
     }
-    .section-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    grid-auto-flow: row;
-}
-/* /////////////////////////////////////////////////////////////////////*/
 
+/* /////////////////////////////////////////////////////////////////////*/
+ i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -308,9 +318,9 @@ button:active {
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
       </button>
-     
+      <h1 class="mx-auto" >SiPS Finance</h1>
       <div class="collapse navbar-collapse" id="navbarToggler">
-        <h1 class="mx-auto" style="font-size:4vw;margin-left: 3vw;">SiPS Finance</h1>
+        
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item">
                   <a class="nav-linkh active btn btn-warning" style="color:#2a2a2a" href="/Home">Home</a>
@@ -348,36 +358,39 @@ button:active {
         <!-- ----------------------------------------------------------------------------------------------------->
         <div class="section-grid">
             <div class="section-box" data-page="investors" onclick="window.location.href='/Investors'">
-                <h3>Investors</h3>
                 <div class="section-stats">
-                    <img src="/Images/InvestorImage.jpg" style="height:130px;width:130px;" alt="Investor">
-                    
+                    <i class="fas fa-users"></i>
                 </div>
+                <h3>Investors</h3>
+           
             </div>
             <div class="section-box" data-page="clients" onclick="window.location.href='/Clients'">
-                <h3>Clients</h3>
                 <div class="section-stats">
-                    
-                    <img src="/Images/ClientImage.gif" style="height:100px;width:100px;" alt="Client">
+                    <i class="fas fa-handshake"></i>
                 </div>
+                <h3>Clients</h3>
+              
             </div>
             <div class="section-box" data-page="queue" onclick="window.location.href='/Queue'">
-                <h3>Queue</h3>
                 <div class="section-stats">
-                    <img src="/Images/QueueImage.gif" style="height:100px;width:100px;" alt="Client">
+                    <i class="fas fa-tasks"></i>
                 </div>
+                <h3>Queue</h3>
+             
             </div>
             <div class="section-box" data-page="company" onclick="window.location.href='/Company'">
-                <h3>Dashboard</h3>
-                <div class="section-stats">
-                    <img src="/Images/MetricImage.gif" style="height:100px;width:100px;" alt="Dashboard">
+                <div class="section-stats" >
+                    <i class="fas fa-chart-line"></i>
                 </div>
+                <h3>Dashboard</h3>
+               
             </div>
             <div class="section-box" data-page="history">
-                <h3>History</h3>
                 <div class="section-stats">
-                 <img src="/Images/WorkInProgess.gif" style="height:100px;width:100px;" alt="Work In Progress">
-                </div>
+                    <img src="/Images/WorkInProgess.gif" style="height:80px;width:80px;" alt="Work In Progress" >
+                   </div>
+                <h3>History</h3>
+               
             </div>
         </div>
        <!----------------------------------------------------------------------------------------------------------->

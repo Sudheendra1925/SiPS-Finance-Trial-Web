@@ -329,10 +329,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                              <td> ${order.EndDate ? new Date(order.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                             <td><a href="../uploads/collaterals/${order.Collaterals}" target="_blank">Collaterals</td>
                             <td>
-                                <a href="/UpdateOrderPage/${order.OrderID}" class="btn btn-primary">Update</a>
+                                <a href="/UpdateOrderPage/${order.OrderID}?ClientId=${id}" class="btn btn-primary">Update</a>
                                 <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.AmountSanctioned}','${new Date(order.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger">Close Order</button>
-                                <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}" class="btn btn-primary">Received EMI</a>
-                                <a href="/OrderEMIHistoryPage/${order.OrderID}" class="btn btn-primary">EMI History</a>
+                                <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}&ClientId=${clientID}" class="btn btn-primary">Received EMI</a>
+                                <a href="/OrderEMIHistoryPage/${order.OrderID}&ClientId=${clientID}" class="btn btn-primary">EMI History</a>
                                 <a 
                                     onclick="alert('Done')" 
                                     href="/AddDueEMI/${order.OrderID}?ClientName=${ClientName}&ActiveAmount=${order.ActiveAmount}&EMIDate=${new Date(order.StartDate).toLocaleDateString('en-IN')}&EMIAmount=${order.PayableInterest}" 

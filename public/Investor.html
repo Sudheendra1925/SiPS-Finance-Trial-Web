@@ -238,10 +238,11 @@ border-radius: 10px;;
     </div>
 
     <script>
+        let id = '';
         async function fetchData() {
-            const id = window.location.pathname.split('/').pop();
+         id = window.location.pathname.split('/').pop();
             let InvestorName = '';
-    
+
             // Function to fetch and update investor details
             async function fetchInvestorDetails(id) {
                 try {
@@ -314,10 +315,10 @@ border-radius: 10px;;
                                 <td>${investment.InterestRate || 'N/A'}%</td>
                                  <td>${investment.EndDate ? new Date(investment.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                                 <td>
-                                    <a href="/UpdateInvestmentPage/${investment.InvestmentID}" class="btn btn-primary" aria-label="Update Investment">Update</a>
+                                    <a href="/UpdateInvestmentPage/${investment.InvestmentID}?InvestorId=${id}" class="btn btn-primary" aria-label="Update Investment">Update</a>
                                     <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.AmountSanctioned}','${new Date(investment.InvestmentDate).toLocaleDateString('en-IN')}')" class="btn btn-danger" aria-label="Close Investment">Close</button>
                                     <a onclick="confirmPay('${investment.InvestmentID}', '${InvestorName}','${investment.PayableInterest}')" class="btn btn-primary" aria-label="Pay EMI">Pay EMI</a>
-                                    <a href="/InvestmentEMIHistoryPage/${investment.InvestmentID}" class="btn btn-primary" aria-label="View EMI History">EMI History</a>
+                                    <a href="/InvestmentEMIHistoryPage/${investment.InvestmentID}?InvestorId=${id}" class="btn btn-primary" aria-label="View EMI History">EMI History</a>
                                 </td>
                             </tr>
                         `;

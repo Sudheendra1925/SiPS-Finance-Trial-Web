@@ -151,28 +151,28 @@
     #TwoButtons {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       padding: 60px;
     }
 
     #searchBar {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto 20px;
-      padding: 10px;
-      margin-top: 2%;
-      font-size: 16px;
-      border: 1px solid var(--text-dark);
-      border-radius: 5px;
-      box-shadow: 0 2px 4px var(--shadow-color);
-      transition: box-shadow var(--transition-speed);
-    }
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px;
+            padding: 10px;
+            margin-top: 2%;
+            font-size: 16px;
+            border: 1px solid var(--font-dark);
+            border-radius: 5px;
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: box-shadow 0.3s;
+        }
 
-    #searchBar:focus {
-      border-color: var(--primary-color);
-      box-shadow: 0 4px 8px var(--shadow-color);
-      outline: none;
-    }
+        #searchBar:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 8px var(--shadow-color);
+            outline: none;
+        }
   </style>
 </head>
 <body>
@@ -184,6 +184,7 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <input type="text" id="searchBar" class="form-control" placeholder="Search Client ">
       <div class="collapse navbar-collapse" id="navbarToggler">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
@@ -209,12 +210,9 @@
     </div>
   </nav>
 
-  <div class="mb-3">
-    <input type="text" id="searchBar" class="form-control" placeholder="Search Client ">
-  </div>
   <div id="TwoButtons">
     <a href="/AddClient" class="btn btn-primary">Add New Client</a>
-    <a href="/OrderHistory" class="btn btn-primary">Active Order History</a>
+    <a href="/OrderHistory" class="btn btn-success">Active Order History</a>
   </div>
   <div class="container my-5">
     <div class="row" id="profile-cards-container">

@@ -207,7 +207,7 @@
 
             <div class="d-flex gap-2">
               <button  type="submit" class="btn btn-primary px-4 py-2">Save Changes</button>
-              <a class="btn btn-danger px-4 py-2" onclick="history.back()">Cancel</a>
+              <a class="btn btn-danger px-4 py-2" id="Cancel">Cancel</a>
           </div>
             <input type="hidden" id="oldCollateralsPath" name="oldCollateralsPath" readonly>
 
@@ -217,6 +217,11 @@
     <script>
         // Fetch investor details using ID
         async function fetchOrderDetails(id) {
+
+          const params = new URLSearchParams(window.location.search);
+  const ClientId =params.get('ClientId');
+const Cancel = document.getElementById('Cancel');
+            Cancel.href = `/Client/${ClientId}`;
             try {
                 const response = await fetch(`/OrderDetails/${id}`);
                 if (!response.ok) {

@@ -230,7 +230,7 @@
                         <td>${order.EndDate ? new Date(order.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                         <td>${order.RateOfInterest || '0'}%</td>
                         <td><a href="/uploads/collaterals/${order.Collaterals}" target="blank" style="font-size:2vh">${order.CollateralType}</a></td>
-                       <td> <a href="/UpdateOrderPage/${order.OrderID}" class="btn btn-primary">Update</a></td>
+                       <td> <a href="/UpdateOrderPage/${order.OrderID}?OrderId=${order.ClientID}" class="btn btn-primary">Update</a></td>
                     `;
                     tbody.appendChild(tr);
                     totalAmount += order.AmountSanctioned || 0;

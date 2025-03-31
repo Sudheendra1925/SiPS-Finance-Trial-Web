@@ -224,8 +224,7 @@ app.get("/getEmails",(req,res)=>{
         const emailArray = results.map(row => row.Email);
         
         res.json(emailArray); // Send only the array of emails
-    });
-    
+    }); 
 })
 
 app.get('/ResetPassword', async (req, res) => {
@@ -269,8 +268,6 @@ app.get('/ResetPassword', async (req, res) => {
         console.error('Error hashing password:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-
-
 })
 
 
@@ -2391,6 +2388,59 @@ app.get('/getYearlyInvestmentOrders', async (req, res) => {
 });
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.get('/getQuarterlyInvestmentOrders', async (req, res) => {
+    try {
+        const { year } = req.query;
+        if (!year) {
+            return res.status(400).send({ status: "error", message: "Year parameter is required" });
+        }
+
+        // Fetch total investments per quarter for the given year
+        const [investmentsData] = await db.promise().query(`
+            SELECT 
+                QUARTER(InvestmentDate) AS quarter,
+                SUM(AmountSanctioned) AS totalInvestments
+            FROM Investments
+            WHERE YEAR(InvestmentDate) = ?
+            GROUP BY QUARTER(InvestmentDate)
+            ORDER BY QUARTER(InvestmentDate);
+        `, [year]);
+
+        // Fetch total orders per quarter for the given year
+        const [ordersData] = await db.promise().query(`
+            SELECT 
+                QUARTER(StartDate) AS quarter,
+                SUM(AmountSanctioned) AS totalOrders
+            FROM Orders
+            WHERE YEAR(StartDate) = ?
+            GROUP BY QUARTER(StartDate)
+            ORDER BY QUARTER(StartDate);
+        `, [year]);
+
+        // Ensure all four quarters are represented
+        const allQuarters = ["Q1", "Q2", "Q3", "Q4"].map(q => `${year}-${q}`);
+        let investments = [0, 0, 0, 0];
+        let orders = [0, 0, 0, 0];
+
+        // Map investments data
+        investmentsData.forEach(row => {
+            let index = row.quarter - 1;
+            if (index >= 0 && index < 4) investments[index] = row.totalInvestments || 0;
+        });
+
+        // Map orders data
+        ordersData.forEach(row => {
+            let index = row.quarter - 1;
+            if (index >= 0 && index < 4) orders[index] = row.totalOrders || 0;
+        });
+
+        res.send({ status: "success", labels: allQuarters, investments, orders });
+    } catch (error) {
+        console.error("Database query error:", error);
+        res.status(500).send({ status: "error", message: "Failed to fetch quarterly investments and orders" });
+    }
+});
 
 
 

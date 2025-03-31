@@ -286,6 +286,7 @@
       color: var(--danger-color);
     }
 
+
   </style>
 </head>
 <body>
@@ -372,8 +373,12 @@
           <option value="Yearly">Yearly</option>
           <option value="Quarterly">Quarterly</option>
       </select>
-  
-      <canvas id="chart_div" style="width: 100px; height: 100px;"></canvas>
+      <input type="number" id="yearInput" placeholder="Enter Year" style="display:none; margin-top: 10px;" min="2000" max="2100">
+      <input type="number" id="QuaterlyYearInput" placeholder="Enter Year" style="display:none; margin-top: 10px;" min="2000" max="2100">
+      
+      <div id="chart_div" ></div>
+      <div id="NoOfInvestors"></div>
+      <div id="NoOfClients"></div>
       </div>
 
     </div>
@@ -480,14 +485,36 @@
 
 
 <!--///////////////////////////////////////////////////////////////////////INVESTOR vs ORDERS CHART////////////////////////////////////////////////-->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   
 <script>
   let chart;
 
   document.getElementById("reportSelector").addEventListener("change", async () => {
       const reportType = document.getElementById("reportSelector").value;
+      const yearInput = document.getElementById("yearInput");
+      const QuaterlyYearInput = document.getElementById("QuaterlyYearInput");
+      
+yearInput.addEventListener("input",(e)=>{
+  
+  fetchMonthlyData(e.target.value);
+})
+QuaterlyYearInput.addEventListener("input",(e)=>{
+  
+  fetchQuarterlyData(e.target.value);
+})
+
+if (reportType === "MonthlyLineGraph" ) {
+  yearInput.style.display = "block";
+} else {
+  yearInput.style.display = "none";
+}
+if (reportType === "Quarterly" ) {
+  QuaterlyYearInput.style.display = "block";
+} else {
+  QuaterlyYearInput.style.display = "none";
+}
+
 
       if (chart) {
           chart.destroy(); // Clear previous chart
@@ -500,8 +527,16 @@
       } else if (reportType === "ClientSplit") {
           fetchOrderData();
       } else if (reportType === "MonthlyLineGraph") {
-          fetchMonthlyData();
+       year=new Date().getFullYear();
+          fetchMonthlyData(year);
       }
+      else if (reportType === "Yearly") {
+          fetchYearlyData();
+      }
+      else if (reportType === "Quarterly") {
+        year=new Date().getFullYear();
+       fetchQuarterlyData(year);
+   }
   });
 
   async function fetchInvestmentVsOrders() {
@@ -527,7 +562,7 @@
           const response = await fetch('/getInvestmentData');
           if (!response.ok) throw new Error('Failed to fetch investment data');
           const data = await response.json();
-
+       
           if (!Array.isArray(data) || data.length === 0) {
               throw new Error('No Investments Yet');
           }
@@ -584,9 +619,9 @@
       }
   }
 
-  async function fetchMonthlyData() {
+  async function fetchMonthlyData(year) {
       try {
-          const response = await fetch('/getMonthlyInvestmentOrders');
+          const response = await fetch(`/getMonthlyInvestmentOrders?currentYear=${year}`);
           const result = await response.json();
 
           if (result.status === "success") {
@@ -598,6 +633,21 @@
           console.error("Error fetching chart data:", error);
       }
   }
+  async function fetchYearlyData() {
+      try {
+          const response = await fetch(`/getYearlyInvestmentOrders`);
+          const result = await response.json();
+
+          if (result.status === "success") {
+              drawLineChart(result.labels, result.investments, result.orders);
+          } else {
+              console.error("Error fetching data:", result.message);
+          }
+      } catch (error) {
+          console.error("Error fetching chart data:", error);
+      }
+  }
+
 
   async function fetchInvestorName(id) {
       try {
@@ -622,78 +672,85 @@
           return `Client ${id}`;
       }
   }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  function drawChart(labels, data, type, colors) {
-      const ctx = document.getElementById('chart_div').getContext('2d');
 
-      if (chart) {
-          chart.destroy();
-      }
 
-      chart = new Chart(ctx, {
-          type: type,
-          data: {
-              labels: labels,
-              datasets: [{
-                  label: type === "bar" ? "Amount" : "Distribution",
-                  data: data,
-                  backgroundColor: colors,
-                  borderWidth: 1
-              }]
-          },
-          options: {
-              responsive: true,
-              scales: type === "bar" ? { y: { beginAtZero: true } } : {},
-              plugins: {
-                  legend: { position: 'top' },
-                  tooltip: { enabled: true }
-              }
-          }
-      });
-  }
+async function fetchQuarterlyData(year) {
+    try {
+        const response = await fetch(`/getQuarterlyInvestmentOrders?year=${year}`);
+        const result = await response.json();
 
-  function drawLineChart(labels, investments, orders) {
-    const ctx = document.getElementById('chart_div').getContext('2d');
-
-    if (chart) {
-        chart.destroy();
-    }
-
-    chart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: "Investments",
-                    data: investments,
-                    borderColor: "#4CAF50",
-                    backgroundColor: "rgba(76, 175, 80, 0.2)",
-                    tension: 0.3,
-                    fill: true
-                },
-                {
-                    label: "Orders",
-                    data: orders,
-                    borderColor: "#1565C0",
-                    backgroundColor: "rgba(21, 101, 192, 0.2)",
-                    tension: 0.3,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            },
-            plugins: {
-                legend: { position: 'top' },
-                tooltip: { enabled: true }
-            }
+        if (result.status === "success") {
+            drawLineChart(result.labels, result.investments, result.orders);
+        } else {
+            console.error("Error fetching quarterly report:", result.message);
         }
+    } catch (error) {
+        console.error("Error fetching quarterly chart data:", error);
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    google.charts.load('current', { packages: ['corechart'] });
+
+    function drawChart(labels, data, type, colors) {
+        google.charts.setOnLoadCallback(function () {
+            let chartData = new google.visualization.DataTable();
+            chartData.addColumn('string', 'Label');
+            chartData.addColumn('number', 'Value');
+
+            for (let i = 0; i < labels.length; i++) {
+                chartData.addRow([labels[i], data[i]]);
+            }
+
+            let options = {
+                title: type === "bar" ? "Amount" : "Distribution",
+                colors: colors,
+                legend: { position: 'top' }
+            };
+
+            let chart;
+            if (type === "bar") {
+                options.bars = 'vertical';
+                chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            } else {
+                options.pieHole = 0.4;
+                chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            }
+
+            chart.draw(chartData, options);
+        });
+    }
+    function drawLineChart(labels, investments, orders) {
+    google.charts.setOnLoadCallback(function () {
+        let chartData = new google.visualization.DataTable();
+        chartData.addColumn('string', 'Label'); // First column must be a string
+        chartData.addColumn('number', 'Investments');
+        chartData.addColumn('number', 'Orders');
+
+        for (let i = 0; i < labels.length; i++) {
+            chartData.addRow([
+                String(labels[i]),            // Convert label to string
+                Number(investments[i]) || 0, // Ensure number, default to 0
+                Number(orders[i]) || 0       // Ensure number, default to 0
+            ]);
+        }
+
+        let options = {
+            title: "Investments vs Orders",
+            curveType: 'function',
+            legend: { position: 'top' }
+        };
+
+        let chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(chartData, options);
     });
 }
+
+
   // Load default data on page load
   fetchInvestmentVsOrders();
 </script>

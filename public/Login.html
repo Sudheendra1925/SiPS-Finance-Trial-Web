@@ -373,6 +373,7 @@ document.getElementById('signup-email').addEventListener('input', checkApplicant
 
   async function sendAccessOtp() {
     // Generate a random 6-digit OTP
+    console.log("hlo1")
     AccessOtp = Math.floor(100000 + Math.random() * 900000);
     const UserName=document.getElementById('signup-username').value;
     const email = "susheeltokala15@gmail.com"; // Replace with your email logic susheeltokala15@gmail.com
@@ -389,7 +390,7 @@ document.getElementById('signup-email').addEventListener('input', checkApplicant
         },
         body: JSON.stringify({ email })
       });
-
+      console.log("hlo2")
       if (response.ok) {
         document.getElementById('email-Accessotp-status').innerHTML =
           '<p style="color:green">OTP sent to susheeltokala15@gmail.com.</p>';

@@ -285,7 +285,17 @@
     .loss {
       color: var(--danger-color);
     }
-
+    input, select {
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border-color);
+      margin-top: 1rem;
+      width:150px;
+    }
+    select{
+      width:300px;
+      margin-bottom:10px;
+    }
 
   </style>
 </head>
@@ -365,19 +375,20 @@
 
 
     <div class="chart-card">
+    
       <select id="reportSelector">
           <option value="InvestmentsVsOrders">Investment V/S Orders</option>
           <option value="InvestorSplit">Investor Split</option>
           <option value="ClientSplit">Client Split</option>
-          <option value="MonthlyLineGraph">Monthly</option>
-          <option value="Yearly">Yearly</option>
-          <option value="Quarterly">Quarterly</option>
+          <option value="MonthlyLineGraph">Monthly Investments V/S Orders</option>
+          <option value="Yearly"> Yearly Investments V/S Orders</option>
+          <option value="Quarterly">Quarterly Investments V/S Orders</option>
       </select>
       <input type="number" id="yearInput" placeholder="Enter Year" style="display:none; margin-top: 10px;" min="2000" max="2100">
-      <canvas id="chart_div" style="height:100px;width:100px"></canvas>
-      <div id="NoOfInvestors"></div>
-      <div id="NoOfClients"></div>
-      </div>
+      <input type="number" id="QuaterlyYearInput" placeholder="Enter Year" style="display:none; margin-top: 10px;" min="2000" max="2100">
+      <div id="Count"></div>
+      <center><canvas id="chart_div" ></canvas></center>
+      
 
     </div>
   </div>
@@ -489,18 +500,37 @@
 <script>
   let chart;
 
+
   document.getElementById("reportSelector").addEventListener("change", async () => {
       const reportType = document.getElementById("reportSelector").value;
       const yearInput = document.getElementById("yearInput");
+      const QuaterlyYearInput = document.getElementById("QuaterlyYearInput");
+      
 yearInput.addEventListener("input",(e)=>{
   
   fetchMonthlyData(e.target.value);
-
 })
-if (reportType === "MonthlyLineGraph") {
+QuaterlyYearInput.addEventListener("input",(e)=>{
+  
+  fetchQuarterlyData(e.target.value);
+})
+
+if (reportType === "MonthlyLineGraph" ) {
   yearInput.style.display = "block";
 } else {
   yearInput.style.display = "none";
+}
+if (reportType === "Quarterly" ) {
+  QuaterlyYearInput.style.display = "block";
+} else {
+  QuaterlyYearInput.style.display = "none";
+}
+if(reportType === "InvestorSplit" || reportType === "ClientSplit" ){
+  document.getElementById("Count").style.display = "block";
+  document.getElementById("Count").innerHTML ="" ;
+}
+else{
+  document.getElementById("Count").style.display = "none";
 }
 
       if (chart) {
@@ -518,9 +548,12 @@ if (reportType === "MonthlyLineGraph") {
           fetchMonthlyData(year);
       }
       else if (reportType === "Yearly") {
-       
           fetchYearlyData();
       }
+      else if (reportType === "Quarterly") {
+        year=new Date().getFullYear();
+       fetchQuarterlyData(year);
+   }
   });
 
   async function fetchInvestmentVsOrders() {
@@ -529,7 +562,7 @@ if (reportType === "MonthlyLineGraph") {
           const result = await response.json();
 
           if (result.status === "success") {
-              drawChart(["Investments", "Orders"], 
+              drawChart(["Investments", "Orders"],
                   [result.breakdown.totalInvestments, result.breakdown.totalOrders], 
                   "bar",
                   ["#4CAF50", "#1565C0"]);
@@ -546,7 +579,7 @@ if (reportType === "MonthlyLineGraph") {
           const response = await fetch('/getInvestmentData');
           if (!response.ok) throw new Error('Failed to fetch investment data');
           const data = await response.json();
-          document.getElementById("NoOfInvestors").innerHTML=`<p>The Total No Of Investors=${data[0].NoOfInvestors}`
+       
           if (!Array.isArray(data) || data.length === 0) {
               throw new Error('No Investments Yet');
           }
@@ -563,7 +596,7 @@ if (reportType === "MonthlyLineGraph") {
                   investments.push(item.TotalInvestment);
               }
           });
-
+          document.getElementById("Count").innerHTML = `<h4 >No of Investors :<span style="color:red"> ${data.length}</span></h4>`;
           if (labels.length === 0) throw new Error('No valid investment data to display');
 
           drawChart(labels, investments, "pie", ['#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#33FFF6']);
@@ -594,7 +627,7 @@ if (reportType === "MonthlyLineGraph") {
                   orders.push(item.TotalOrder);
               }
           });
-
+          document.getElementById("Count").innerHTML = `<h4 >No Of Clients :<span style="color:red">${dataClient.length}</span></h4>`;
           if (labels.length === 0) throw new Error('No valid order data to display');
 
           drawChart(labels, orders, "pie", ['#FFC107', '#03A9F4', '#4CAF50', '#E91E63', '#9C27B0']);
@@ -631,7 +664,7 @@ if (reportType === "MonthlyLineGraph") {
           console.error("Error fetching chart data:", error);
       }
   }
-  
+
 
   async function fetchInvestorName(id) {
       try {
@@ -656,10 +689,29 @@ if (reportType === "MonthlyLineGraph") {
           return `Client ${id}`;
       }
   }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+async function fetchQuarterlyData(year) {
+    try {
+        const response = await fetch(`/getQuarterlyInvestmentOrders?year=${year}`);
+        const result = await response.json();
+
+        if (result.status === "success") {
+            drawLineChart(result.labels, result.investments, result.orders);
+        } else {
+            console.error("Error fetching quarterly report:", result.message);
+        }
+    } catch (error) {
+        console.error("Error fetching quarterly chart data:", error);
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   function drawChart(labels, data, type, colors) {
       const ctx = document.getElementById('chart_div').getContext('2d');
-
       if (chart) {
           chart.destroy();
       }
@@ -677,7 +729,7 @@ if (reportType === "MonthlyLineGraph") {
           },
           options: {
              
-            responsive: true,
+            responsive: false,
             maintainAspectRatio: true,
             scales: type === "bar" ? { y: { beginAtZero: true } } : {},
               plugins: {
@@ -720,9 +772,11 @@ if (reportType === "MonthlyLineGraph") {
         },
         options: {
           responsive: true,
+          maintainAspectRatio: true,
           scales: {
                 y: { beginAtZero: true }
             },
+            width:1000,
             plugins: {
                 legend: { position: 'top' },
                 tooltip: { enabled: true }
@@ -740,167 +794,3 @@ if (reportType === "MonthlyLineGraph") {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <!-- <script>
-
-google.charts.load("current", { packages: ["corechart"] });
-
-/////////////////////////////////////////// INVESTOR CHART ///////////////////////////////////////////
-async function fetchInvestmentData() {
-    try {
-        const response = await fetch('/getInvestmentData');
-        if (!response.ok) throw new Error('Failed to fetch investment data');
-        const data = await response.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-            throw new Error('No Investments Yet');
-        }
-
-        const chartData = [['Investor Name', 'Investment Amount']];
-        const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
-        const investorNames = await Promise.all(investorNamesPromises);
-
-        data.forEach((item, index) => {
-            if (item.InvestorID && item.TotalInvestment) {
-                chartData.push([investorNames[index], item.TotalInvestment]);
-            }
-        });
-
-        if (chartData.length <= 1) {
-            throw new Error('No valid investment data to display');
-        }
-
-        drawInvestorChart(chartData);
-    } catch (error) {
-        console.error('Error fetching investment data:', error.message);
-        document.getElementById('investor_chart').innerHTML = `
-            <h6 class="text-muted text-center">${error.message}</h6>
-        `;
-    }
-}
-
- function drawInvestorChart(chartData) {
-    try {
-        if (!Array.isArray(chartData) || chartData.length <= 1) {
-            throw new Error('Invalid chart data');
-        }
-
-        const data = google.visualization.arrayToDataTable(chartData);
-        const options = {
-            is3D: false,
-            pieSliceText: 'value',
-            backgroundColor: 'transparent',
-        };
-
-        const chart = new google.visualization.PieChart(document.getElementById('investor_chart'));
-        chart.draw(data, options);
-    } catch (error) {
-        console.error('Error drawing chart:', error.message);
-        document.getElementById('investor_chart').innerHTML = `
-            <p class="text-danger">Error drawing chart: ${error.message}</p>
-        `;
-    }
-}
-
-async function fetchInvestorName(id) {
-    try {
-        const res = await fetch(`/InvestorDetails/${id}`);
-        if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
-        const investorDetails = await res.json();
-        return investorDetails.InvestorName;
-    } catch (err) {
-        console.error(err.message);
-        return id; // Fallback to ID if name can't be fetched
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fetchInvestmentData);
-
-/////////////////////////////////////////// CLIENTS CHART ///////////////////////////////////////////
-async function fetchOrderData() {
-    try {
-        const response = await fetch('/getOrderData');
-        if (!response.ok) throw new Error('Failed to fetch order data');
-
-        const dataClient = await response.json();
-        if (!Array.isArray(dataClient) || dataClient.length === 0) {
-            throw new Error('No Orders Yet');
-        }
-
-        const ClientchartData = [['Client Name', 'Order Amount']];
-        const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
-        const clientNames = await Promise.all(clientNamesPromises);
-
-        dataClient.forEach((item, index) => {
-            if (item.ClientID && item.TotalOrder) {
-                ClientchartData.push([clientNames[index], item.TotalOrder]);
-            }
-        });
-
-        if (ClientchartData.length <= 1) {
-            throw new Error('No valid order data to display');
-        }
-
-        drawClientChart(ClientchartData);
-    } catch (error) {
-        console.error('Error fetching client data:', error.message);
-        document.getElementById('client_chart').innerHTML = `
-            <h6 class="text-muted text-center">${error.message}</h6>
-        `;
-    }
-}
-
-function drawClientChart(ClientchartData) {
-    try {
-        if (!Array.isArray(ClientchartData) || ClientchartData.length <= 1) {
-            throw new Error('Invalid chart data');
-        }
-
-        const dataClient = google.visualization.arrayToDataTable(ClientchartData);
-        const Clientoptions = {
-            is3D: false,
-            pieSliceText: 'value',
-            backgroundColor: 'transparent',
-        };
-
-        const Clientchart = new google.visualization.PieChart(document.getElementById('client_chart'));
-        Clientchart.draw(dataClient, Clientoptions);
-    } catch (error) {
-        console.error('Error drawing chart:', error.message);
-        document.getElementById('client_chart').innerHTML = `
-            <p class="text-danger">Error drawing chart: ${error.message}</p>
-        `;
-    }
-}
-
-async function fetchClientName(id) {
-    try {
-        const res = await fetch(`/ClientDetails/${id}`);
-        if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
-        const clientDetails = await res.json();
-        return clientDetails.ClientName;
-    } catch (err) {
-        console.error(err.message);
-        return id; // Fallback to ID if name can't be fetched
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fetchOrderData);
-
-
-</script> -->
