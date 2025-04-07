@@ -6,12 +6,8 @@
     <title>Investment History</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-  
-*{  
-    font-family:sans-serif;
-     
-}
 :root {
       --primary-color: #2563eb;
       --primary-hover: #1d4ed8;
@@ -27,7 +23,7 @@
     }
 
     * {
-      font-family:  sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -43,14 +39,36 @@
       background: var(--white);
       padding: 1rem 2rem;
       box-shadow: 0 1px 3px var(--shadow-color);
+    
+    }
+    .navbar-nav{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width:30%;
+      
+    }
+    .nav-item{
+      padding: 10px;
+        color: var(--font-dark);
+        border-radius: 10px;;
+    }
+    .nav-item a{
+      color:#64748b;
+      font-weight:500 ;
+        text-decoration: none;
+    
+    }
+    .nav-item:hover{
+    
+        text-decoration: none;
+        background-color: rgba(59, 130, 246, 0.1);
     }
 
-.sign-out:hover {
-    color: var(--white);
-}
+
 
 .sign-out:hover {
-    background-color: var(--danger-color);
+    opacity: 0.9;
 }
 .btn{
     margin:0.2vw;
@@ -102,28 +120,27 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
           <a class="navbar-brand d-flex align-items-center" href="/Home">
-            <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">
-            
+            <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">  
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-        </button>
+          </button>
           <div class="collapse navbar-collapse" id="navbarToggler">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="btn  btn-warning" href="/Home">Home</a>
+                <a  href="/Home">Home</a>
               </li>
               <li class="nav-item">
-                <a class="btn btn-info" href="/Investors" style="background-color:rgb(255, 85, 0);"> Investors</a>
+                <a href="/Investors" > Investors</a>
               </li>
               <li class="nav-item">
-                <a class="btn"  style="background-color:#27ae60;"  href="/Clients">Clients</a>
+                <a  href="/Clients">Clients</a>
               </li>
               <li class="nav-item">
-                <a class="btn btn-info" href="/Queue">Queue</a>
+                <a  href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a class="btn active" style="background-color:#a4b2c7;" href="/Company">Dashboard</a>
+                <a  href="/Company">Company</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -155,110 +172,107 @@
         </table>
     </div>
   <center>  <a class="btn btn-danger" href="/Investors">Back</a></center>
-    <script>
-        let originalData = []; // Store fetched data for filtering
+  <script>
+    let originalData = [];
 
-async function fetchInvestmentHistory() {
- 
-    try {
-        // Fetch investment history
-        const response = await fetch('/InvestmentHistoryData');
-        if (!response.ok) throw new Error('Failed to fetch investment history');
-
-        const investments = await response.json();
-        originalData = await fetchInvestorDetails(investments); // Fetch investor details and store data
-        populateTable(originalData); // Populate the table
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        const tbody = document.getElementById('tbody');
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load data.</td></tr>';
-    }
-}
-
-async function fetchInvestorDetails(investments) {
-    const investorDetailsMap = new Map();
-    const uniqueInvestorIDs = [...new Set(investments.map(inv => inv.InvestorID))];
-
-    // Fetch details for each unique InvestorID
-    for (const investorID of uniqueInvestorIDs) {
+    async function fetchInvestmentHistory() {
         try {
-            const response = await fetch(`/InvestorDetails/${investorID}`);
-            if (response.ok) {
-                const details = await response.json();
-                investorDetailsMap.set(investorID, details.InvestorName || 'Unknown');
-            } else {
-                investorDetailsMap.set(investorID, 'Unknown');
+            const response = await fetch('/InvestmentHistoryData');
+            if (!response.ok) throw new Error('Failed to fetch investment history');
+
+            const investments = await response.json();
+            originalData = await fetchInvestorDetails(investments);
+            populateTable(originalData);
+
+            // Optional: Filter by query param ?search=
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('search');
+            if (query) {
+                document.getElementById('searchBar').value = query;
+                filterData(query);
             }
         } catch (error) {
-            console.error(`Failed to fetch details for InvestorID ${investorID}`, error);
-            investorDetailsMap.set(investorID, 'Unknown');
+            console.error('Error fetching data:', error);
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Failed to load data.</td></tr>';
         }
     }
 
-    return investments.map(inv => ({
-        ...inv,
-        InvestorName: investorDetailsMap.get(inv.InvestorID)
-    }));
-}
+    async function fetchInvestorDetails(investments) {
+        const investorDetailsMap = new Map();
+        const uniqueInvestorIDs = [...new Set(investments.map(inv => inv.InvestorID))];
 
-function populateTable(data) {
-    let TotalInvestment=0;
-    const tbody = document.getElementById('tbody');
-    tbody.innerHTML = ''; // Clear existing rows
+        for (const investorID of uniqueInvestorIDs) {
+            try {
+                const response = await fetch(`/InvestorDetails/${investorID}`);
+                const details = response.ok ? await response.json() : {};
+                investorDetailsMap.set(investorID, details.InvestorName || 'Unknown');
+            } catch {
+                investorDetailsMap.set(investorID, 'Unknown');
+            }
+        }
 
-    let i = 0; // Row counter
-
-    data.forEach(investment => {
-         
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${++i}</td>
-            <td>${investment.InvestorName || 'Unknown'}</td>
-            <td>${investment.AmountSanctioned ? investment.AmountSanctioned.toLocaleString("en-In") : '0'}</td>
-            <td> ${investment.InvestmentDate?new Date(investment.InvestmentDate).toLocaleDateString('en-IN'):"N/A"} </td>
-            <td>${investment.InterestRate || '0'}</td>
-          <td> ${investment.EndDate ?new Date(investment.EndDate).toLocaleDateString('en-IN'):"N/A"} </td>
-          <td> <a href="/UpdateInvestmentPage/${investment.InvestmentID}?InvestorId=${investment.InvestorID}" class="btn btn-primary">Update</a> </td>
-        `;
-        TotalInvestment +=investment.AmountSanctioned || 0;
-        tbody.appendChild(tr);
-    });
-    const totalRow = document.createElement('tr');
-                totalRow.innerHTML = `<td></td>
-                    <td  class="font-weight-bold " ><b>Total Amount:</b></td>
-                    <td style="color:green;" style="border:2px solid red;"><b>${TotalInvestment.toLocaleString("en-In")}</b></td>
-                 
-                `;
-                tbody.appendChild(totalRow);
-}
-
-function filterData(query) {
-    const tbody = document.getElementById('tbody');
-    tbody.innerHTML = ''; // Clear existing rows
-
-    const filteredData = originalData.filter(investment => {
-        return (
-            (investment.InvestorName && investment.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
-            (investment.AmountSanctioned && investment.AmountSanctioned.toString().includes(query)) ||
-            (investment.InvestmentDate && investment.InvestmentDate.toLowerCase().includes(query.toLowerCase())) ||
-            (investment.InterestRate && investment.InterestRate.toString().includes(query))
-        );
-    });
-
-    if (filteredData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">No matching results found.</td></tr>';
-        return;
+        return investments.map(inv => ({
+            ...inv,
+            InvestorName: investorDetailsMap.get(inv.InvestorID)
+        }));
     }
 
-    populateTable(filteredData);
-}
+    function populateTable(data) {
+        let TotalInvestment = 0;
+        const tbody = document.getElementById('tbody');
+        tbody.innerHTML = '';
 
-document.getElementById('searchBar').addEventListener('input', (e) => {
-    filterData(e.target.value);
-});
+        data.forEach((investment, i) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${i + 1}</td>
+                <td>${investment.InvestorName || 'Unknown'}</td>
+                <td>${investment.AmountSanctioned ? investment.AmountSanctioned.toLocaleString("en-In") : '0'}</td>
+                <td>${investment.InvestmentDate ? new Date(investment.InvestmentDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                <td>${investment.InterestRate || '0'}</td>
+                <td>${investment.EndDate ? new Date(investment.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
+                <td><a href="/UpdateInvestmentPage/${investment.InvestmentID}?InvestorId=${investment.InvestorID}" class="btn btn-primary">Update</a></td>
+            `;
+            TotalInvestment += investment.AmountSanctioned || 0;
+            tbody.appendChild(tr);
+        });
 
-document.addEventListener('DOMContentLoaded', fetchInvestmentHistory);
-    </script>
+        // Add Total row
+        const totalRow = document.createElement('tr');
+        totalRow.innerHTML = `
+            <td></td>
+            <td class="font-weight-bold"><b>Total Amount:</b></td>
+            <td style="color:green;"><b>${TotalInvestment.toLocaleString("en-In")}</b></td>
+            <td colspan="4"></td>
+        `;
+        tbody.appendChild(totalRow);
+    }
+
+    function filterData(query) {
+        const filteredData = originalData.filter(investment =>
+            (investment.InvestorName && investment.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
+            (investment.AmountSanctioned && investment.AmountSanctioned.toString().includes(query)) ||
+            (investment.InvestmentDate && new Date(investment.InvestmentDate).toLocaleDateString("en-IN").includes(query)) ||
+            (investment.EndDate && new Date(investment.EndDate).toLocaleDateString("en-IN").includes(query)) ||
+            (investment.InterestRate && investment.InterestRate.toString().includes(query)) ||
+            (investment.InvestmentID && investment.InvestmentID.toString().includes(query))
+        );
+
+        if (filteredData.length === 0) {
+            document.getElementById('tbody').innerHTML = '<tr><td colspan="7" class="text-center text-danger">No matching results found.</td></tr>';
+        } else {
+            populateTable(filteredData);
+        }
+    }
+
+    document.getElementById('searchBar').addEventListener('input', (e) => {
+        filterData(e.target.value);
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchInvestmentHistory);
+</script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 </body>

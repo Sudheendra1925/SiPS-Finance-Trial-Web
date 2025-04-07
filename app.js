@@ -758,7 +758,7 @@ app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (re
 
 
 app.get("/InvestorsData", (req, res) => {
-    db.query('SELECT * FROM Investors', (err, results) => {
+    db.query('SELECT * FROM Investors order by InvestorName asc', (err, results) => {
         if (err) {
             console.error('Error fetching data:', err);
             return res.status(500).json({ error: 'Error fetching data' });
@@ -769,7 +769,7 @@ app.get("/InvestorsData", (req, res) => {
 
 
 app.get("/ClientsData",(req,res)=>{
-    db.query('SELECT * FROM Clients', (err, results) => {
+    db.query('SELECT * FROM Clients order by ClientName asc', (err, results) => {
         if (err) {
             console.error('Error fetching data:', err);
             return res.status(500).json({ error: 'Error fetching data' });
@@ -2446,7 +2446,7 @@ app.get('/getQuarterlyInvestmentOrders', async (req, res) => {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-const PORT=process.env.PORT||2001;
+const PORT=process.env.PORT||2021;
 app.listen(PORT,()=>{
 
     console.log("SUCCESFUL")
