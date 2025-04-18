@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 //Declarations  
 const express = require('express');
 const mysql = require('mysql2');
@@ -426,11 +426,8 @@ app.get('/RejectedInvestmentsPage',isAuthenticated, (req, res) => {
 app.get('/RejectedOrdersPage',isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, 'public/RejectedOrdersPage.html'));
 });
-app.get('/Dashboard',isAuthenticated,(req, res) => {
+app.get('/Dashboard',(req, res) => {
     res.sendFile(path.join(__dirname, 'public/Dashboard.html'));
-})
-app.get('/EditCompanyPage',isAuthenticated,(req, res) => {
-    res.sendFile(path.join(__dirname, 'public/EditCompanyPage.html'));
 })
 
 
@@ -480,44 +477,36 @@ app.post('/NewClient', upload.fields([
 ]), (req, res) => {
     const ClientID = generateSmallId('CLI');
     try {
-        const { ClientName, AddressAndOccupation, PhoneNumber, Aadhar, Pan, Comments } = req.body;
+        const { ClientName,AddressAndOccupation,PhoneNumber,Aadhar,Pan,Comments} = req.body;
+
+        // Handle uploaded files
         const AadharCardFile = req.files?.AadharCard ? req.files.AadharCard[0].filename : null;
         const PanCardFile = req.files?.PanCard ? req.files.PanCard[0].filename : null;
         const ImageFile = req.files?.Image ? req.files.Image[0].filename : null;
 
         const sql = `INSERT INTO Clients (ClientID, ClientName, TotalAmount, AddressAndOccupation, PhoneNumber, Aadhar, AadharCard, Pan, PanCard, Image, Comments)
-                     VALUES (?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                     VALUES (?,?,0, ?, ?, ?, ?, ?,?,?,?)`;
 
-        db.query(sql, [ClientID, ClientName, AddressAndOccupation, PhoneNumber, Aadhar, AadharCardFile, Pan, PanCardFile, ImageFile, Comments], (err) => {
+        // Execute the query with form data and uploaded file names
+        db.query(sql, [ClientID,ClientName,AddressAndOccupation,PhoneNumber,Aadhar,AadharCardFile,Pan,PanCardFile,ImageFile,Comments], (err) => {
             if (err) {
-                console.error('Error inserting client:', err);
-                return res.status(500).send('Error inserting record');
+                console.error('Error inserting record:', err);
+                res.status(500).send('Error inserting record');
+                return;
             }
-
-            // ✅ Update NoOfClients in Company table
-            db.query(`UPDATE Company 
-                      SET NoOfClients = NoOfClients + 1
-                      WHERE 1`, (updateErr) => {
-                if (updateErr) {
-                    console.error('Error updating company client count:', updateErr);
-                    return res.status(500).send('Client added but failed to update company data');
-                }
-
-                console.log('Client added and company updated');
-                res.send(`
-                    <script>
-                      alert("Client Added Successfully!");
-                      window.location.href = "/AddOrder";
-                    </script>
-                `);
-            });
+            console.log('Record inserted');
+            res.send(`
+                <script>
+                  alert("Client Added Succesfully!");
+                  window.location.href = "/AddOrder";
+                </script>
+              `);
         });
     } catch (error) {
         console.error('Error handling request:', error.message);
         res.status(500).send('An error occurred while processing the request');
     }
 });
-
 
 app.post("/NewClientLead",(req,res)=>{
 
@@ -570,10 +559,12 @@ app.post("/NewInvestorLead",(req,res)=>{
     });
 })
 
+
 app.post("/NewInvestment", (req, res) => {
     const InvestmentID = generateSmallId('INVE');
-    const { Investor, AmountSanctioned, InvestmentDate, PayableInterest, InterestRate, EndDate } = req.body;
+    const { Investor, AmountSanctioned, InvestmentDate, PayableInterest, InterestRate,EndDate } = req.body;
 
+    // Update Investor's Total Investment
     const updateInvestorSql = `UPDATE Investors SET AmountInvested = AmountInvested + ? WHERE InvestorID = ?`;
 
     db.query(updateInvestorSql, [AmountSanctioned, Investor], (updateErr) => {
@@ -587,12 +578,15 @@ app.post("/NewInvestment", (req, res) => {
             `);
         }
 
+        console.log('Investor AmountInvested updated');
+
+        // Insert Investment Record
         const insertInvestmentSql = `
-            INSERT INTO Investments (InvestmentID, InvestorID, AmountSanctioned, ActiveAmount, PayableInterest, InvestmentDate, InterestRate, EndDate)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Investments (InvestmentID, InvestorID, AmountSanctioned, ActiveAmount, PayableInterest, InvestmentDate, InterestRate,EndDate)
+            VALUES (?, ?, ?, ?, ?, ?, ?,?)
         `;
 
-        db.query(insertInvestmentSql, [InvestmentID, Investor, AmountSanctioned, AmountSanctioned, PayableInterest, InvestmentDate, InterestRate, EndDate], (insertErr) => {
+        db.query(insertInvestmentSql, [InvestmentID, Investor, AmountSanctioned, AmountSanctioned, PayableInterest, InvestmentDate, InterestRate,EndDate], (insertErr) => {
             if (insertErr) {
                 console.error('Error inserting Investment:', insertErr);
                 return res.send(`
@@ -603,40 +597,57 @@ app.post("/NewInvestment", (req, res) => {
                 `);
             }
 
-            // 🔁 Update TotalInvestments in Company
-            db.query(`UPDATE Company SET TotalInvestments = TotalInvestments + ? WHERE 1`, [AmountSanctioned], (companyErr) => {
-                if (companyErr) {
-                    console.error('Error updating Company TotalInvestments:', companyErr);
+            console.log('New Investment record inserted');
+
+            // Fetch InvestorName from Investors table
+            const fetchInvestorNameSql = `SELECT InvestorName FROM Investors WHERE InvestorID = ?`;
+
+            db.query(fetchInvestorNameSql, [Investor], (fetchErr, results) => {
+                if (fetchErr) {
+                    console.error('Error fetching InvestorName:', fetchErr);
+                    return res.send(`
+                        <script>
+                            alert("Error fetching InvestorName: ${fetchErr.message}");
+                            window.location.href = "/Home";
+                        </script>
+                    `);
                 }
 
-                const fetchInvestorNameSql = `SELECT InvestorName FROM Investors WHERE InvestorID = ?`;
+                if (results.length === 0) {
+                    console.error('Investor not found');
+                    return res.send(`
+                        <script>
+                            alert("Investor not found");
+                            window.location.href = "/Home";
+                        </script>
+                    `);
+                }
 
-                db.query(fetchInvestorNameSql, [Investor], (fetchErr, results) => {
-                    if (fetchErr || results.length === 0) {
-                        console.error('Error fetching InvestorName or not found:', fetchErr);
+                const InvestorName = results[0].InvestorName;
+
+                // Delete from InvestorLead where InvestorName and Amount match
+                const deleteInvestorLeadSql = `DELETE FROM InvestorLead WHERE InvestorName = ? AND Amount = ?`;
+
+                db.query(deleteInvestorLeadSql, [InvestorName, AmountSanctioned], (deleteErr) => {
+                    if (deleteErr) {
+                        console.error('Error deleting from InvestorLead:', deleteErr);
                         return res.send(`
                             <script>
-                                alert("Investor not found");
+                                alert("Error deleting from InvestorLead: ${deleteErr.message}");
                                 window.location.href = "/Home";
                             </script>
                         `);
                     }
 
-                    const InvestorName = results[0].InvestorName;
-                    const deleteInvestorLeadSql = `DELETE FROM InvestorLead WHERE InvestorName = ? AND Amount = ?`;
+                    console.log('Investor Lead entry deleted');
 
-                    db.query(deleteInvestorLeadSql, [InvestorName, AmountSanctioned], (deleteErr) => {
-                        if (deleteErr) {
-                            console.error('Error deleting from InvestorLead:', deleteErr);
-                        }
-
-                        res.send(`
-                            <script>
-                                alert("Investment Added Successfully!");
-                                window.location.href = "/Home";
-                            </script>
-                        `);
-                    });
+                    // Success Message
+                    res.send(`
+                        <script>
+                            alert("Investment Added Successfully!");
+                            window.location.href = "/Home";
+                        </script>
+                    `);
                 });
             });
         });
@@ -646,18 +657,20 @@ app.post("/NewInvestment", (req, res) => {
 
 app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (req, res) => {
     const OrderID = generateSmallId('ORD');
-    const { Client, AmountSanctioned, PayableInterest, Years = 0, Months = 0, Days = 0, RateOfInterest, StartDate, CollateralType } = req.body;
+    const { Client, AmountSanctioned, PayableInterest, Years = 0, Months = 0, Days = 0, RateOfInterest, StartDate,CollateralType } = req.body;
     const CollateralsFile = req.files?.Collaterals ? req.files.Collaterals[0].filename : null;
     const Duration = parseInt(Years * 365) + parseInt(Months * 30) + parseInt(Days);
 
+    // Calculate the EndDate
     const startDateObj = new Date(StartDate).toISOString().split('T')[0];
     const endDateObj = new Date(startDateObj);
     endDateObj.setDate(endDateObj.getDate() + Duration);
     const EndDate = endDateObj.toISOString().split('T')[0];
 
-    const updateClientSql = `UPDATE Clients SET TotalAmount = TotalAmount + ? WHERE ClientID = ?`;
+    // Update Client's TotalAmount
+    const updateInvestorSql = `UPDATE Clients SET TotalAmount = TotalAmount + ? WHERE ClientID = ?`;
 
-    db.query(updateClientSql, [AmountSanctioned, Client], (updateErr) => {
+    db.query(updateInvestorSql, [AmountSanctioned, Client], (updateErr) => {
         if (updateErr) {
             console.error('Error updating Client TotalAmount:', updateErr);
             return res.send(`
@@ -668,12 +681,15 @@ app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (re
             `);
         }
 
+        console.log('Client TotalAmount updated');
+
+        // Insert new order
         const insertOrderSql = `
-            INSERT INTO Orders (OrderID, ClientID, AmountSanctioned, ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Collaterals, CollateralType)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO Orders (OrderID, ClientID, AmountSanctioned, ActiveAmount, PayableInterest, RateOfInterest, StartDate, EndDate, Collaterals,CollateralType)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
         `;
 
-        db.query(insertOrderSql, [OrderID, Client, AmountSanctioned, AmountSanctioned, PayableInterest, RateOfInterest, StartDate, EndDate, CollateralsFile, CollateralType], (insertErr) => {
+        db.query(insertOrderSql, [OrderID, Client, AmountSanctioned, AmountSanctioned, PayableInterest, RateOfInterest, StartDate, EndDate, CollateralsFile,CollateralType], (insertErr) => {
             if (insertErr) {
                 console.error('Error inserting Order:', insertErr);
                 return res.send(`
@@ -684,40 +700,57 @@ app.post("/NewOrder", upload.fields([{ name: 'Collaterals', maxCount: 1 }]), (re
                 `);
             }
 
-            // 🔁 Update TotalOrders in Company
-            db.query(`UPDATE Company SET TotalOrders = TotalOrders + ? WHERE 1`, [AmountSanctioned], (companyErr) => {
-                if (companyErr) {
-                    console.error('Error updating Company TotalOrders:', companyErr);
+            console.log('New Order record inserted');
+
+            // Fetch ClientName from Clients table
+            const fetchClientNameSql = `SELECT ClientName FROM Clients WHERE ClientID = ?`;
+
+            db.query(fetchClientNameSql, [Client], (fetchErr, results) => {
+                if (fetchErr) {
+                    console.error('Error fetching ClientName:', fetchErr);
+                    return res.send(`
+                        <script>
+                            alert("Error fetching ClientName: ${fetchErr.message}");
+                            window.location.href = "/Home";
+                        </script>
+                    `);
                 }
 
-                const fetchClientNameSql = `SELECT ClientName FROM Clients WHERE ClientID = ?`;
+                if (results.length === 0) {
+                    console.error('Client not found');
+                    return res.send(`
+                        <script>
+                            alert("Client not found");
+                            window.location.href = "/Home";
+                        </script>
+                    `);
+                }
 
-                db.query(fetchClientNameSql, [Client], (fetchErr, results) => {
-                    if (fetchErr || results.length === 0) {
-                        console.error('Error fetching ClientName or not found:', fetchErr);
+                const ClientName = results[0].ClientName;
+
+                // Delete from ClientLead where ClientName and Amount match
+                const deleteClientLeadSql = `DELETE FROM ClientLead WHERE ClientName = ? AND Amount = ?`;
+
+                db.query(deleteClientLeadSql, [ClientName, AmountSanctioned], (deleteErr) => {
+                    if (deleteErr) {
+                        console.error('Error deleting from ClientLead:', deleteErr);
                         return res.send(`
                             <script>
-                                alert("Client not found");
+                                alert("Error deleting from ClientLead: ${deleteErr.message}");
                                 window.location.href = "/Home";
                             </script>
                         `);
                     }
 
-                    const ClientName = results[0].ClientName;
-                    const deleteClientLeadSql = `DELETE FROM ClientLead WHERE ClientName = ? AND Amount = ?`;
+                    console.log('ClientLead entry deleted');
 
-                    db.query(deleteClientLeadSql, [ClientName, AmountSanctioned], (deleteErr) => {
-                        if (deleteErr) {
-                            console.error('Error deleting from ClientLead:', deleteErr);
-                        }
-
-                        res.send(`
-                            <script>
-                                alert("Order Added Successfully!");
-                                window.location.href = "/Home";
-                            </script>
-                        `);
-                    });
+                    // Success Message
+                    res.send(`
+                        <script>
+                            alert("Order Added Successfully!");
+                            window.location.href = "/Home";
+                        </script>
+                    `);
                 });
             });
         });
@@ -1098,7 +1131,7 @@ app.post('/UpdateClient', upload.fields([{ name: 'AadharCard' }, { name: 'PanCar
 
 // Route to update investment details
 app.post('/UpdateInvestment', (req, res) => {
-   const{InvestmentID,ActiveAmount,PayableInterest,InterestRate,InvestorId}=req.body;
+   const{InvestmentID,ActiveAmount,PayableInterest,InterestRate}=req.body;
 
     const query = `
         UPDATE Investments SET
@@ -1117,7 +1150,7 @@ app.post('/UpdateInvestment', (req, res) => {
                 res.send(`
                     <script>
                       alert("Investment updated Succesfully!");
-                      window.location.href = "/Investor/${InvestorId}";
+                      window.location.href = "/Investors";
                     </script>
                   `);
                 
@@ -1166,7 +1199,7 @@ app.post('/UpdateInvestment', (req, res) => {
     
     
     app.post('/UpdateOrder',upload.single('Collaterals'), (req, res) => {
-        const {OrderID,ActiveAmount,PayableInterest,RateOfInterest,oldCollateralsPath,EndDate,CollateralType,ClientId } = req.body;
+        const {OrderID,ActiveAmount,PayableInterest,RateOfInterest,oldCollateralsPath,EndDate,CollateralType } = req.body;
         
         let newCollateralsPath = null;
 
@@ -1201,7 +1234,7 @@ app.post('/UpdateInvestment', (req, res) => {
             res.send(`
                 <script>
                   alert("Order updated Succesfully!");
-                  window.location.href = "/Client/${ClientId}";
+                  window.location.href = "/Clients";
                 </script>
               `);
         });
@@ -1348,7 +1381,7 @@ db.query(query, [ClientID], (err, results) => {
 
 app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
     const { InvestmentID } = req.params;
-    var { InvestorName, Amount, InvestmentDate,InvestorId } = req.query;
+    var { InvestorName, Amount, InvestmentDate } = req.query;
 
     function formatDate(InvestmentDate) {
         const [day,month, year] = InvestmentDate.split('/'); // Assuming 'MM/DD/YYYY' format
@@ -1395,7 +1428,7 @@ app.get('/DeleteInvestment/:InvestmentID', (req, res) => {
                         return  res.send(`
                             <script>
                               alert("Error In Deletion,${deleteErr}");
-                              window.location.href = "/Investor/${InvestorId}";
+                              window.location.href = "/Investors";
                             </script>
                           `);
                           
@@ -1545,7 +1578,6 @@ app.get('/DeleteOrder/:OrderID', (req, res) => {
 app.get("/InvestorEMIPay/:investmentID", (req, res) => {
     const InvestmentID = req.params.investmentID;
     const PayableInterest = parseFloat(req.query.PayableInterest);
-   const  InvestorId=req.query.InvestorId
 const InvestorName=req.query.InvestorName
     // Validate parameters
     if (!InvestmentID || isNaN(PayableInterest)) {
@@ -1570,7 +1602,7 @@ const InvestorName=req.query.InvestorName
         res.send(`
             <script>
               alert("EMI Paid Successfully!");
-              window.location.href = "/Investor/${InvestorId}";
+              window.location.href = "/Investors";
             </script>
           `);
         
@@ -1580,7 +1612,7 @@ const InvestorName=req.query.InvestorName
 
 app.post("/ClientEMIPayement", (req, res) => {
 
-    const{OrderID,ActualEMI,PaidEMI,ClientName,ClientId}=req.body;
+    const{OrderID,ActualEMI,PaidEMI,ClientName}=req.body;
     // Query to insert data into InvestorEMIHistory with only the current date
     const query = `
         INSERT INTO OrderEMIHistory (OrderID,ClientName,EMIDate,ActualEMI,PaidEMI)
@@ -1590,15 +1622,10 @@ app.post("/ClientEMIPayement", (req, res) => {
     db.query(query, [OrderID,ClientName, ActualEMI,PaidEMI], (err, result) => {
         if (err) {
             console.error("Error inserting data into InvestorEMIHistory:", err);
-            res.send(`
-                <script>
-                  alert("Error  EMI Payement !");
-                  window.location.href = "/Client/${ClientId}";
-                </script>
-              `);
+            res.status(500).send("Error processing EMI payment");
         } else {
             console.log("EMI payment recorded successfully:", result);
-            res.redirect(`/Client/${ClientId}`)
+            res.redirect('/Clients')
         }
     });
 });
@@ -2443,73 +2470,8 @@ app.get('/getQuarterlyInvestmentOrders', async (req, res) => {
         res.status(500).send({ status: "error", message: "Failed to fetch quarterly investments and orders" });
     }
 });
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/getTotalCompanyData',(req,res)=>{
 
 
-    const query = `SELECT * FROM Company;`
-
-    db.query(query, (err, results) => {
-        if (err) {
-            res.send(
-`<script>
-alert("Error fetching data from Company table: ${err}");
-window.location.href = "/Dashboard";
-</script>`
-
-            )
-        }
-
-        res.status(200).json(results[0]);
-    });
-})
-
-app.post('/UpdateCompany', (req, res) => {
-    const {
-        NoOfInvestors,
-        NoOfClients,
-        Corpus,
-        OnePercentFund,
-        InvestorProjection,
-        ClientProjection,
-        TotalInvestments,
-        TotalOrders
-    } = req.body;
-
-    const query = `
-        UPDATE Company 
-        SET NoOfInvestors=?, NoOfClients=?, Corpus=?, OnePercentFund=?, 
-            InvestorProjection=?, ClientProjection=?, TotalInvestments=?, TotalOrders=? 
-        WHERE ID=1
-    `;
-
-    db.query(query, [
-        NoOfInvestors,
-        NoOfClients,
-        Corpus,
-        OnePercentFund,
-        InvestorProjection,
-        ClientProjection,
-        TotalInvestments,
-        TotalOrders
-    ], (err, results) => {
-        if (err) {
-            return res.send(`
-                <script>
-                    alert("Error updating Company data: ${err.message}");
-                    window.location.href = "/Dashboard";
-                </script>
-            `);
-        }
-
-        res.send(`
-            <script>
-                alert("Updated Successfully");
-                window.location.href = "/Company";
-            </script>
-        `);
-    });
-});
 
 
 

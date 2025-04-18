@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investors | SiPS Finance</title>
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
+            --background-color: #f8fafc;
+            --card-bg: #ffffff;
+            --dark-text: #1e293b;
+            --light-text: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+            --danger-color: #ef4444;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+      background: white;
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 6px -1px var(--shadow-color);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--font-dark);
+    }
+
+    .navbar-brand img {
+      border-radius: 8px;
+    }
+
+    .navbar-toggler {
+      border: none;
+      padding: 0.25rem;
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: none;
+      outline: none;
+    }
+
+    /* Modified navbar layout for improved spacing and alignment */
+    .navbar-collapse {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .navbar-nav {
+      margin-right: 20px;
+    }
+
+    .nav-link {
+      position: relative;
+      font-weight: 500;
+      color: var(--light-text);
+      margin: 0 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-color);
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    .nav-link.active {
+      color: white;
+    }
+
+
+    .nav-link.investors.active {
+      background-color: rgba(59, 130, 246, 0.12);
+    }
+
+    /* Modified layout for navbar elements */
+    .navbar-elements {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .sign-out {
+      background-color: #ef4444;
+      color: white;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+    }
+
+    .sign-out:hover {
+      background-color: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+        .search-container {
+      width: 100%;
+      max-width: 500px;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    #searchBar {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    #searchBar:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+      outline: none;
+    }
+        .action-btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .action-btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+         
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-success:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-header img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .profile-title {
+            flex: 1;
+        }
+
+        .profile-title h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-title p {
+            font-size: 0.875rem;
+            color: var(--light-text);
+            margin: 0;
+        }
+
+        .profile-details {
+            padding: 1rem 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--light-text);
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+
+       
+    @media (max-width: 992px) {
+      .navbar-collapse {
+        flex-direction: column;
+      }
+      
+      .search-container {
+        margin: 15px 0;
+        width: 100%;
+        order: 2;
+      }
+      
+      .navbar-elements {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .navbar-nav {
+        margin-right: 0;
+        margin-top: 1rem;
+        align-items: center;
+      }
+      
+      .nav-link {
+        width: 100%;
+        text-align: center;
+        margin: 0.25rem 0;
+      }
+      
+      .sign-out {
+        width: 100%;
+        text-align: center;
+        margin-top: 0.5rem;
+      }
+    }
+    a{
+        text-decoration: none;
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <a 
+          id="LogoBlock" 
+          href="/Home" 
+          style="display: flex; align-items: center; text-decoration: none; gap: 12px; transition: transform 0.2s ease;"
+          onmouseover="this.style.transform='translateY(-1px)'" 
+          onmouseout="this.style.transform='none'"
+      >
+          <!-- <img src="/Images/images.jpg" alt="SIPS LOGO" class="logo-img"> -->
+          <div style="display: flex; flex-direction: column;">
+              <div 
+                  class="d-flex" 
+                  style="font-size: 40px; font-weight: 700; color: black; line-height: 1;"
+              >
+                  FinTech
+              </div>
+              <span 
+                  style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;"
+              >
+                  Powered by SiPS
+              </span>
+          </div>
+      </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggler">
+            <!-- Search bar moved to center -->
+            <div class="search-container">
+              <input type="text" id="searchBar" placeholder="Search client by name, ID, or phone">
+            </div>
+            
+            <!-- Navigation and signout grouped together -->
+            <div class="navbar-elements">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link home" href="/Home">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link investors active" href="/Investors">Investors</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link clients " href="/Clients">Clients</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link queue" href="/Queue">Queue</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link company" href="/Company">Company</a>
+                </li>
+              </ul>
+              
+              <!-- Sign out button -->
+              <a href="/" class="sign-out">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+    <div class="container-fluid py-3">
+        <!-- <div class="search-container">
+            <input type="text" id="searchBar" placeholder="Search investor by name, ID, or phone">
+        </div> -->
+        <div class="action-btn-container">
+            <a href="/AddInvestor" class="btn btn-primary action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus" viewBox="0 0 16 16">
+                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                    <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+                Add Investor
+            </a>
+
+       
+            <a href="/InvestmentHistory" class="btn btn-success action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z"/>
+                </svg>
+                Active Investment History
+            </a>
+        </div>
+
+        <div class="profile-container" id="profile-cards-container">
+            <!-- Dynamic profile cards will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        async function fetchInvestmentData() {
+            try {
+                const response = await fetch('/getInvestmentData');
+                if (!response.ok) throw new Error('Failed to fetch investment data');
+                const data = await response.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error('No Investments Yet');
+                }
+            } catch (error) {
+                console.error('Error fetching investment data:', error.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchInvestmentData);
+
+        async function fetchInvestorName(id) {
+            try {
+                const res = await fetch(`/InvestorDetails/${id}`);
+                if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
+                const investorDetails = await res.json();
+                return investorDetails.InvestorName;
+            } catch (err) {
+                console.error(err.message);
+                return id;
+            }
+        }
+
+        let originalData = [];
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/InvestorsData');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                originalData = data;
+
+                const container = document.getElementById('profile-cards-container');
+                container.innerHTML = '';
+
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="no-results"><h3>No Investors Yet</h3><p>Add your first investor to get started</p></div>';
+                    return;
+                }
+
+                data.forEach(investor => {
+                    const profileCard = document.createElement('div');
+                    profileCard.classList.add('profile-card');
+                    const imageUrl = investor.Image ? `../uploads/images/${investor.Image}` : '../Images/DummyProfile2.jpg';
+                    
+                    profileCard.innerHTML = `
+                        <div class="profile-header">
+                            <img src="${imageUrl}" alt="${investor.InvestorName}" class="profile-image">
+                            <div class="profile-title">
+                                <h2>${investor.InvestorName}</h2>
+                                <p>ID: ${investor.InvestorID}</p>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Total Amount Invested:</span>
+                                <span class="detail-value">${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(investor.AmountInvested)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Phone Number:</span>
+                                <span class="detail-value">${investor.PhoneNumber}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(profileCard);
+                    profileCard.addEventListener('click', () => {
+                        window.location.href = `/investor/${encodeURIComponent(investor.InvestorID)}`;
+                    });
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                const container = document.getElementById('profile-cards-container');
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>Unable to load investor data</h3>
+                        <p>Please try again later</p>
+                    </div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchData);
+
+        function filterData(query) {
+            const container = document.getElementById('profile-cards-container');
+            container.innerHTML = '';
+
+            const filteredData = originalData.filter(investment => {
+                return (
+                    (investment.InvestorName && investment.InvestorName.toLowerCase().includes(query.toLowerCase())) ||
+                    (investment.AmountInvested && investment.AmountInvested.toString().includes(query)) ||
+                    (investment.InvestorID && investment.InvestorID.toLowerCase().includes(query.toLowerCase())) ||
+                    (investment.PhoneNumber && investment.PhoneNumber.toString().includes(query))
+                );
+            });
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>No matching results found</h3>
+                        <p>Try a different search term</p>
+                    </div>`;
+                return;
+            }
+
+            filteredData.forEach(investor => {
+                const profileCard = document.createElement('div');
+                profileCard.classList.add('profile-card');
+                const imageUrl = investor.Image ? `../uploads/images/${investor.Image}` : '../Images/DummyProfile2.jpg';
+
+                profileCard.innerHTML = `
+                    <div class="profile-header">
+                        <img src="${imageUrl}" alt="${investor.InvestorName}" class="profile-image">
+                        <div class="profile-title">
+                            <h2>${investor.InvestorName}</h2>
+                            <p>ID: ${investor.InvestorID}</p>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Total Amount Invested:</span>
+                            <span class="detail-value">${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(investor.AmountInvested)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phone Number:</span>
+                            <span class="detail-value">${investor.PhoneNumber}</span>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(profileCard);
+                profileCard.addEventListener('click', () => {
+                    window.location.href = `/investor/${encodeURIComponent(investor.InvestorID)}`;
+                });
+            });
+        }
+
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            filterData(e.target.value);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

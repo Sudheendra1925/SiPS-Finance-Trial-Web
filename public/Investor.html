@@ -32,6 +32,8 @@
       background-color: var(--secondary-color);
       color: var(--font-dark);
       line-height: 1.6;
+    padding:20px;
+    padding-top: 0px;
     }
 
     .navbar {
@@ -44,7 +46,7 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width:30%;
+          
       
     }
     .nav-item{
@@ -180,9 +182,28 @@ border-radius: 10px;;
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-          <a class="navbar-brand d-flex align-items-center" href="/Home">
-            <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">  
-          </a>
+            <a 
+            id="LogoBlock" 
+            href="/Home" 
+            style="display: flex; align-items: center; text-decoration: none; gap: 12px; transition: transform 0.2s ease;"
+            onmouseover="this.style.transform='translateY(-1px)'" 
+            onmouseout="this.style.transform='none'"
+        >
+            <!-- <img src="/Images/images.jpg" alt="SIPS LOGO" class="logo-img"> -->
+            <div style="display: flex; flex-direction: column;">
+                <div 
+                    class="d-flex" 
+                    style="font-size: 40px; font-weight: 700; color: black; line-height: 1;"
+                >
+                    FinTech
+                </div>
+                <span 
+                    style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;"
+                >
+                    Powered by SiPS
+                </span>
+            </div>
+        </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -201,7 +222,10 @@ border-radius: 10px;;
                 <a  href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a  href="/Company">Company</a>
+                <a  href="/Company">Insights</a>
+              </li>
+              <li class="nav-item">
+                <a  href="/Dashboard">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -252,8 +276,8 @@ border-radius: 10px;;
         </table>
         
     <center> 
-        <div id="ActiveInvestment"></div> 
-        <div class="total-amount"></div> 
+        <div id="ActiveInvestment" style="margin-bottom:50px;"></div> 
+        <!-- <div class="total-amount"></div>  -->
     </center>
     </div>
 
@@ -273,7 +297,7 @@ border-radius: 10px;;
                     let formattedDetails = data.BankDetails.split(",").map(detail => 
             `<span class="bank-detail-item">${detail.trim()}</span>`
         ).join("");
-                    const img = data.Image ? `../uploads/images/${data.Image}`:'../Images/DummyProfile2.jpg'  ;
+                    const img = data.Image ? `/public/uploads/Images/${data.Image}`:'/public/Images/DummyProfile2.jpg'  ;
                     
                     console.log("Image Path:", img);
 
@@ -299,9 +323,9 @@ border-radius: 10px;;
                         }
                     });
     
-                    const totalAmountDiv = document.querySelector('.investments-section .total-amount');
-                    totalAmountDiv.innerHTML = ` <span class="fw-semibold text-secondary">Total Investment Amount:</span> 
-    <span class="fw-bold text-primary">₹${data.AmountInvested?.toLocaleString("en-IN") || '0'}</span>`;
+    //                 const totalAmountDiv = document.querySelector('.investments-section .total-amount');
+    //                 totalAmountDiv.innerHTML = ` <span class="fw-semibold text-secondary">Total Investment Amount:</span> 
+    // <span class="fw-bold text-primary">₹${data.AmountInvested?.toLocaleString("en-IN") || '0'}</span>`;
     
                     document.getElementById('loader').style.display = 'none';
                     document.querySelector('.investor-container').style.display = 'flex';
@@ -336,8 +360,8 @@ border-radius: 10px;;
                                  <td>${investment.EndDate ? new Date(investment.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                                 <td>
                                     <a href="/UpdateInvestmentPage/${investment.InvestmentID}?InvestorId=${id}" class="btn btn-primary" aria-label="Update Investment">Update</a>
-                                    <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.AmountSanctioned}','${new Date(investment.InvestmentDate).toLocaleDateString('en-IN')}')" class="btn btn-danger" aria-label="Close Investment">Close</button>
-                                    <a onclick="confirmPay('${investment.InvestmentID}', '${InvestorName}','${investment.PayableInterest}')" class="btn btn-primary" aria-label="Pay EMI">Pay EMI</a>
+                                    <button onclick="confirmDelete('${investment.InvestmentID}','${InvestorName}','${investment.AmountSanctioned}','${new Date(investment.InvestmentDate).toLocaleDateString('en-IN')}','${id}')" class="btn btn-danger" aria-label="Close Investment">Close</button>
+                                    <a onclick="confirmPay('${investment.InvestmentID}', '${InvestorName}','${investment.PayableInterest}','${id}')" class="btn btn-primary" aria-label="Pay EMI">Pay EMI</a>
                                     <a href="/InvestmentEMIHistoryPage/${investment.InvestmentID}?InvestorId=${id}" class="btn btn-primary" aria-label="View EMI History">EMI History</a>
                                 </td>
                             </tr>
@@ -373,11 +397,11 @@ border-radius: 10px;;
     </script>
     <script>
 
-function confirmDelete(InvestmentID,InvestorName,AmountSanctioned,InvestmentDate) {
+function confirmDelete(InvestmentID,InvestorName,AmountSanctioned,InvestmentDate,InvestorId) {
             // Show confirmation alert
             if (confirm("Are you sure you want to Close this Investment?")) {
               
-                window.location.href = `/DeleteInvestment/${InvestmentID}?InvestorName=${InvestorName}&Amount=${AmountSanctioned}&InvestmentDate=${InvestmentDate}`;
+                window.location.href = `/DeleteInvestment/${InvestmentID}?InvestorName=${InvestorName}&Amount=${AmountSanctioned}&InvestmentDate=${InvestmentDate}&InvestorId=${InvestorId}`;
                 
             } else {
                 // Action if user cancels
@@ -386,10 +410,10 @@ function confirmDelete(InvestmentID,InvestorName,AmountSanctioned,InvestmentDate
         }
 
         
-function confirmPay(InvestmentID,InvestorName,PayableInterest) {
+function confirmPay(InvestmentID,InvestorName,PayableInterest,InvestorId) {
             // Show confirmation alert
             if (confirm("Are you sure you want to Pay EMI to this Investment?")) {
-                window.location.href = `/InvestorEMIPay/${InvestmentID}?InvestorName=${InvestorName}&PayableInterest=${PayableInterest}`;
+                window.location.href = `/InvestorEMIPay/${InvestmentID}?InvestorName=${InvestorName}&PayableInterest=${PayableInterest}&InvestorId=${InvestorId}`;
                
             } else {
                 // Action if user cancels

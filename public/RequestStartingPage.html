@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Services Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {  
+            font-family: sans-serif;
+        }
+        :root {
+            --primary-color: #0875e1; 
+            --secondary-color: #f8faff;
+            --accent-color: #0875e1;
+            --text-dark: #2a2a2a;
+            --text-light: #5f6f81;
+            --white: #ffffff;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --highlight-color: #f1c40f;
+            --card-bg: #f9f9f9;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --transition-speed: 0.3s;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--secondary-color);
+            margin: 0;
+            padding: 0;
+        }
+        .form-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            padding: 30px 40px;
+            max-width: 600px;
+            margin: 50px auto;
+        }
+        .form-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .btn-primary:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px var(--shadow-color);
+        }
+        .form-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* For Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        
+        /* Tab Styling */
+        .nav-tabs {
+            display:flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link {
+            margin-bottom: -2px;
+            border: none;
+            color: var(--text-light);
+            font-weight: 500;
+            padding: 10px 25px;
+            border-radius: 8px 8px 0 0;
+            transition: all var(--transition-speed);
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--primary-color);
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--white);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        /* Add spacing between tab buttons */
+        .nav-tabs .nav-item {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container shadow-lg">
+        <div class="logo">
+            <img src="./Images/Sips Finance Logo.png" alt="Company Logo">
+        </div>
+        
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="financeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="loan-tab" data-bs-toggle="tab" data-bs-target="#loan-content" type="button" role="tab" aria-controls="loan-content" aria-selected="true">Loan Request</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="investment-tab" data-bs-toggle="tab" data-bs-target="#investment-content" type="button" role="tab" aria-controls="investment-content" aria-selected="false">Investment</button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content" id="financeTabsContent">
+            <!-- Loan Request Form -->
+            <div class="tab-pane fade show active" id="loan-content" role="tabpanel" aria-labelledby="loan-tab">
+                <h2 class="text-center">Loan Request Form</h2>
+                <form action="/SubmitLoanRequest" method="POST">
+                    <div class="mb-3">
+                        <label for="ClientName" class="form-label">Full Name</label>
+                        <input type="text" id="ClientName" name="ClientName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ClientPhoneNumber" class="form-label">Phone Number</label>
+                        <input type="number" id="ClientPhoneNumber" name="ClientPhoneNumber" class="form-control" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="LoanAmount" class="form-label">Loan Amount (₹)</label>
+                        <input type="number" id="LoanAmount" name="LoanAmount" class="form-control"  required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label for="Duration" class="form-label">Duration</label><br>
+                        <div style="margin-top: 10px;" class="row">
+                            <div class="col-4">
+                                <label for="Years">Years</label>
+                                <input type="number" id="Years" name="Years" placeholder="Years" min="0" step="1" value="0" class="form-control">
+                            </div>
+                            <div class="col-4">
+                                <label for="Months">Months</label>
+                                <input type="number" id="Months" name="Months" placeholder="Months" min="0" max="11" step="1" value="0" class="form-control">
+                            </div>
+                            <div class="col-4">
+                                <label for="Days">Days</label>
+                                <input type="number" id="Days" name="Days" placeholder="Days" min="0" max="30" step="1" value="0" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Collateral" class="form-label">Collateral</label>
+                        <textarea id="Collateral" name="Collateral" class="form-control" rows="2" placeholder="List down surety" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit Loan Request</button>
+                </form>
+            </div>
+            
+            <!-- Investment Request Form -->
+            <div class="tab-pane fade" id="investment-content" role="tabpanel" aria-labelledby="investment-tab">
+                <h2 class="text-center">Investment Request Form</h2>
+                <form action="/SubmitInvestmentRequest" method="POST">
+                    <div class="mb-3">
+                        <label for="InvestorName" class="form-label">Full Name</label>
+                        <input type="text" id="InvestorName" name="InvestorName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="InvestorPhoneNumber" class="form-label">Phone Number</label>
+                        <input type="number" id="InvestorPhoneNumber" name="InvestorPhoneNumber" class="form-control" placeholder="Enter Phone Number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="InvestmentAmount" class="form-label">Investment Amount (₹)</label>
+                        <input type="number" id="InvestmentAmount" name="InvestmentAmount" class="form-control"  required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit Investment Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Phone Number Validation - Loan Form
+        document.getElementById('ClientPhoneNumber').addEventListener('input', function (e) {
+            const value = e.target.value;
+            if (!/^\d{0,10}$/.test(value)) {
+                e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+            }
+        });
+
+        // Phone Number Validation - Investment Form
+        document.getElementById('InvestorPhoneNumber').addEventListener('input', function (e) {
+            const value = e.target.value;
+            if (!/^\d{0,10}$/.test(value)) {
+                e.target.value = value.slice(0, -1); // Restrict input to 10 digits
+            }
+        });
+        
+  
+    </script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -45,7 +45,7 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width:30%;
+    
       
     }
     .nav-item{
@@ -154,9 +154,28 @@ input[type="number"]::-webkit-outer-spin-button,
 <body>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="/Home">
-        <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">  
-      </a>
+      <a 
+        id="LogoBlock" 
+        href="/Home" 
+        style="display: flex; align-items: center; text-decoration: none; gap: 12px; transition: transform 0.2s ease;"
+        onmouseover="this.style.transform='translateY(-1px)'" 
+        onmouseout="this.style.transform='none'"
+    >
+        <!-- <img src="/Images/images.jpg" alt="SIPS LOGO" class="logo-img"> -->
+        <div style="display: flex; flex-direction: column;">
+            <div 
+                class="d-flex" 
+                style="font-size: 40px; font-weight: 700; color: black; line-height: 1;"
+            >
+                FinTech
+            </div>
+            <span 
+                style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;"
+            >
+                Powered by SiPS
+            </span>
+        </div>
+    </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -175,7 +194,10 @@ input[type="number"]::-webkit-outer-spin-button,
             <a  href="/Queue">Queue</a>
           </li>
           <li class="nav-item">
-            <a  href="/Company">Company</a>
+            <a  href="/Company">Insights</a>
+          </li>
+          <li class="nav-item">
+            <a  href="/Dashboard">Dashboard</a>
           </li>
         </ul>
         <div class="d-flex align-items-center ms-3">

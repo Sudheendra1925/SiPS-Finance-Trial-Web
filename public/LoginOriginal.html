@@ -295,21 +295,10 @@ let Otp=0;
   document.getElementById('signup-username').addEventListener('input', function (e) {
     const value = e.target.value;
     if (value.length > 25) {
-      e.target.value = value.slice(0, -1); // Restrict input to 25 digits
+      e.target.value = value.slice(0, -1); // Restrict input to 10 digits
     }
   });
-  document.getElementById('signup-password').addEventListener('input', function (e) {
-    const value = e.target.value;
-    if (value.length > 25) {
-      e.target.value = value.slice(0, -1); // Restrict input to 25 digits
-    }
-  });
-  document.getElementById('signup-password-confirm').addEventListener('input', function (e) {
-    const value = e.target.value;
-    if (value.length > 25) {
-      e.target.value = value.slice(0, -1); // Restrict input to 25 digits
-    }
-  });
+  
   function togglePasswordVisibility(inputId) {
     const inputField = document.getElementById(inputId);
     const eyeButton = inputField.nextElementSibling; // Assuming the button is the next sibling

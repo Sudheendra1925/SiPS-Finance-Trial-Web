@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SiPS Finance Analytics Dashboard - Company Overview">
+  <title>SiPS Finance - Analytics Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-light: rgba(37, 99, 235, 0.1);
+      --primary-hover: #1d4ed8;
+      --secondary-color: #f8fafc;
+      --success-color: #22c55e;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --warning-color: #f59e0b;
+      --white: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --font-dark: #1e293b;
+      --font-light: #64748b;
+      --border-color: #e2e8f0;
+      --card-radius: 12px;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--secondary-color);
+      color: var(--font-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      background: var(--white);
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 6px -1px var(--shadow-color);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    #LogoBlock {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 12px;
+      transition: transform var(--transition-speed) ease;
+    }
+
+    #LogoBlock:hover {
+      transform: translateY(-2px);
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: var(--font-dark);
+    }
+
+    .navbar-toggler {
+      border: none;
+      padding: 0.25rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .navbar-toggler:focus {
+      box-shadow: none;
+      outline: none;
+    }
+
+    .navbar-toggler:hover {
+      opacity: 0.8;
+    }
+
+    .navbar-collapse {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .navbar-nav {
+      margin-right: 20px;
+    }
+
+    .nav-link {
+      position: relative;
+      font-weight: 500;
+      color: var(--font-light);
+      margin: 0 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .nav-link:hover {
+      color: var(--primary-color);
+      background-color: var(--primary-light);
+    }
+
+    .nav-link.active {
+      color: var(--primary-color);
+      background-color: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .navbar-elements {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .sign-out {
+      background-color: var(--danger-color);
+      color: var(--white);
+      font-weight: 500;
+      transition: all var(--transition-speed) ease;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+    }
+
+    .sign-out:hover {
+      background-color: var(--danger-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Dashboard Container */
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      gap: 1.5rem;
+    }
+
+    /* Summary Cards Grid */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .summary-card {
+      background: var(--white);
+      border-radius: var(--card-radius);
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary-color);
+      opacity: 0.5;
+    }
+
+    .summary-title {
+      font-size: 0.95rem;
+      color: var(--font-light);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-title i {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+    }
+
+    .summary-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .summary-card span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--font-light);
+      margin-top: 5px;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(400px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .chart-card {
+  
+      background: var(--white);
+      border-radius: var(--card-radius);
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px var(--shadow-color);
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--font-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chart-title i {
+      color: var(--primary-color);
+      font-size: 1rem;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
+
+    .count-display {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      color: var(--font-light);
+      padding: 0.5rem;
+      background-color: rgba(37, 99, 235, 0.05);
+      border-radius: 6px;
+    }
+
+    .count-display span {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    /* Trend Controls */
+    .trend-controls {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      /* flex-wrap: wrap; */
+      background-color: rgba(37, 99, 235, 0.05);
+      padding: 0.75rem;
+      border-radius: 8px;
+      
+    }
+
+    .trend-select {
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: var(--white);
+      color: var(--font-dark);
+      font-size: 0.9rem;
+      transition: all var(--transition-speed) ease;
+      cursor: pointer;
+  
+    }
+
+    .trend-select:hover, .trend-select:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width:20%;
+    }
+
+    .input-group input {
+      /* width: 120px; */
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .input-group input:hover, .input-group input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Sidebar Styles */
+    .mini-bar {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 100px;
+      background-color: var(--primary-color);
+      border-radius: 0 4px 4px 0;
+      z-index: 1001;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .mini-bar:hover {
+      width: 12px;
+      background-color: var(--primary-hover);
+    }
+
+    .mini-bar::after {
+      content: "≡";
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      opacity: 0;
+      transition: opacity var(--transition-speed) ease;
+    }
+
+    .mini-bar:hover::after {
+      opacity: 1;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: -280px;
+      top: 0;
+      height: 100%;
+      width: 280px;
+      background-color: var(--white);
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      transition: all var(--transition-speed) ease;
+      z-index: 1000;
+      padding-top: 80px;
+      overflow-y: auto;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      color: var(--font-dark);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-left: 3px solid transparent;
+      position: relative;
+    }
+
+    .sidebar-link:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+      border-left: 3px solid var(--primary-color);
+    }
+
+    .sidebar-link i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+      transition: transform var(--transition-speed) ease;
+    }
+
+    .sidebar-link:hover i {
+      transform: translateX(3px);
+    }
+
+    .sidebar-section {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-section-title {
+      padding: 0.5rem 1.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--font-light);
+      letter-spacing: 1px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 999;
+      backdrop-filter: blur(2px);
+      transition: opacity var(--transition-speed) ease;
+      opacity: 0;
+    }
+
+    .overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Skeleton loading animation */
+    @keyframes skeleton-loading {
+      0% {
+        background-position: -200px 0;
+      }
+      100% {
+        background-position: calc(200px + 100%) 0;
+      }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200px 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    /* Error and empty state styling */
+    .chart-error {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--danger-color);
+      text-align: center;
+      padding: 1rem;
+    }
+    
+    .chart-error i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--secondary-color);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-color);
+    }
+
+    /* Tooltips */
+    .tooltip-trigger {
+      position: relative;
+      cursor: help;
+    }
+
+    .tooltip-content {
+      visibility: hidden;
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--font-dark);
+      color: var(--white);
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      width: 150px;
+      font-size: 0.75rem;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip-trigger:hover .tooltip-content {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 1200px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .chart-card {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .navbar-collapse {
+        flex-direction: column;
+      }
+      
+      .navbar-elements {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .navbar-nav {
+        margin-right: 0;
+        margin-top: 1rem;
+        align-items: center;
+      }
+      
+      .nav-link {
+        width: 100%;
+        text-align: center;
+        margin: 0.25rem 0;
+      }
+      
+      .sign-out {
+        width: 100%;
+        text-align: center;
+        margin-top: 0.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 0 1rem;
+        margin: 1rem auto;
+      }
+      
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .sidebar {
+        width: 250px;
+        left: -250px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .trend-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-container {
+        height: 250px;
+      }
+
+      .sidebar {
+        width: 85%;
+        left: -85%;
+      }
+    }
+
+    /* Accessibility improvements */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Enhance focus states for keyboard navigation */
+    a:focus, button:focus, input:focus, select:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+
+    /* Print styles */
+    @media print {
+      .navbar, .sidebar, .mini-bar, .overlay, .sign-out {
+        display: none !important;
+      }
+
+      .dashboard-container {
+        margin: 0;
+        padding: 0;
+      }
+
+      .summary-card, .chart-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+      }
+
+      .chart-container {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+    <div class="container-fluid">
+      <div style="display:flex;justify-content: center;align-items: center;">
+        <a id="LogoBlock" href="/Home" style="display: flex; align-items: center; text-decoration: none; gap: 12px;">
+          <div style="display: flex; flex-direction: column;">
+            <div class="d-flex" style="font-size: 40px; font-weight: 700; color: black; line-height: 1;">
+              FinTech
+            </div>
+            <span style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;">
+              Powered by SiPS
+            </span>
+          </div>
+        </a>
+      </div>
+      <div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+          <div class="navbar-elements">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link home" href="/Home">
+                  Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link investors" href="/Investors">
+                   Investors
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link clients" href="/Clients">
+                  </i> Clients
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link queue" href="/Queue">
+                   Queue
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link company " href="/Company">
+                  Insights
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link company active" href="/Dashboard">
+                  Dashboard
+                </a>
+              </li>
+            </ul>
+            <a href="/" class="sign-out">
+               Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mini Bar that shows on hover -->
+  <div class="mini-bar" id="miniBar" role="button" aria-label="Open sidebar menu" style="height:50vh" tabindex="0"></div>
+  <div class="overlay" id="overlay" role="presentation"></div>
+  
+  <aside class="sidebar" id="sidebar" aria-label="Secondary navigation">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Transactions</div>
+      <a href="/TotalInvestmentEMIHistoryPage" class="sidebar-link">
+        <i class="fas fa-history"></i>Investor EMI History
+      </a>
+      <a href="/TotalOrderEMIHistoryPage" class="sidebar-link">
+        <i class="fas fa-file-invoice-dollar"></i>Client EMI History
+      </a>
+      <a href="/DueEMIPage" class="sidebar-link">
+        <i class="fas fa-calendar-times"></i>Due EMI
+      </a>
+    </div>
+    
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Closed Items</div>
+      <a href="/ClosedInvestmentsPage" class="sidebar-link">
+        <i class="fas fa-lock"></i>Closed Investments
+      </a>
+      <a href="/ClosedOrdersPage" class="sidebar-link">
+        <i class="fas fa-lock"></i>Closed Orders
+      </a>
+    </div>
+    
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Data Management</div>
+      <a href="/ExcelExportPage" class="sidebar-link">
+        <i class="fas fa-file-export"></i>Export To Excel
+      </a>
+      <a href="/ExcelImportPage" class="sidebar-link">
+        <i class="fas fa-file-import"></i>Import From Excel
+      </a>
+    </div>
+    
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Rejected Items</div>
+      <a href="/RejectedInvestmentsPage" class="sidebar-link">
+        <i class="fas fa-times-circle"></i>Rejected Investments
+      </a>
+      <a href="/RejectedOrdersPage" class="sidebar-link">
+        <i class="fas fa-times-circle"></i>Rejected Orders
+      </a>
+    </div>
+    <a href="/EditCompanyPage" class="sidebar-link">
+      <i class="fa-solid fa-pen-to-square"></i>EditCompanyPage
+    </a>
+  </aside>
+
+  <main class="dashboard-container">
+    <h1 class="sr-only">Company Dashboard</h1>
+    
+    <!-- Summary Cards Section -->
+    <section class="summary-grid" aria-label="Financial summary">
+      <div class="summary-card">
+        <div class="summary-title"><i class="fas fa-money-bill-wave"></i> Gross Investments</div>
+        <div class="summary-value" id="totalInvestments">₹0</div>
+        <span id="NoOfInvestors"></span>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title"><i class="fas fa-shopping-cart"></i> Gross Orders</div>
+        <div class="summary-value" id="totalOrders">₹0</div>
+        <span id="NoOfClients"></span>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title"><i class="fas fa-coins"></i> Corpus</div>
+        <div class="summary-value" id="Corpus">₹0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title tooltip-trigger">
+          <i class="fas fa-percentage"></i> OnePercentFund
+          <span class="tooltip-content">1% of all transactions</span>
+        </div>
+        <div class="summary-value" id="OnePercentFund">₹0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title tooltip-trigger">
+          <i class="fas fa-chart-line"></i> Investor Projection
+          <span class="tooltip-content">Expected returns for investors</span>
+        </div>
+        <div class="summary-value" id="InvestorProjection">₹0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-title tooltip-trigger">
+          <i class="fas fa-chart-bar"></i> Client Projection
+          <span class="tooltip-content">Expected client payments</span>
+        </div>
+        <div class="summary-value" id="ClientProjection">₹0</div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-grid" aria-label="Performance charts">
+      <!-- Trend Chart Card -->
+      <div class="chart-card">
+        <div class="trend-controls" >
+          <select class="trend-select" id="trendSelect" aria-label="Select trend view">
+            <option value="monthly">Monthly Trend</option>
+            <option value="quarterly">Quarterly Trend</option>
+            <option value="yearly">Yearly Trend</option>
+          </select>
+          <div class="input-group" id="yearInputGroup">
+            <label for="yearInput" class="sr-only" style="color:black" >Select Year</label>
+            <input type="number" id="yearInput" placeholder="Enter Year" min="2000" max="2100" value="2025" aria-label="Select year for trend data">
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="trendChart" aria-label="Investment and Order Trends"></canvas>
+          <div id="trendChartLoader" class="skeleton" style="height: 100%; width: 100%; display: none;"></div>
+          <div id="trendChartError" class="chart-error" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Unable to load trend data</p>
+            <button class="btn btn-sm btn-primary mt-2" id="retryTrendBtn">Retry</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Investments vs Orders Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title">
+          <span>Investments vs Orders</span>
+          <i class="fas fa-balance-scale"></i>
+        </h3>
+        <div class="chart-container">
+          <canvas id="investmentsVsOrdersChart" aria-label="Comparison of investments versus orders"></canvas>
+          <div id="investmentsVsOrdersChartLoader" class="skeleton" style="height: 100%; width: 100%; display: none;"></div>
+          <div id="investmentsVsOrdersChartError" class="chart-error" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Unable to load comparison data</p>
+            <button class="btn btn-sm btn-primary mt-2" id="retryComparisonBtn">Retry</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Investor Distribution Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title">
+          <span>Investor Distribution</span>
+          <i class="fas fa-user-tie"></i>
+        </h3>
+        <div class="count-display">Active Investors: <span id="investorCount">0</span></div>
+        <div class="chart-container">
+          <canvas id="investorSplitChart" aria-label="Distribution of investments by investor"></canvas>
+          <div id="investorSplitChartLoader" class="skeleton" style="height: 100%; width: 100%; display: none;"></div>
+          <div id="investorSplitChartError" class="chart-error" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Unable to load investor data</p>
+            <button class="btn btn-sm btn-primary mt-2" id="retryInvestorBtn">Retry</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Client Distribution Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title">
+          <span>Client Distribution</span>
+          <i class="fas fa-users"></i>
+        </h3>
+        <div class="count-display">Active Clients: <span id="clientCount">0</span></div>
+        <div class="chart-container">
+          <canvas id="clientSplitChart" aria-label="Distribution of orders by client"></canvas>
+          <div id="clientSplitChartLoader" class="skeleton" style="height: 100%; width: 100%; display: none;"></div>
+          <div id="clientSplitChartError" class="chart-error" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>Unable to load client data</p>
+            <button class="btn btn-sm btn-primary mt-2" id="retryClientBtn">Retry</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 text-muted">
+    <small>© 2025 SiPS Finance. All rights reserved.</small>
+  </footer>
+
+  <script>
+    // Initialize all charts when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Setup mini bar hover functionality
+      const miniBar = document.getElementById('miniBar');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.overlay');
+      
+      miniBar.addEventListener('mouseenter', function() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+      });
+      
+      // Close sidebar when clicking overlay
+      overlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+      });
+      
+      // Close sidebar when mouse leaves sidebar area
+      sidebar.addEventListener('mouseleave', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+      });
+
+      // Initialize all charts and data
+    
+      loadInvestmentsVsOrdersChart();
+      loadInvestorSplitChart();
+      loadClientSplitChart();
+      setupTrendChart();
+
+      // Set up event listeners for trend controls
+      document.getElementById('trendSelect').addEventListener('change', function() {
+        updateTrendChart();
+      });
+
+      document.getElementById('yearInput').addEventListener('input', function() {
+        updateTrendChart();
+      });
+    });
+
+    // Chart instances
+    let investmentsVsOrdersChart;
+    let investorSplitChart;
+    let clientSplitChart;
+    let trendChart;
+
+    function setupTrendChart() {
+      // Hide year input initially (shown when monthly/quarterly selected)
+      const yearInputGroup = document.getElementById('yearInputGroup');
+      const trendSelect = document.getElementById('trendSelect');
+      
+      // Show/hide year input based on selection
+      function toggleYearInput() {
+        if (trendSelect.value === 'yearly') {
+          yearInputGroup.style.display = 'none';
+        } else {
+          yearInputGroup.style.display = 'flex';
+        }
+      }
+      
+      trendSelect.addEventListener('change', toggleYearInput);
+      toggleYearInput(); // Initial call
+      
+      // Load initial trend chart
+      updateTrendChart();
+    }
+
+    // Update Trend Chart based on selection
+    async function updateTrendChart() {
+      const trendType = document.getElementById('trendSelect').value;
+      const year = document.getElementById('yearInput').value;
+      
+      try {
+        let url, labels, title;
+        
+        if (trendType === 'monthly') {
+          url = `/getMonthlyInvestmentOrders?currentYear=${year}`;
+          title = `Monthly Trend (${year})`;
+        } else if (trendType === 'quarterly') {
+          url = `/getQuarterlyInvestmentOrders?year=${year}`;
+          title = `Quarterly Trend (${year})`;
+        } else { // yearly
+          url = `/getYearlyInvestmentOrders`;
+          title = `Yearly Trend`;
+        }
+        
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.status === "success") {
+          const ctx = document.getElementById('trendChart').getContext('2d');
+          
+          if (trendChart) {
+            trendChart.destroy();
+          }
+
+          trendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: result.labels,
+              datasets: [
+                {
+                  label: "Investments",
+                  data: result.investments,
+                  borderColor: "#4CAF50",
+                  backgroundColor: "rgba(76, 175, 80, 0.2)",
+                  tension: 0.3,
+                  fill: true
+                },
+                {
+                  label: "Orders",
+                  data: result.orders,
+                  borderColor: "#1565C0",
+                  backgroundColor: "rgba(21, 101, 192, 0.2)",
+                  tension: 0.3,
+                  fill: true
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                title: {
+                  display: true,
+                  text: title,
+                  font: {
+                    size: 16
+                  }
+                },
+                legend: { position: 'top' },
+                tooltip: { 
+                  callbacks: {
+                    label: function(context) {
+                      let label = context.dataset.label || '';
+                      if (label) {
+                        label += ': ';
+                      }
+                      label += '₹' + context.raw.toLocaleString();
+                      return label;
+                    }
+                  }
+                }
+              },
+              scales: {
+                y: { 
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function(value) {
+                      return '₹' + value.toLocaleString();
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error loading trend chart:", error);
+      }
+    }
+
+    // Load Investments vs Orders Chart
+    async function loadInvestmentsVsOrdersChart() {
+      try {
+        const response = await fetch('/TotalCompanyAccount');
+        const result = await response.json();
+
+        if (result.status === "success") {
+          const ctx = document.getElementById('investmentsVsOrdersChart').getContext('2d');
+          
+          if (investmentsVsOrdersChart) {
+            investmentsVsOrdersChart.destroy();
+          }
+
+          investmentsVsOrdersChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ["Investments", "Orders"],
+              datasets: [{
+                label: "Amount",
+                data: [result.breakdown.totalInvestments, result.breakdown.totalOrders],
+                backgroundColor: ["#4CAF50", "#1565C0"],
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: { 
+                y: { 
+                  beginAtZero: true,
+                  ticks: {
+                    callback: function(value) {
+                      return '₹' + value.toLocaleString();
+                    }
+                  }
+                }
+              },
+              plugins: {
+                legend: { display: false },
+                tooltip: { 
+                  callbacks: {
+                    label: function(context) {
+                      return '₹' + context.raw.toLocaleString();
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error loading Investments vs Orders chart:", error);
+      }
+    }
+
+    // Load Investor Split Chart
+    async function loadInvestorSplitChart() {
+      try {
+        const response = await fetch('/getInvestmentData');
+        if (!response.ok) throw new Error('Failed to fetch investment data');
+        const data = await response.json();
+     
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('No Investments Yet');
+        }
+
+        const investorNamesPromises = data.map(item => fetchInvestorName(item.InvestorID));
+        const investorNames = await Promise.all(investorNamesPromises);
+
+        const labels = [];
+        const investments = [];
+
+        data.forEach((item, index) => {
+          if (item.InvestorID && item.TotalInvestment) {
+            labels.push(investorNames[index]);
+            investments.push(item.TotalInvestment);
+          }
+        });
+
+        document.getElementById("investorCount").textContent = data.length;
+
+        const ctx = document.getElementById('investorSplitChart').getContext('2d');
+        
+        if (investorSplitChart) {
+          investorSplitChart.destroy();
+        }
+
+        investorSplitChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Investment Amount',
+              data: investments,
+              backgroundColor: [
+                '#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#33FFF6',
+                '#FF5733', '#33FF57', '#5733FF', '#FF33A6', '#33FFF6'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.label || '';
+                    if (label) {
+                      label += ': ';
+                    }
+                    label += '₹' + context.raw.toLocaleString();
+                    return label;
+                  }
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error("Error loading Investor Split chart:", error);
+        document.getElementById('investorSplitChart').innerHTML = 
+         `<p style="text-align: center; color: var(--danger-color); margin-top: 50%;">${error.message}</p>`;
+      }
+    }
+
+    // Load Client Split Chart
+    async function loadClientSplitChart() {
+      try {
+        const response = await fetch('/getOrderData');
+        if (!response.ok) throw new Error('Failed to fetch order data');
+        const dataClient = await response.json();
+
+        if (!Array.isArray(dataClient) || dataClient.length === 0) {
+          throw new Error('No Orders Yet');
+        }
+
+        const clientNamesPromises = dataClient.map(item => fetchClientName(item.ClientID));
+        const clientNames = await Promise.all(clientNamesPromises);
+
+        const labels = [];
+        const orders = [];
+
+        dataClient.forEach((item, index) => {
+          if (item.ClientID && item.TotalOrder) {
+            labels.push(clientNames[index]);
+            orders.push(item.TotalOrder);
+          }
+        });
+
+        document.getElementById("clientCount").textContent = dataClient.length;
+
+        const ctx = document.getElementById('clientSplitChart').getContext('2d');
+        
+        if (clientSplitChart) {
+          clientSplitChart.destroy();
+        }
+
+        clientSplitChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Order Amount',
+              data: orders,
+              backgroundColor: [
+                '#FFC107', '#03A9F4', '#4CAF50', '#E91E63', '#9C27B0',
+                '#FFC107', '#03A9F4', '#4CAF50', '#E91E63', '#9C27B0'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.label || '';
+                    if (label) {
+                      label += ': ';
+                    }
+                    label += '₹' + context.raw.toLocaleString();
+                    return label;
+                  }
+                }
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error("Error loading Client Split chart:", error);
+        document.getElementById('clientSplitChart').innerHTML = 
+          `<p style="text-align: center; color: var(--danger-color); margin-top: 50%;">${error.message}</p>`;
+      }
+    }
+
+    // Helper functions
+    async function fetchInvestorName(id) {
+      try {
+        const res = await fetch(`/InvestorDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for InvestorID: ${id}`);
+        const investorDetails = await res.json();
+        return investorDetails.InvestorName;
+      } catch (err) {
+        console.error(err.message);
+        return "Investor #" + id;
+      }
+    }
+
+    async function fetchClientName(id) {
+      try {
+        const res = await fetch(`/ClientDetails/${id}`);
+        if (!res.ok) throw new Error(`Failed to fetch details for ClientID: ${id}`);
+        const clientDetails = await res.json();
+        return clientDetails.ClientName;
+      } catch (err) {
+        console.error(err.message);
+        return "Client #" + id;
+      }
+    }
+  </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded',async function() {
+  const response = await fetch('/getTotalCompanyData');
+        if (!response.ok) throw new Error('Failed to fetch investment but why data');
+        const data = await response.json();
+        
+    document.getElementById('totalInvestments').textContent = '₹' + data.TotalInvestments.toLocaleString();
+    document.getElementById('totalOrders').textContent = '₹' + data.TotalOrders.toLocaleString();
+    document.getElementById('NoOfInvestors').innerHTML = `Total Investors : <h6 style="display:inline"> ${data.NoOfInvestors.toLocaleString()}</h6>`;
+    document.getElementById('NoOfClients').innerHTML = `No Of Clients :<h6 style="display:inline">  ${data.NoOfClients.toLocaleString()}</h6>`;
+    document.getElementById('Corpus').textContent = '₹' + data.Corpus.toLocaleString();
+    document.getElementById('OnePercentFund').textContent = '₹' + data.OnePercentFund.toLocaleString();
+    document.getElementById('InvestorProjection').textContent = data.InvestorProjection.toLocaleString();
+    document.getElementById('ClientProjection').textContent =  data.ClientProjection.toLocaleString();
+
+});
+
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

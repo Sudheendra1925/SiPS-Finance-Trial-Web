@@ -24,7 +24,6 @@
       --font-dark: #1e293b;
       --font-light: #64748b;
       --border-color: #e2e8f0;
-      --light-text: #64748b;
     }
 
     * {
@@ -323,7 +322,6 @@
             transition: all 0.3s ease;
             z-index: 1000;
             padding-top: 80px;
-            overflow: scroll;
         }
 
         .sidebar.active {
@@ -343,19 +341,7 @@
             background-color: var(--secondary-color);
             color: var(--primary-color);
         }
-        .sidebar-section {
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-    }
 
-    .sidebar-section-title {
-      padding: 0.5rem 1.5rem;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      color: var(--font-light);
-      letter-spacing: 1px;
-    }
         .overlay {
             position: fixed;
             top: 0;
@@ -483,10 +469,7 @@
               <a class="nav-link queue " href="/Queue">Queue</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="/Company">Insights</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/Dashboard">Dashboard</a>
+              <a class="nav-link company active" href="/Company">Company</a>
             </li>
           </ul>
           
@@ -501,54 +484,38 @@
   <!-- Mini Bar that shows on hover -->
   <div class="mini-bar" id="miniBar" style="height: 50vh;"></div>
   <div class="overlay"></div>
-  <aside class="sidebar" id="sidebar" aria-label="Secondary navigation">
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">Transactions</div>
-      <a href="/TotalInvestmentEMIHistoryPage" class="sidebar-link">
-        <i class="fas fa-history"></i>Investor EMI History
-      </a>
-      <a href="/TotalOrderEMIHistoryPage" class="sidebar-link">
-        <i class="fas fa-file-invoice-dollar"></i>Client EMI History
-      </a>
-      <a href="/DueEMIPage" class="sidebar-link">
-        <i class="fas fa-calendar-times"></i>Due EMI
-      </a>
-    </div>
-    
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">Closed Items</div>
-      <a href="/ClosedInvestmentsPage" class="sidebar-link">
-        <i class="fas fa-lock"></i>Closed Investments
-      </a>
-      <a href="/ClosedOrdersPage" class="sidebar-link">
-        <i class="fas fa-lock"></i>Closed Orders
-      </a>
-    </div>
-    
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">Data Management</div>
-      <a href="/ExcelExportPage" class="sidebar-link">
-        <i class="fas fa-file-export"></i>Export To Excel
-      </a>
-      <a href="/ExcelImportPage" class="sidebar-link">
-        <i class="fas fa-file-import"></i>Import From Excel
-      </a>
-    </div>
-    
-    <div class="sidebar-section">
-      <div class="sidebar-section-title">Rejected Items</div>
-      <a href="/RejectedInvestmentsPage" class="sidebar-link">
-        <i class="fas fa-times-circle"></i>Rejected Investments
-      </a>
-      <a href="/RejectedOrdersPage" class="sidebar-link">
-        <i class="fas fa-times-circle"></i>Rejected Orders
-      </a>
-    </div>
-    <a href="/EditCompanyPage" class="sidebar-link">
-      <i class="fa-solid fa-pen-to-square"></i>EditCompanyPage
-    </a>
-    
-  </aside>
+  <div class="sidebar">
+  <a href="/TotalInvestmentEMIHistoryPage" class="sidebar-link">
+    <i class="fas fa-history"></i>Investor EMI History
+  </a>
+  <a href="/TotalOrderEMIHistoryPage" class="sidebar-link">
+    <i class="fas fa-file-invoice-dollar"></i>Client EMI History
+  </a>
+  <a href="/DueEMIPage" class="sidebar-link">
+    <i class="fas fa-calendar-times"></i>Due EMI
+  </a>
+  <a href="/ClosedInvestmentsPage" class="sidebar-link">
+    <i class="fas fa-lock"></i>Closed Investments
+  </a>
+  <a href="/ClosedOrdersPage" class="sidebar-link">
+    <i class="fas fa-lock"></i>Closed Orders
+  </a>
+  <a href="/ExcelExportPage" class="sidebar-link">
+    <i class="fas fa-file-export"></i>Export To Excel
+  </a>
+  <a href="/ExcelImportPage" class="sidebar-link">
+    <i class="fas fa-file-import"></i>Import From Excel
+  </a>
+  <a href="/RejectedInvestmentsPage" class="sidebar-link">
+    <i class="fas fa-times-circle"></i>Rejected Investments
+  </a>
+  <a href="/RejectedOrdersPage" class="sidebar-link">
+    <i class="fas fa-times-circle"></i>Rejected Orders
+  </a>
+  <a href="/EditCompanyPage" class="sidebar-link">
+    <i class="fa-solid fa-pen-to-square"></i>Edit Company
+  </a>
+</div>
 
   <div class="dashboard-container">
     <div id="summaryBox" class="summary-box">
@@ -562,8 +529,8 @@
       <p>Total Client EMI: <span id="totalClientEmi" style="color:green">Loading...</span></p>
       <p>Active Orders: <span id="totalOrders" style="color:red">Loading...</span></p>
       <p>Total Investor EMI: <span id="totalInvestorEmi" style="color:red">Loading...</span></p>
-      <a href="/ExtraExpensesHistoryPage" style="color:black;text-decoration:underline;"><p>Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
-      <a href="/ExtraIncomeHistoryPage" style="color:black;text-decoration:underline"><p>Total Extra Income: <span id="ExtraIncome" style="color:green">Loading...</span></p></a>
+      <a href="/ExtraExpensesHistoryPage" style="color:black"><p>Total Extra Expenses: <span id="ExtraExpenses" style="color:red">Loading...</span></p></a>
+      <a href="/ExtraIncomeHistoryPage" style="color:black"><p>Total Extra Income: <span id="ExtraIncome" style="color:green">Loading...</span></p></a>
     </div>
 
     <div class="quick-actions">

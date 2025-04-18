@@ -44,7 +44,7 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width:30%;
+       
       
     }
     .nav-item{
@@ -195,9 +195,28 @@ a{
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-          <a class="navbar-brand d-flex align-items-center" href="/Home">
-            <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">  
-          </a>
+            <a 
+            id="LogoBlock" 
+            href="/Home" 
+            style="display: flex; align-items: center; text-decoration: none; gap: 12px; transition: transform 0.2s ease;"
+            onmouseover="this.style.transform='translateY(-1px)'" 
+            onmouseout="this.style.transform='none'"
+        >
+            <!-- <img src="/Images/images.jpg" alt="SIPS LOGO" class="logo-img"> -->
+            <div style="display: flex; flex-direction: column;">
+                <div 
+                    class="d-flex" 
+                    style="font-size: 40px; font-weight: 700; color: black; line-height: 1;"
+                >
+                    FinTech
+                </div>
+                <span 
+                    style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;"
+                >
+                    Powered by SiPS
+                </span>
+            </div>
+        </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -216,7 +235,10 @@ a{
                 <a  href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a  href="/Company">Company</a>
+                <a  href="/Company">Insights</a>
+              </li>
+              <li class="nav-item">
+                <a  href="/Dashboard">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -252,7 +274,7 @@ a{
         <!-- Order Details Section -->
         <div class="Orders-section">
          <center>   <h3 class="mb-4 text-primary">Order Details</h3></center>
-            <table class="table table-striped">
+            <table class="table table-striped" style="padding:20px;">
                 <thead>
                     <tr>
                         <th>OrderID</th>
@@ -269,8 +291,8 @@ a{
                 <tbody></tbody>
             </table>
            <center> 
-            <div  id="ActiveLending"></div>
-            <div class="total-amount" id="TotalAmount"></div>
+            <div  id="ActiveLending" style="margin-bottom:50px;;"></div>
+            <!-- <div class="total-amount" id="TotalAmount"></div> -->
            
         </center>
         </div>
@@ -310,8 +332,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             clientInfo.querySelector('p:nth-of-type(6)').innerHTML = `<strong>PAN Number:</strong> ${data.Pan || 'N/A'}`;
             clientInfo.querySelector('p:nth-of-type(7)').innerHTML = `<strong>PAN Card:</strong> <a href="../uploads/pancard/${data.PanCard}" target="_blank">View Document</a>`;
             clientInfo.querySelector('p:nth-of-type(8)').innerHTML = `<strong>Comments:</strong> ${data.Comments || 'N/A'}`;
-            document.getElementById("TotalAmount").innerHTML = ` <span class="fw-semibold text-secondary">Total Borrowing:</span> 
-            <span class="fw-bold text-primary">₹${data.TotalAmount.toLocaleString("en-IN") || '0'}</span>`;
+            // document.getElementById("TotalAmount").innerHTML = ` <span class="fw-semibold text-secondary">Total Borrowing:</span> 
+            // <span class="fw-bold text-primary">₹${data.TotalAmount.toLocaleString("en-IN") || '0'}</span>`;
             document.getElementById("UpdateClient").href = `/UpdateClientPage/${data.ClientID}`;
             document.getElementById("AddOrder").href = `/AddOrder?ClientName=${data.ClientName}`;
            
@@ -348,14 +370,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                              <td> ${order.EndDate ? new Date(order.EndDate).toLocaleDateString('en-IN') : 'N/A'}</td>
                             <td><a href="../uploads/collaterals/${order.Collaterals}" target="_blank">Collaterals</td>
                             <td>
-                                <a href="/UpdateOrderPage/${order.OrderID}?ClientId=${id}" class="btn btn-primary">Update</a>
-                                <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.AmountSanctioned}','${new Date(order.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger">Close Order</button>
-                                <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}&ClientId=${clientID}" class="btn btn-primary">Received EMI</a>
-                                <a href="/OrderEMIHistoryPage/${order.OrderID}&ClientId=${clientID}" class="btn btn-primary">EMI History</a>
+                                <a href="/UpdateOrderPage/${order.OrderID}?ClientId=${id}" class="btn btn-primary btn-sm">Update</a>
+                                <button onclick="confirmDelete('${order.OrderID}','${ClientName}','${order.AmountSanctioned}','${new Date(order.StartDate).toLocaleDateString('en-IN')}')" class="btn btn-danger btn-sm">Close Order</button>
+                                <a href="/ClientEMIPage/${order.OrderID}?PayableInterest=${order.PayableInterest}&ClientName=${ClientName}&ClientId=${id}" class="btn btn-primary btn-sm">Received EMI</a>
+                                <a href="/OrderEMIHistoryPage/${order.OrderID}?ClientId=${clientID}" class="btn btn-primary btn-sm">EMI History</a>
                                 <a 
                                     onclick="alert('Done')" 
                                     href="/AddDueEMI/${order.OrderID}?ClientName=${ClientName}&ActiveAmount=${order.ActiveAmount}&EMIDate=${new Date(order.StartDate).toLocaleDateString('en-IN')}&EMIAmount=${order.PayableInterest}" 
-                                    class="btn btn-primary">
+                                    class="btn btn-primary btn-sm">
                                     Due
                                 </a>
                             </td>

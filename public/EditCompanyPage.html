@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Company Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <style>
+    * {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    :root {
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-color: #10b981;
+      --accent-hover: #059669;
+      --background-color: #f8fafc;
+      --card-bg: #ffffff;
+      --dark-text: #1e293b;
+      --light-text: #64748b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.05);
+      --danger-color: #ef4444;
+      --font-dark: #1e293b;
+      --font-light: #64748b;
+      --table-header-bg: #2563eb;
+      --table-border: #e2e8f0;
+      --table-hover: #f1f5f9;
+      --table-stripe: #f8fafc;
+      --transition-speed: 0.3s;
+      --white: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--font-dark);
+      line-height: 1.6;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: var(--primary-color);
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: var(--dark-text);
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-top: 5px;
+      transition: border var(--transition-speed);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary-hover);
+    }
+
+    .actions {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color var(--transition-speed);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-back {
+      background-color: var(--light-text);
+      color: white;
+    }
+
+    .btn-back:hover {
+      background-color: var(--dark-text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Edit Company Overview</h2>
+    <form method="POST" action="/UpdateCompany">
+      <label for="NoOfInvestors">Number of Investors</label>
+      <input type="text" id="NoOfInvestors" name="NoOfInvestors" value="0">
+
+      <label for="NoOfClients">Number of Clients</label>
+      <input type="text" id="NoOfClients" name="NoOfClients" value="0">
+      
+      <label for="Corpus">Corpus</label>
+      <input type="text" id="Corpus" name="Corpus" value="0">
+
+      <label for="OnePercentFund">One Percent Fund</label>
+      <input type="text" id="OnePercentFund" name="OnePercentFund" value="0">
+
+      <label for="InvestorProjection">Investor Projection</label>
+      <input type="text" id="InvestorProjection" name="InvestorProjection" value="0">
+
+      <label for="ClientProjection">Client Projection</label>
+      <input type="text" id="ClientProjection" name="ClientProjection" value="0">
+
+      <label for="TotalInvestments">Total Investments</label>
+      <input type="text" id="TotalInvestments" name="TotalInvestments" value="0">
+
+      <label for="TotalOrders">Total Orders</label>
+      <input type="text" id="TotalOrders" name="TotalOrders" value="0">
+
+      <div class="actions">
+        <a type="button" class="btn btn-danger" href="/company" style="text-decoration: none;"> Back</a>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded',async function() {
+      const response = await fetch('/getTotalCompanyData');
+            if (!response.ok) throw new Error('Failed to fetch investment but why data');
+            const data = await response.json();
+            
+        document.getElementById('TotalInvestments').value = data.TotalInvestments;
+        document.getElementById('TotalOrders').value =data.TotalOrders;
+        document.getElementById('NoOfInvestors').value =data.NoOfInvestors;
+        document.getElementById('NoOfClients').value =  data.NoOfClients;
+        document.getElementById('Corpus').value = data.Corpus;
+        document.getElementById('OnePercentFund').value =data.OnePercentFund;
+        document.getElementById('InvestorProjection').value =data.InvestorProjection;
+        document.getElementById('ClientProjection').value =  data.ClientProjection;
+    
+    });
+    
+    </script>
+</body>
+</html>

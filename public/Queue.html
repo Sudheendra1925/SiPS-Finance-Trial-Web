@@ -507,10 +507,28 @@ a {
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/Home">
-            <img src="/Images/Sips Finance Logo.png" alt="Logo" width="40" height="40">
-            <span>SiPS Finance</span>
-          </a>
+            <a 
+            id="LogoBlock" 
+            href="/Home" 
+            style="display: flex; align-items: center; text-decoration: none; gap: 12px; transition: transform 0.2s ease;"
+            onmouseover="this.style.transform='translateY(-1px)'" 
+            onmouseout="this.style.transform='none'"
+        >
+            <!-- <img src="/Images/images.jpg" alt="SIPS LOGO" class="logo-img"> -->
+            <div style="display: flex; flex-direction: column;">
+                <div 
+                    class="d-flex" 
+                    style="font-size: 40px; font-weight: 700; color: black; line-height: 1;"
+                >
+                    FinTech
+                </div>
+                <span 
+                    style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;"
+                >
+                    Powered by SiPS
+                </span>
+            </div>
+        </a>
           <div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -532,8 +550,11 @@ a {
                   <a class="nav-link queue active" href="/Queue">Queue</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link company" href="/Company">Company</a>
-                </li>
+                    <a class="nav-link" href="/Company">Insights</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/Dashboard">Dashboard</a>
+                  </li>
               </ul>
               
               <!-- Sign out button -->
@@ -546,14 +567,14 @@ a {
       
 <!--      ---------------------------------------------------------------------------------------------------------------------      -->
 <div class="container mt-5">
-    <h1 class="text-center mb-4"><b>Queue Summary</b></h1>
+   <center> <h3 class="text-center mb-4"><b>Queue Summary</b></h3></center>
     <div class="summary-container">
         <div id="InvestmentTotal" class="summary-box investment">
-            <h3>Investment</h3>
+            <h5>Investment</h5>
             <p id="investmentValue"><span class="highlight">6,00,000</span></p>
         </div>
         <div id="OrderTotal" class="summary-box order">
-            <h3><span> Orders</span></h3>
+            <h5><span> Orders</span></h5>
             <p id="orderValue"><span class="highlight">500</span></p>
         </div>
     </div>

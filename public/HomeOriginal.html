@@ -31,13 +31,6 @@
             --shadow-color: rgba(0, 0, 0, 0.15); /* Slightly Stronger Shadow */
             --transition-speed: 0.3s; /* Smooth Transitions */
             --orange-color: #27ae60; /* Orange for Add Investment */
-            
-            /* New module background colors */
-            --investors-gradient: linear-gradient(135deg, #3498db, #2980b9);
-            --clients-gradient: linear-gradient(135deg, #27ae60, #2ecc71);
-            --queue-gradient: linear-gradient(135deg, #f1c40f, #f39c12);
-            --company-gradient: linear-gradient(135deg, #9b59b6, #8e44ad);
-            --history-gradient: linear-gradient(135deg, #e74c3c, #c0392b);
         }
 
         body {
@@ -428,7 +421,6 @@
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
         }
 
-        /* Enhanced section box styling */
         .section-box {
             background-color: white;
             border-radius: 15px;
@@ -438,93 +430,25 @@
             transition: all 0.3s ease;
             cursor: pointer;
             border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            height:200px;
-            width:250px;
-        }
-        
-        /* Add the gradient background overlays for each section */
-        .section-box:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            opacity: 0.8;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .section-box[data-page="investors"]:before {
-            background: var(--investors-gradient);
-        }
-        
-        .section-box[data-page="clients"]:before {
-            background: var(--clients-gradient);
-        }
-        
-        .section-box[data-page="queue"]:before {
-            background: var(--queue-gradient);
-        }
-        
-        .section-box[data-page="company"]:before {
-            background: var(--company-gradient);
-        }
-        
-        .section-box[data-page="history"]:before {
-            background: var(--history-gradient);
         }
         
         .section-box:hover {
             transform: translateY(-10px);
-            border-color: white;
+            border-color: var(--primary-color);
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-        
-        .section-box:hover:before {
-            opacity: 1;
         }
 
         .section-box h3 {
             margin-bottom: 15px;
             font-size: 1.3em;
-            font-weight: 600;
-            color: black;
-            position: relative;
-            z-index: 2;
-        }
-
-        .section-stats {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .section-stats img {
-            border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .section-box:hover .section-stats img {
-            transform: scale(1.05);
-            border-color: white;
         }
 
         .section-stats span {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: #f3f4f6;
             padding: 8px 15px;
             border-radius: 20px;
             font-size: 0.9em;
             margin-top: 2vh;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .dashboard-footer {
@@ -552,8 +476,6 @@
             grid-template-columns: repeat(5, 1fr);
             gap: 20px;
             grid-auto-flow: row;
-            margin-top: 20px;
-            margin-bottom: 40px;
         }
         
         .add-buttons {
@@ -897,7 +819,7 @@
                                         onclick="InvestorWhatsappMessage('${InvestorDetails.PhoneNumber}','${InvestorDetails.InvestorName}','${Investor.PayableInterest}')">
                                         Send Message
                                     </button>
-                                   <a class="btn btn-primary btn-sm received-emi-btn" onclick="confirmEMI('${Investor.InvestmentID}', '${Investor.PayableInterest}', '${InvestorDetails.InvestorName}','${Investor.InvestorID}')">EMI Paid</a>
+                                   <a class="btn btn-primary btn-sm received-emi-btn" onclick="confirmEMI('${Investor.InvestmentID}', '${Investor.PayableInterest}', '${InvestorDetails.InvestorName}')">EMI Paid</a>
                                 </td>
                             </tr>
                         `;
@@ -976,9 +898,9 @@
         }
 
         function InvestorWhatsappMessage(PhoneNumber, InvestorName, PayableInterest) {
-            const message =` Hello ${InvestorName}, we have successfully paid your interest of ${PayableInterest}. Thank you for your investment and trust in SiPS!`;
+            const message = `Hello ${InvestorName}, we have successfully paid your interest of ${PayableInterest}. Thank you for your investment and trust in SiPS!`;
             const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
-            window.open( whatsappUrl,'_blank');
+            window.location.href = whatsappUrl;
         }
         
         function ClientWhatsappMessage(PhoneNumber, ClientName, PayableInterest, StartDate) {
@@ -993,17 +915,17 @@ SIPS Financial Services
 Canara Bank
 A/C #: 120031763211
 IFSC code: CNRB0008686
-Account type: Current 
+Account type: Current
 
 Regards,
 SiPS Finance team`;
             const whatsappUrl = `https://wa.me/91${PhoneNumber}?text=${encodeURIComponent(message)}`;
-            window.open (whatsappUrl,'_blank');
+            window.location.href = whatsappUrl;
         }
 
-        function confirmEMI(InvestmentID, PayableInterest, InvestorName,InvestorId) {
+        function confirmEMI(InvestmentID, PayableInterest, InvestorName) {
             if (confirm(`Are you sure you want to pay the interest of ${PayableInterest} to ${InvestorName}?`)) {
-                window.location.href =`/InvestorEMIPay/${InvestmentID}?PayableInterest=${PayableInterest}&InvestorName=${InvestorName}&InvestorId=${InvestorId}`;
+                window.location.href =`/InvestorEMIPay/${InvestmentID}?PayableInterest=${PayableInterest}&InvestorName=${InvestorName}`;
             } else {
                 alert("Payment canceled.");
             }

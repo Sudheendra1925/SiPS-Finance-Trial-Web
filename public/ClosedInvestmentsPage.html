@@ -44,7 +44,7 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        width:30%;
+       
       
     }
     .nav-item{
@@ -98,7 +98,7 @@
         }
 
         table.table th {
-            background-color: var(--accent-color);
+            
             color: black;
         }
 
@@ -119,15 +119,43 @@
         .text-center.text-danger {
             color: var(--danger-color);
         }
+        thead th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
 
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-          <a class="navbar-brand d-flex align-items-center" href="/Home">
-            <img src="/Images/Sips Finance Logo.png" alt="Logo" width="60" height="60" class="me-2">  
-          </a>
+            <a 
+            id="LogoBlock" 
+            href="/Home" 
+            style="display: flex; align-items: center; text-decoration: none; gap: 12px; transition: transform 0.2s ease;"
+            onmouseover="this.style.transform='translateY(-1px)'" 
+            onmouseout="this.style.transform='none'"
+        >
+            <!-- <img src="/Images/images.jpg" alt="SIPS LOGO" class="logo-img"> -->
+            <div style="display: flex; flex-direction: column;">
+                <div 
+                    class="d-flex" 
+                    style="font-size: 40px; font-weight: 700; color: black; line-height: 1;"
+                >
+                    FinTech
+                </div>
+                <span 
+                    style="font-size: 10px; color:#e74c3c; text-align: end; font-weight: 500; letter-spacing: 1px;"
+                >
+                    Powered by SiPS
+                </span>
+            </div>
+        </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -146,7 +174,10 @@
                 <a  href="/Queue">Queue</a>
               </li>
               <li class="nav-item">
-                <a  href="/Company">Company</a>
+                <a  href="/Company">Insights</a>
+              </li>
+              <li class="nav-item">
+                <a  href="/Dashboard">Dashboard</a>
               </li>
             </ul>
             <div class="d-flex align-items-center ms-3">
@@ -161,7 +192,7 @@
             <input type="text" id="searchBar" class="form-control" placeholder="Search by Investor Name, Investment ID, Start or End Date or Amount">
         </div>
         <table class="table table-striped">
-            <thead>
+            <thead >
                 <tr>
                     <th scope="col">S.No</th>
                     <th scope="col">Investment ID</th>
@@ -177,7 +208,7 @@
         </table>
     </div>
 
-      <center>  <a class="btn btn-danger px-4 py-2" href="/Company">Back</a></center>
+      <center>  <a class="btn btn-danger px-4 py-2 mb-3" href="/Company">Back</a></center>
    
     <script>
 
@@ -212,7 +243,7 @@
                 totalRow.innerHTML = `
                 <td></td><td></td><td></td><td></td>
                     <td  class="text-center font-weight-bold"><b>Total</b></td>
-                    <td class="font-weight-bold" style="color: var(--success-color);">${totalAmount.toLocaleString("en-In")}</td>
+                    <td class="font-weight-bold" style="color: var(--success-color);"><b>${totalAmount.toLocaleString("en-In")}</b></td>
                 `;
                 tbody.appendChild(totalRow);
             } else {
@@ -250,7 +281,7 @@
             if (totalRow) {
                 totalRow.innerHTML = `
                     <td colspan="5" class="text-end font-weight-bold">Filtered Total:</td>
-                    <td class="font-weight-bold" style="color: var(--success-color);">${totalFilteredAmount.toFixed(2)}</td>
+                    <td class="font-weight-bold" style="color: var(--success-color);"><b>${totalFilteredAmount.toFixed(2)}</b></td>
                 `;
             }
         });
